@@ -4,7 +4,7 @@ require('dotenv').config();
 const connectToDB = require('./controller/connectToDB');
 const { getHomePage } = require('./controller/home');
 const Position = require('./model/position');
-
+const reportsRouter = require('./routes/report'); // Assuming this is the path to the route file
 const app = express();
 const PORT = process.env.PORT || 4000;
 
@@ -44,6 +44,7 @@ app.get('/api/check-employee-number/:number', async (req, res) => {
   }
 });
 
+app.use('/api', reportsRouter);
 
 // Start the server
 app.listen(PORT, () => {

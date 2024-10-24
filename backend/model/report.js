@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { STATUS, STATIONS } = require('../enums');
+const { STATUS, STATIONS } = require('../model/enums');
 const MiniReport = require('./miniReport');
 const TransitionBetweenStations = require('./transitionBetweenStations');
 const Component = require('./component');
