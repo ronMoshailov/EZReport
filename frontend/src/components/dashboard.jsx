@@ -3,6 +3,7 @@ import Card from './card';
 import Slidebar from './slidebar';  // Import the sidebar component
 import './dashboard.scss'; // Import the dashboard styles
 import './slidebar.scss';  // Import the sidebar styles
+import Modal from './modal';  // Modal component for showing options
 
 const Dashboard = () => {
 
@@ -10,7 +11,21 @@ const Dashboard = () => {
     const [reports, setReports] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedCard, setSelectedCard] = useState(null);
 
+    // Step 2: Function to handle card click and show modal
+    const handleCardClick = (cardData) => {
+      setSelectedCard(cardData);  // Set the clicked card data
+      setIsModalOpen(true);       // Open the modal
+    };
+
+    // Step 3: Function to close the modal
+    const handleCloseModal = () => {
+      setIsModalOpen(false);
+      setSelectedCard(null);
+    };
+  
   // Step 2: Fetch data from the backend when the component mounts
   useEffect(() => {
     const fetchReports = async () => {
@@ -51,6 +66,7 @@ const Dashboard = () => {
               name={report.product_name} // Pass product name
               date={new Date(report.openDate).toLocaleDateString()} // Format and pass the date
               employeeNumber={report.employeeNumber || 'N/A'} // Add other report data as needed
+              onClick={() => handleCardClick(report)}  // Handle card click to show modal
             />
           ))}
         </div>
@@ -60,6 +76,7 @@ const Dashboard = () => {
       <div className="sidebar">
         <Slidebar />
       </div>
+      {isModalOpen && <Modal onClose={handleCloseModal} selectedCard={selectedCard} />}
     </div>
   );
 };
