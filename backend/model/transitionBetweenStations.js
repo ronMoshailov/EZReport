@@ -16,16 +16,18 @@ const transitionBetweenStationsSchema = new mongoose.Schema({
     },
     receive_worker: {
         type: String,
-        required: true
     },
     receive_date: {
         type: Date,
-        required: true
     },
     receive_station: {
         type: String,
-        required: true
-    }
+    },
+    isFinished: {
+        type: Boolean,
+        required: true,
+        default: true
+    },
 });
 
 // Create and export the model

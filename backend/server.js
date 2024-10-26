@@ -1,12 +1,19 @@
 const express = require('express');
 const mongoose = require('mongoose');
+
+// Require routes
+const reportsRouter = require('./routes/reportRoutess'); // Assuming this is the path to the route file
+const EmployeeRoutes = require('./routes/EmployeeRoutes'); // Assuming this is the path to the route file
+const positionRoutes = require('./routes/positionRoutes');
+
+// Require controllers
+const connectToDB = require('./connectToDB');
+// const { getHomePage } = require('./controller/home');
+
+// Defines
 require('dotenv').config();
-const connectToDB = require('./controller/connectToDB');
-const { getHomePage } = require('./controller/home');
-const Position = require('./model/position');
-const reportsRouter = require('./routes/report'); // Assuming this is the path to the route file
-const app = express();
 const PORT = process.env.PORT || 4000;
+const app = express();
 
 // Middleware to parse JSON bodies
 // express.json() ->  built-in middleware function in Express that parses incoming requests with JSON payloads and makes the parsed data available under the req.body property.
@@ -23,28 +30,12 @@ app.use((req, res, next) => {
 // Connect to the database
 connectToDB();
 
-// Example route
-app.get('/api/check-employee-number/:number', async (req, res) => {
-  const positionNumber = parseInt(req.params.number, 10);
-  
-  try {
-      // Query MongoDB to check if the position number exists
-      const position = await Position.findOne({ position: positionNumber });
-      console.log('returned from DB: ' + position);
-      if (position) {
-          // If the position is found
-          return res.status(200).json({ exists: true, position });
-      } else {
-          // If the position is not found
-          return res.status(200).json({ exists: false });
-      }
-  } catch (error) {
-      console.error('Error querying MongoDB:', error);
-      return res.status(500).json({ error: 'Internal server error' });
-  }
-});
 
 app.use('/api', reportsRouter);
+app.use('/api', EmployeeRoutes);
+app.use('/api', positionRoutes);
+
+
 
 // Start the server
 app.listen(PORT, () => {

@@ -1,13 +1,15 @@
 import React from 'react';
-import './slidebar.scss';  // Import the sidebar styles
+import { Link } from 'react-router-dom';  // Use Link for navigation
+import './slidebar.scss';
 
 const Slidebar = () => {
   return (
     <div className="sidebar-content">
-      <a href="/">בית</a>
-      <a href="/other">אחר</a>
-      <a href="/settings">הגדרות</a>
-      <a href="/help">עזרה</a>
+      <img id="slider_logo" src={require('../images/Logo.png')} alt="Logo" />
+      <Link to="/dashboard">פקעו"ת</Link>
+      <Link to="/queue">תור</Link>
+      <Link to="/settings">הגדרות</Link>
+      <Link to="/">יציאה</Link>
     </div>
   );
 };

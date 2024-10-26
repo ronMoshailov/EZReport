@@ -2,6 +2,7 @@
 .layout {
     display: flex;  /* Flexbox to position sidebar and dashboard side by side */
     min-height: 100vh;  /* Full viewport height */
+    text-align: right;
   }
   
   /* Main dashboard content styles */
@@ -9,8 +10,13 @@
     flex: 1;  /* Allow dashboard content to take the remaining space */
     padding: 20px;
     background-color: #f0f4f7;
+    direction: rtl;
   }
   
+  .dashboard-content h1{
+    border-bottom: 2px solid;
+  }
+
   .cards-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));  /* Responsive grid for cards */

@@ -41,3 +41,29 @@
     margin-right: 5px;
     font-size: 18px;
 }
+
+#sendIcon {
+    display: flex;
+    justify-content: center; /* Center the icon horizontally */
+    align-items: center;  /* Center the icon vertically */
+    width: 40px;  /* Adjust the width */
+    height: 40px; /* Make height equal for a square button */
+    background-color: #007bff;  /* Primary blue color */
+    border: none;  /* Remove default button border */
+    border-radius: 50%;  /* Round button */
+    color: white;  /* Icon color */
+    font-size: 25px;  /* Increase icon size */
+    cursor: pointer;  /* Show pointer on hover */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);  /* Add shadow for depth */
+    transition: background-color 0.3s ease, transform 0.2s ease;  /* Smooth transitions */
+    margin-right: auto;
+}
+
+#sendIcon:hover {
+    background-color: #0056b3;  /* Darker blue on hover */
+}
+
+#sendIcon:active {
+    background-color: #004494;  /* Even darker blue when active (clicked) */
+    transform: translateY(1px);  /* Move down slightly on click */
+}
