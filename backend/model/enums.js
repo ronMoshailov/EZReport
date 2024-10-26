@@ -6,11 +6,9 @@ const STATUS = {
   };
   
   const STATIONS = {
-    STATION_A: 'STATION_A',
-    STATION_B: 'STATION_B',
-    STATION_C: 'STATION_C',
-    STATION_D: 'STATION_D',
-    STATION_E: 'STATION_E',
+    PACKING: 'Packing',
+    PRODUCTION: 'Production',
+    STORAGE: 'Storage',
   };
   
   module.exports = { STATUS, STATIONS };

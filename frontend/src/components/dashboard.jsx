@@ -5,6 +5,7 @@ import './dashboard.scss'; // Import the dashboard styles
 import './slidebar.scss';  // Import the sidebar styles
 import Modal from './modal';  // Modal component for showing options
 import SendModal from './sendModal'  // Correct the name to PascalCase
+import newStorageReport from './NewReportPage'
 
 const Dashboard = ({position, isQueue}) => {
 
@@ -14,24 +15,31 @@ const Dashboard = ({position, isQueue}) => {
     const [error, setError] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isSendModalOpen, setIsSendModalOpen] = useState(false);
-    const [selectedCard, setSelectedCard] = useState(null);
+    const [report, setReport] = useState(null);
+    const [isReceive, setIsReceive] = useState(false);
+    const [refreshReports, setRefreshReports] = useState(false); // New state for triggering refresh
+    const [searchQuery, setSearchQuery] = useState(''); // New state for search query
+
+    const triggerRefresh = () => setRefreshReports((prev) => !prev); // Toggle refresh
 
     // Function to handle card click and show modal
-    const handleClickOnCard = (cardData) => {
-      setSelectedCard(cardData);  // Set the clicked card data
-      setIsModalOpen(true);       // Open the modal
+    const handleClickOnCard = (report) => {
+      if (!isQueue) { // Only open modal if not in queue
+        setReport(report);  
+        setIsModalOpen(true);
+      }
     };
-
+    
     // Function to handle sending card click and show modal
-    const handleMovePosition = (cardData) => {
-      setSelectedCard(cardData);  // Set the clicked card data
+    const handleMovePositionButton = (report) => {
+      setReport(report);  // Set the clicked card data
       setIsSendModalOpen(true);       // Open the modal
     };
 
     // Function to close the modal
     const handleCloseModal = () => {
       setIsModalOpen(false);
-      setSelectedCard(null);
+      setReport(null);
       setIsSendModalOpen(false);
     };
     
@@ -50,14 +58,12 @@ const Dashboard = ({position, isQueue}) => {
         const response = await fetch('http://localhost:5000/api/getReports', {
           method: 'POST',
           headers: {
-              'Content-Type': 'application/json',
+            'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ position, isQueue})
-      });
-        if (!response.ok) {
-          throw new Error('Failed to fetch reports');
-        }
-        console.log('Successfully recieved data from the server to the fronted.');
+          body: JSON.stringify({ position, isQueue })
+        });
+        if (!response.ok) throw new Error('Failed to fetch reports');
+        
         const data = await response.json();
         setReports(data);
         setLoading(false);
@@ -67,39 +73,51 @@ const Dashboard = ({position, isQueue}) => {
       }
     };
     fetchReports();
-  }, [position, isQueue]);
+  }, [position, isQueue, refreshReports]); // Re-fetch when `refreshReports` changes
+
+  // Filtered reports based on search query
+  const filteredReports = reports.filter((report) =>
+    report.id.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   // Display loading/error state if necessary
   if (loading) return <p>Loading reports...</p>;
   if (error) return <p>Error: {error}</p>;
 
-  return (
-    <div className="layout">
-      <div className="dashboard-content">
-        <h1>עמדת {positionMap[position]}</h1>
-        <div className="cards-container">
-          {/* Map through the reports and create a Card for each report */}
-          {reports.map(report => ( 
-            <Card
-              key={report.id} // Use a unique key for each element
-              numberOperation={report.product_num} // Pass product number
-              date={new Date(report.openDate).toLocaleDateString()} // Format and pass the date
-              onClick={() => handleClickOnCard(report)}  // Handle card click to show modal
-              onClickSend={() => handleMovePosition(report)}
-              isQueue={isQueue}
+    return (
+      <div className="layout">
+        <div className="dashboard-content">
+          <div id='headerDashboard'>
+            <h1>עמדת {positionMap[position]}</h1>
+            <input
+              type="text"
+              placeholder="פקודת עבודה לחיפוש..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="search-bar" // Add styling in CSS if needed
             />
-          ))}
+          </div>
+          
+          <div className="cards-container">
+            {filteredReports.map(report => (
+              <Card
+                key={report.id}
+                numberOperation={report.id}
+                date={new Date(report.openDate).toLocaleDateString()}
+                onClick={() => handleClickOnCard(report)}
+                onClickSend={() => handleMovePositionButton(report)}
+              />
+            ))}
+          </div>
         </div>
+        
+        <div className="sidebar">
+          <Slidebar setIsReceive={setIsReceive}/>
+        </div>
+        {isModalOpen && !isQueue && <Modal onClose={handleCloseModal} selectedReport={report} />}
+        {isSendModalOpen && <SendModal onClose={handleCloseModal} selectedReport={report} isReceive={isReceive} onSuccess={triggerRefresh} />}
       </div>
-
-      {/* Sidebar on the right */}
-      <div className="sidebar">
-        <Slidebar />
-      </div>
-      {isModalOpen && <Modal onClose={handleCloseModal} selectedCard={selectedCard} />}
-      {isSendModalOpen && <SendModal onClose={handleCloseModal} selectedCard={selectedCard} />}
-    </div>
-  );
+    );
 };
 
 export default Dashboard;

@@ -9,7 +9,7 @@ const LoginPage = ({position, setPosition}) => {
     const [loading, setLoading] = useState(false);
     const [isValid, setIsValid] = useState(null);
     const navigate = useNavigate();
-
+    
     // Each time input changed save the number
     const handleInputChange = (e) => {
         setPosition(e.target.value);
@@ -27,7 +27,7 @@ const LoginPage = ({position, setPosition}) => {
 
         // Communicate with the server 
         try {
-            const response = await fetch(`http://localhost:5000/api/check-employee-number/${position}`);
+            const response = await fetch(`http://localhost:5000/api/isPositionExist/${position}`);
             // If returned properly
             if (response.ok) {
                 const result = await response.json();
@@ -57,7 +57,7 @@ const LoginPage = ({position, setPosition}) => {
         <div className="modal-container">
             <div className="modal">
                 <button className="close-btn">✕</button>
-                <label htmlFor="employee-number">:מספר עובד</label>
+                <label htmlFor="employee-number">:מספר עמדה</label>
                 <input 
                     type="number" 
                     id="employee-number" 

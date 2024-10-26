@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './modal.scss';  // Assuming you have styles for the modal
 import { useNavigate } from 'react-router-dom';  // Import useNavigate for navigation
 
-const Modal = ({ onClose, selectedCard }) => {
+const Modal = ({ onClose, selectedReport }) => {
     // Step 1: Create state to manage which option is selected
     const [selectedOption, setSelectedOption] = useState('');
     const navigate = useNavigate();  // Step 1: Initialize useNavigate
@@ -28,11 +28,11 @@ const Modal = ({ onClose, selectedCard }) => {
             <div className="modal">
                 <button className="close-btn" onClick={onClose}>✕</button>
 
-                <h2>מספר עובד: {selectedCard ? selectedCard.employeeNumber : ''}</h2>
+                <h2>מספר עובד: {selectedReport ? selectedReport.employeeNumber : ''}</h2>
                 
                 <div className="form-group">
                     <label>:מספר עובד</label>
-                    <input type="text" value={selectedCard.employeeNumber} readOnly />
+                    <input type="text" value={selectedReport.employeeNumber} />
                 </div>
 
                 <div className="form-options">

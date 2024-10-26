@@ -4,7 +4,7 @@ import './card.scss'; // Assuming you have card styles here
 const Card = ({ numberOperation, date, onClick, onClickSend }) => {
   return (
     <div className="card" onClick={onClick}>
-      <h3>{numberOperation} :פקע</h3>
+      <h3>פקע: {numberOperation}</h3>
       <p>תאריך פתיחה: {date}</p>
       <button id='sendIcon' onClick={(e) => {
         e.stopPropagation();  // Prevent triggering the card's onClick when clicking the button

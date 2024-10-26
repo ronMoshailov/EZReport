@@ -1,8 +1,5 @@
 const mongoose = require('mongoose');
 const { STATUS, STATIONS } = require('./enums');
-const MiniReport = require('./miniReport');
-const TransitionBetweenStations = require('./TransitionBetweenStations');
-const Component = require('./component');
 
 // Define the Report schema
 const reportSchema = new mongoose.Schema({
@@ -64,9 +61,8 @@ const reportSchema = new mongoose.Schema({
     },
     enable: {
         type: Boolean,
-    }
-
-    
+        default: true
+    }    
 });
 
 // Create and export the Report model

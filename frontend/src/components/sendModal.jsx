@@ -1,89 +1,120 @@
+// sendModal.jsx
 import React from 'react';
-import './sendModal.scss';  // Assuming you have styles for the modal
+import './sendModal.scss';
 
-const SendModal = ({ onClose, selectedCard }) => {
+const SendModal = ({ onClose, selectedReport, isReceive, onSuccess }) => {
+  const nextPositionMap = {
+    Packing: 'Out of our system!',
+    Production: 'Packing',
+    Storage: 'Production'
+  };
 
-    const handleSubmit = async () => {
-        try {
-            // Check if employee exists
-            console.log('Trying to check if employee exists.');
-            const response = await fetch('http://localhost:5000/api/isEmployeeExist', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ data: document.getElementById('sendModalInput').value })
-            });
-    
-            // Handle network errors or non-OK responses
-            if (!response.ok) {
-                const errorDetails = await response.text();
-                throw new Error(`Failed to fetch employee data. Status: ${response.status}. Details: ${errorDetails}`);
-            }
-    
-            // Parse JSON response
-            const data = await response.json();
-            console.log('Successfully received employee data from the server:', data);
-    
-            // Check if data exists and is an array
-            if (!Array.isArray(data) || data.length === 0) {
-                console.log("Employee does not exist or data format is incorrect.");
-                return;  // Exit if no data or invalid format
-            }
-    
-            // Assuming the employee exists in data[0]
-            console.log("Employee exists:", data[0].name);
-            let name = data[0].name;
-            let number_employee = data[0].number_employee;
-    
-            // Second Fetch: Send to new station
-            console.log('AAA');
-            const sendStationResponse = await fetch('http://localhost:5000/api/sendStation', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    send_worker_name: name,            // Example value
-                    send_date: new Date().toISOString(),     // Current date in ISO format
-                    send_station: "Packing",                 // Example station value
-                    receive_worker: "Jane Doe",              // Optional, can be empty initially
-                    receive_date: null,                      // Set as null if not available yet
-                    receive_station: null,                   // Set as null if not available yet
-                    isFinished: false                        // Initially set as false if incomplete
-                })
-            });
-    
-            // Handle errors in the second request
-            if (!sendStationResponse.ok) {
-                const sendStationErrorDetails = await sendStationResponse.text();
-                throw new Error(`Failed to send station data. Status: ${sendStationResponse.status}. Details: ${sendStationErrorDetails}`);
-            }
-    
-            // Log success if both requests succeed
-            console.log("Station data successfully sent.");
-    
-        } catch (err) {
-            console.error("Error:", err.message);
-        }
-    };
+  const handleSubmit = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/isEmployeeExist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ data: document.getElementById('sendModalInput').value })
+      });
 
-    return (
-        <div className="modal-container">
-            <div className="modal">
-                <button className="close-btn" onClick={onClose}>✕</button>
+      if (!response.ok) throw new Error(`Failed to fetch employee data. Status: ${response.status}`);
 
-                <h2>שליחה לתחנה הבאה{selectedCard ? selectedCard.employeeNumber : ''}</h2>
-                
-                <div className="form-group">
-                    <label>מספר עובד:</label>
-                    <input id='sendModalInput' type="text" />
-                </div>
+      const employeeData = await response.json();
+      if (!Array.isArray(employeeData) || employeeData.length === 0) {
+        console.log("Employee does not exist.");
+        return;
+      }
 
-                <button className="submit-btn" onClick={handleSubmit}>המשך</button>
-            </div>
+      const name = employeeData[0].name;
+      if (isReceive) {
+        await handleReceiveStation(name);
+      } else {
+        await handleSendStation(name);
+      }
+
+      onSuccess(); // Trigger refresh in `Dashboard`
+      onClose(); // Close the modal
+    } catch (err) {
+      console.error("Error:", err.message);
+    }
+  };
+
+  const handleReceiveStation = async (name) => {
+    const sendStationResponse = await fetch('http://localhost:5000/api/receiveStation', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        idReport: selectedReport._id,
+        receive_worker: name,
+        receive_date: new Date().toISOString(),
+        receive_station: selectedReport.current_station,
+        isFinished: true
+      })
+    });
+
+    if (!sendStationResponse.ok) {
+      throw new Error(`Failed to receive station data. Status: ${sendStationResponse.status}`);
+    }
+
+    const updateReport = await fetch('http://localhost:5000/api/updateReportStation', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        _id: selectedReport._id,
+        current_station: selectedReport.current_station,
+        enable: true
+      })
+    });
+
+    if (!updateReport.ok) throw new Error(`Failed to update report. Status: ${updateReport.status}`);
+    console.log("Station data successfully received and report updated.");
+  };
+
+  const handleSendStation = async (name) => {
+    const sendStationResponse = await fetch('http://localhost:5000/api/sendStation', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        idReport: selectedReport._id,
+        send_worker_name: name,
+        send_date: new Date().toISOString(),
+        send_station: selectedReport.current_station,
+        isFinished: false
+      })
+    });
+
+    if (!sendStationResponse.ok) {
+      throw new Error(`Failed to send station data. Status: ${sendStationResponse.status}`);
+    }
+
+    selectedReport.current_station = nextPositionMap[selectedReport.current_station];
+    const updateReport = await fetch('http://localhost:5000/api/updateReportStation', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        _id: selectedReport._id,
+        current_station: selectedReport.current_station,
+        enable: false
+      })
+    });
+
+    if (!updateReport.ok) throw new Error(`Failed to update report. Status: ${updateReport.status}`);
+    console.log("Station data successfully sent and report updated.");
+  };
+
+  return (
+    <div className="modal-container">
+      <div className="modal">
+        <button className="close-btn" onClick={onClose}>✕</button>
+        <h2>{isReceive ? 'קבלה לתחנה הנוכחית' : 'שליחה לתחנה הבאה'}</h2>
+        <div className="form-group">
+          <label>מספר עובד:</label>
+          <input id='sendModalInput' type="text" />
         </div>
-    );
+        <button className="submit-btn" onClick={handleSubmit}>המשך</button>
+      </div>
+    </div>
+  );
 };
 
 export default SendModal;

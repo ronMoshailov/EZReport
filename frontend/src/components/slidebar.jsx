@@ -2,12 +2,12 @@ import React from 'react';
 import { Link } from 'react-router-dom';  // Use Link for navigation
 import './slidebar.scss';
 
-const Slidebar = () => {
+const Slidebar = ({setIsReceive}) => {
   return (
     <div className="sidebar-content">
       <img id="slider_logo" src={require('../images/Logo.png')} alt="Logo" />
-      <Link to="/dashboard">פקעו"ת</Link>
-      <Link to="/queue">תור</Link>
+      <Link to="/dashboard" onClick={() => setIsReceive(false)}>פקעו"ת</Link>
+      <Link to="/queue" onClick={() => setIsReceive(true)}>תור</Link>
       <Link to="/settings">הגדרות</Link>
       <Link to="/">יציאה</Link>
     </div>

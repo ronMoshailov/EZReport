@@ -23,3 +23,40 @@
     gap: 20px;
   }
   
+  #headerDashboard {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+    
+    h1 {
+      margin: 0;
+      font-size: 24px;
+      color: #333;
+      font-weight: 600;
+    }
+  }
+  
+  .search-bar {
+    padding: 8px 12px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    outline: none;
+    transition: border-color 0.2s ease-in-out;
+    width: 100%;
+    max-width: 300px;
+    background-color: #fff;
+    color: #333;
+  
+    &:focus {
+      border-color: #007bff;  // Change color on focus for better accessibility
+    }
+  
+    &::placeholder {
+      color: #999;
+    }
+  }
+  

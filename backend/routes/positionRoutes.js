@@ -1,9 +1,10 @@
 
 const express = require('express');
 const router = express.Router();
-const { nextStation, isNumberPositionExist } = require('../controller/positionController');
+const { sendStation, isNumberPositionExist , receiveStation} = require('../controller/positionController');
 
-router.get('/check-employee-number/:id', isNumberPositionExist);
-router.post('/sendStation', nextStation);
+router.get('/isPositionExist/:id', isNumberPositionExist);
+router.post('/sendStation', sendStation);
+router.post('/receiveStation', receiveStation);
 
 module.exports = router;

@@ -5,10 +5,10 @@ const mongoose = require('mongoose');
 const reportsRouter = require('./routes/reportRoutess'); // Assuming this is the path to the route file
 const EmployeeRoutes = require('./routes/EmployeeRoutes'); // Assuming this is the path to the route file
 const positionRoutes = require('./routes/positionRoutes');
+const componentRoutes = require('./routes/componentRoutes');
 
 // Require controllers
 const connectToDB = require('./connectToDB');
-// const { getHomePage } = require('./controller/home');
 
 // Defines
 require('dotenv').config();
@@ -34,6 +34,7 @@ connectToDB();
 app.use('/api', reportsRouter);
 app.use('/api', EmployeeRoutes);
 app.use('/api', positionRoutes);
+app.use('/api', componentRoutes);
 
 
 

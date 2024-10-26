@@ -2,19 +2,17 @@ const mongoose = require('mongoose');
 
 // Define the schema
 const positionSchema = new mongoose.Schema({
-    id: {
+
+    position_number: {
         type: Number,
         required: true,
         unique: true
     },
-    name: {
+        name: {
         type: String,
         required: true
-    },
-    position_number: {
-        type: Number,
-        required: true
-    },
+    }
+    
 });
 
 // Create and export the model
