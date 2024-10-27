@@ -5,7 +5,7 @@ import './dashboard.scss'; // Import the dashboard styles
 import './slidebar.scss';  // Import the sidebar styles
 import Modal from './modal';  // Modal component for showing options
 import SendModal from './sendModal'  // Correct the name to PascalCase
-import newStorageReport from './NewReportPage'
+import { useNavigate } from 'react-router-dom';
 
 const Dashboard = ({position, isQueue}) => {
 
@@ -19,6 +19,7 @@ const Dashboard = ({position, isQueue}) => {
     const [isReceive, setIsReceive] = useState(false);
     const [refreshReports, setRefreshReports] = useState(false); // New state for triggering refresh
     const [searchQuery, setSearchQuery] = useState(''); // New state for search query
+    const navigate = useNavigate(); // Initialize navigate
 
     const triggerRefresh = () => setRefreshReports((prev) => !prev); // Toggle refresh
 
@@ -27,7 +28,10 @@ const Dashboard = ({position, isQueue}) => {
       if (!isQueue) { // Only open modal if not in queue
         setReport(report);  
         setIsModalOpen(true);
+      }else if(position === 'Storage'){
+        navigate('/newStorageReport'); // Navigate to newStorageReport if position is Storage
       }
+
     };
     
     // Function to handle sending card click and show modal
@@ -114,7 +118,7 @@ const Dashboard = ({position, isQueue}) => {
         <div className="sidebar">
           <Slidebar setIsReceive={setIsReceive}/>
         </div>
-        {isModalOpen && !isQueue && <Modal onClose={handleCloseModal} selectedReport={report} />}
+        {isModalOpen && !isQueue && <Modal onClose={handleCloseModal} selectedReport={report} position={position}/>}
         {isSendModalOpen && <SendModal onClose={handleCloseModal} selectedReport={report} isReceive={isReceive} onSuccess={triggerRefresh} />}
       </div>
     );

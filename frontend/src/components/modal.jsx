@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './modal.scss';  // Assuming you have styles for the modal
 import { useNavigate } from 'react-router-dom';  // Import useNavigate for navigation
 
-const Modal = ({ onClose, selectedReport }) => {
+const Modal = ({ onClose, selectedReport, position }) => {
     // Step 1: Create state to manage which option is selected
     const [selectedOption, setSelectedOption] = useState('');
     const navigate = useNavigate();  // Step 1: Initialize useNavigate
@@ -14,10 +14,13 @@ const Modal = ({ onClose, selectedReport }) => {
 
         // Step 3: Handle button click
         const handleSubmit = () => {
-            if (selectedOption === 'new-report') {
+            if (selectedOption === 'new-report' && position === 'Production') {
                 // Step 4: Navigate to the new report page if the first option is selected
-                navigate('/new-report');
-            } else {
+                navigate('/new-report-page');
+            } else if(selectedOption === 'new-report' && position === 'Storage'){
+                navigate('/newStorageReport');
+            }
+             else {
                 // Handle other options here or show an error
                 console.log('Another option selected or no option selected');
             }

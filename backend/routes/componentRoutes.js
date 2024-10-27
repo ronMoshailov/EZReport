@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {getComponent, getComponentByID} = require('../model/Component'); // Assuming this is your component model
+const {getComponent, getComponentByID} = require('../controller/componentController'); // Assuming this is your component model
 
 // Get all components
 router.get('/components', getComponent);

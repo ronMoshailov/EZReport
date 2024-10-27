@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './NewReportPage.scss'
+import './newStorageReport.scss'
 
 const ComponentPage = () => {
   const [components, setComponents] = useState([]); // Left side list
@@ -14,6 +14,7 @@ const ComponentPage = () => {
       try {
         const response = await fetch('http://localhost:5000/api/components');
         const data = await response.json();
+        console.log(`components that return from server after .json(): ` + data);
         setComponents(data);
       } catch (err) {
         console.error('Failed to fetch components', err);
@@ -55,8 +56,8 @@ const ComponentPage = () => {
         <h2>Component List</h2>
         <ul>
           {components.map(comp => (
-            <li key={comp.id}>
-              {comp.name} (ID: {comp.id}, Count: {comp.count})
+            <li key={comp._id}>
+              <b>Name:</b> {comp.component_name} <br></br><b>ID:</b> {comp.component_num}<br></br> <b>Count:</b> {comp.component_count}
             </li>
           ))}
         </ul>
