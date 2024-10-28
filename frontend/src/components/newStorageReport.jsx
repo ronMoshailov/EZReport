@@ -66,20 +66,20 @@ const ComponentPage = () => {
     <div className="component-page">
       
       <div className="left-panel">
-        <h2>Component List</h2>
+        <h2 className='move_right border_bottom'>רשימת הרכיבים</h2>
         <ul>
         {myComponents.map((comp, index) => (
-    <li key={`myComp-${comp.id}-${index}`}>
-      <b>Name:</b> {comp.name} <br />
-      <b>ID:</b> {comp.id}<br />
-      <b>Count:</b> {comp.count}
-    </li>
-  ))}
+        <li key={`myComp-${comp.id}-${index}`}>
+          <b>שם:</b> {comp.name} <br />
+          <b>מספר רכיב:</b> {comp.id}<br />
+          <b>כמות:</b> {comp.count}
+        </li>
+      ))}
         </ul>
       </div>
 
       <div className="right-panel">
-        <h2>Add New Component</h2>
+        <h2 className='move_right border_bottom'>הוספת רכיב</h2>
         <div className="input-group">
           <label>:מספר רכיב</label>
           <input
@@ -114,13 +114,13 @@ const ComponentPage = () => {
         {error && <p className="error">{error}</p>}
 
         <div className="all_components">
-        <h2>Component List</h2>
+        <h2 className='move_right border_bottom'>כל הרכיבים במערכת</h2>
         <ul>
         {allComponents.map((comp, index) => (
         <li key={`${index}`}>
-          <b>Name:</b> {comp.component_name} <br />
-          <b>ID:</b> {comp.component_num}<br />
-          <b>Count:</b> {comp.component_count}
+          <b>שם:</b> {comp.component_name} <br />
+          <b>מספר רכיב:</b> {comp.component_num}<br />
+          <b>כמות:</b> {comp.component_count}
         </li>
       ))}
         </ul>

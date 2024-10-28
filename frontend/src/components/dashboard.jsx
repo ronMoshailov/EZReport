@@ -17,9 +17,9 @@ const Dashboard = ({position, isQueue}) => {
     const [isSendModalOpen, setIsSendModalOpen] = useState(false);
     const [report, setReport] = useState(null);
     const [isReceive, setIsReceive] = useState(false);
-    const [refreshReports, setRefreshReports] = useState(false); // New state for triggering refresh
-    const [searchQuery, setSearchQuery] = useState(''); // New state for search query
-    const navigate = useNavigate(); // Initialize navigate
+    const [refreshReports, setRefreshReports] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
+    const navigate = useNavigate();
 
     const triggerRefresh = () => setRefreshReports((prev) => !prev); // Toggle refresh
 
@@ -28,10 +28,10 @@ const Dashboard = ({position, isQueue}) => {
       if (!isQueue) { // Only open modal if not in queue
         setReport(report);  
         setIsModalOpen(true);
-      }else if(position === 'Storage'){
-        navigate('/newStorageReport'); // Navigate to newStorageReport if position is Storage
       }
-
+      // else if(position === 'Storage'){
+      //   navigate('/newStorageReport'); // Navigate to newStorageReport if position is Storage
+      // }
     };
     
     // Function to handle sending card click and show modal
