@@ -24,17 +24,6 @@
     position: relative;
   }
   
-  /* Close button */
-  .close-btn {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    border: none;
-    background: none;
-    font-size: 18px;
-    cursor: pointer;
-  }
-  
   /* Label and Input field */
   label , .error-message{
     display: block;
@@ -86,4 +75,8 @@
 
   input[type="number"]::-webkit-inner-spin-button {
       -webkit-appearance: none;
+  }
+
+  .bold{
+    font-weight: bold;
   }

@@ -2,12 +2,12 @@ const Position = require('../model/Position');
 const TransitionBetweenStations = require('../model/TransitionBetweenStations');
 const Report = require('../model/Report')
 
-const isNumberPositionExist = async (req, res) => {
+const isPositionExist = async (req, res) => {
   const positionNumber = parseInt(req.params.id, 10);
-  console.log(`position number the server recieved: ${positionNumber}`);
+  // console.log(`position number the server recieved: ${positionNumber}`);
   try {
       const position = await Position.findOne({ position_number: positionNumber });
-      console.log('position that returned from mongoDB: \n' + position + '\n');
+      /* console.log('position that returned from mongoDB: \n' + position + '\n'); */
       if (position) {
           return res.status(200).json({ exists: true, name: position.name });
       } else {
@@ -110,4 +110,4 @@ const receiveStation = async (req, res) => {
 };
 
 // Export the controller functions
-module.exports = { sendStation, isNumberPositionExist , receiveStation }
+module.exports = { sendStation, isPositionExist , receiveStation }

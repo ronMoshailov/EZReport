@@ -12,19 +12,19 @@ const Modal = ({ onClose, selectedReport, position }) => {
         setSelectedOption(option);  // Only set one option at a time
     };
 
-        // Step 3: Handle button click
-        const handleSubmit = () => {
-            if (selectedOption === 'new-report' && position === 'Production') {
-                // Step 4: Navigate to the new report page if the first option is selected
-                navigate('/new-report-page');
-            } else if(selectedOption === 'new-report' && position === 'Storage'){
-                navigate('/newStorageReport');
-            }
-             else {
-                // Handle other options here or show an error
-                console.log('Another option selected or no option selected');
-            }
-        };
+    // Step 3: Handle button click
+    const handleSubmit = () => {
+        if (selectedOption === 'new-report' && position === 'Production') {
+            // Step 4: Navigate to the new report page if the first option is selected
+            navigate('/new-report-page');
+        } else if(selectedOption === 'new-report' && position === 'Storage'){
+            navigate('/newStorageReport');
+        }
+            else {
+            // Handle other options here or show an error
+            console.log('Another option selected or no option selected');
+        }
+    };
     
     return (
         <div className="modal-container">

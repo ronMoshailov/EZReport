@@ -1,9 +1,9 @@
 
 const express = require('express');
 const router = express.Router();
-const { sendStation, isNumberPositionExist , receiveStation} = require('../controller/positionController');
+const { sendStation, isPositionExist , receiveStation} = require('../controller/positionController');
 
-router.get('/isPositionExist/:id', isNumberPositionExist);
+router.get('/isPositionExist/:id', isPositionExist);
 router.post('/sendStation', sendStation);
 router.post('/receiveStation', receiveStation);
 

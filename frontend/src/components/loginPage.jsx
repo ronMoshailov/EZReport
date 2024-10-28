@@ -8,35 +8,36 @@ const LoginPage = ({position, setPosition}) => {
     const [errorMessage, setErrorMessage] = useState('');
     const [loading, setLoading] = useState(false);
     const [isValid, setIsValid] = useState(null);
+
+    // Navigate
     const navigate = useNavigate();
     
-    // Each time input changed save the number
+    // Function: Store the change of the number position 
     const handleInputChange = (e) => {
         setPosition(e.target.value);
     };
     
-    // Handle sumbit
+    // Function: Handle submit
     const handleSubmit = async () => {
+        // If the position number is empty
         if (!position) {
             setErrorMessage('הכנס בבקשה מספר עמדה תקין');
             return;
         }
-        // Active loading && Disactive error message
+        // Set loading and errors
         setLoading(true);
         setErrorMessage('');
-
-        // Communicate with the server 
+        // Communicate with the server
         try {
             const response = await fetch(`http://localhost:5000/api/isPositionExist/${position}`);
-            // If returned properly
             if (response.ok) {
-                const result = await response.json();
-                console.log("Returned position from server:", result);  // Log
-                if (result.exists) {
+                const position_data = await response.json();
+                // console.log("Returned position from server:", position_data);  // Log
+                if (position_data.exists) {
                     setIsValid(true);
-                    setPosition(result.name);
-                    console.log("Logged in as position: " + result.name);  // Log
-                    navigate('/dashboard'); // Redirect to dashboard on success
+                    setPosition(position_data.name);
+                    // console.log("Logged in as position: " + position_data.name);  // Log
+                    navigate('/dashboard');
                 } else {
                     setIsValid(false);
                     setErrorMessage('מספר עמדה לא קיים');
@@ -45,35 +46,20 @@ const LoginPage = ({position, setPosition}) => {
                 setErrorMessage('שגיאה בבדיקה');
             }
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             setErrorMessage('החיבור לשרת לא הצליח');
         } finally {
             setLoading(false);
         }
     };
 
-    // Returned HTML
     return (
         <div className="modal-container">
             <div className="modal">
                 <button className="close-btn">✕</button>
-                <label htmlFor="employee-number">:מספר עמדה</label>
-                <input 
-                    type="number" 
-                    id="login_input" 
-                    placeholder="הכנס מספר עמדה" 
-                    value={position} 
-                    onChange={handleInputChange} 
-                    required 
-                />
-                <button 
-                    className="submit-btn" 
-                    onClick={handleSubmit} 
-                    disabled={loading}
-                > 
-                    {loading ? 'המתן' : 'המשך'} 
-                </button>
-                
+                <label className='bold' htmlFor="employee-number">:מספר עמדה</label>
+                <input type="number" id="login_input" placeholder="הכנס מספר עמדה" value={position} onChange={handleInputChange} required />
+                <button  className="submit-btn" onClick={handleSubmit} disabled={loading}> {loading ? 'המתן' : 'המשך'} </button>
                 {errorMessage && <p className="error-message">{errorMessage}</p>}
                 {isValid && <p className="success-message">שלום....</p>}
             </div>
