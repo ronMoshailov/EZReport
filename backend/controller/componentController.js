@@ -14,8 +14,9 @@ const getComponent = async (req, res) => {
 const getComponentByID = async (req, res) => {
     const { id } = req.params;
     try {
-      const component = await Component.findOne({ id });
+      const component = await Component.findOne({ component_num: id });
       if (component) {
+        console.log(`component name: ${component.component_name}`);
         res.status(200).json(component);
       } else {
         res.status(404).json({ message: 'Component not found' });

@@ -1,5 +1,4 @@
 const express = require('express');
-const mongoose = require('mongoose');
 
 // Require routes
 const reportsRouter = require('./routes/reportRoutess'); // Assuming this is the path to the route file
@@ -7,7 +6,7 @@ const EmployeeRoutes = require('./routes/EmployeeRoutes'); // Assuming this is t
 const positionRoutes = require('./routes/positionRoutes');
 const componentRoutes = require('./routes/componentRoutes');
 
-// Require controllers
+// Require methods
 const connectToDB = require('./connectToDB');
 
 // Defines
@@ -30,13 +29,10 @@ app.use((req, res, next) => {
 // Connect to the database
 connectToDB();
 
-
 app.use('/api', reportsRouter);
 app.use('/api', EmployeeRoutes);
 app.use('/api', positionRoutes);
 app.use('/api', componentRoutes);
-
-
 
 // Start the server
 app.listen(PORT, () => {

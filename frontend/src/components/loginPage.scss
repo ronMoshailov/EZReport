@@ -45,8 +45,10 @@
   
   .error-message{
     text-align: center;
+    color: red;
+    font-weight: bold;
   }
-  input[type="number"] {
+  #login_input{
     width: 100%;
     padding: 10px;
     border: 1px solid #ccc;
@@ -77,3 +79,11 @@
     background-color: #ddd;
   }
   
+  // General
+  input{
+    direction: rtl;
+  }
+
+  input[type="number"]::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+  }

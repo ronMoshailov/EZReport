@@ -2,20 +2,28 @@ import React, { useState, useEffect } from 'react';
 import './newStorageReport.scss'
 
 const ComponentPage = () => {
-  const [components, setComponents] = useState([]); // Left side list
+  const [allComponents, setAllComponents] = useState([]); // Left side list
+  const [myComponents, setMyComponents] = useState([]); // Left side list
   const [inputId, setInputId] = useState('');
   const [inputName, setInputName] = useState('');
   const [inputCount, setInputCount] = useState('');
   const [error, setError] = useState('');
+  const [isValid, setIsValid] = useState(false);
 
+  const getComponentByNameOrId = (identifier) => {
+    return allComponents.find(comp => 
+      comp.component_name === identifier || comp.component_num === identifier
+    );
+  };
+  
   // Fetch all components from MongoDB on initial render
   useEffect(() => {
     const fetchComponents = async () => {
       try {
         const response = await fetch('http://localhost:5000/api/components');
         const data = await response.json();
-        console.log(`components that return from server after .json(): ` + data);
-        setComponents(data);
+        // console.log(`components that return from server after .json(): ` + data);
+        setAllComponents(data);
       } catch (err) {
         console.error('Failed to fetch components', err);
       }
@@ -26,19 +34,23 @@ const ComponentPage = () => {
   // Handle add button click
   const handleAddComponent = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/components/${inputId}`);
-      if (!response.ok) throw new Error('Component not found');
-
-      // Check if the component already exists in the list
-      const existingComponent = components.find(comp => comp.id === inputId);
-      if (existingComponent) {
-        setError('Component already exists in the list');
+      if((inputId === '' &&  inputCount === '') || (inputName === '' &&  inputCount === '') || inputCount === ''){
+        setError('נתונים חסרים');
         return;
       }
 
+      const response = await fetch(`http://localhost:5000/api/components/${inputId}`);
+      if (!response.ok) throw new Error('Component not found');
+      const data = await response.json();
+
+      // Check if the component already exists in the list
+      console.log('inputId: ' + data);
+      const existingComponent = getComponentByNameOrId(data.component_num);
+
       // Add new component to the list
-      const newComponent = { id: inputId, name: inputName, count: inputCount };
-      setComponents(prevComponents => [...prevComponents, newComponent]);
+      console.log('existingComponent: ' + existingComponent);
+      const newComponent = { id: existingComponent.component_num, name: existingComponent.component_name, count: existingComponent.component_count };
+      setMyComponents(prevComponents => [...prevComponents, newComponent]);
 
       // Clear input fields
       setInputId('');
@@ -52,48 +64,68 @@ const ComponentPage = () => {
 
   return (
     <div className="component-page">
+      
       <div className="left-panel">
         <h2>Component List</h2>
         <ul>
-          {components.map(comp => (
-            <li key={comp._id}>
-              <b>Name:</b> {comp.component_name} <br></br><b>ID:</b> {comp.component_num}<br></br> <b>Count:</b> {comp.component_count}
-            </li>
-          ))}
+        {myComponents.map((comp, index) => (
+    <li key={`myComp-${comp.id}-${index}`}>
+      <b>Name:</b> {comp.name} <br />
+      <b>ID:</b> {comp.id}<br />
+      <b>Count:</b> {comp.count}
+    </li>
+  ))}
         </ul>
       </div>
 
       <div className="right-panel">
         <h2>Add New Component</h2>
         <div className="input-group">
-          <label>Component ID</label>
+          <label>:מספר רכיב</label>
           <input
-            type="text"
+            type="number"
             value={inputId}
             onChange={(e) => setInputId(e.target.value)}
-            placeholder="Enter component ID"
+            placeholder="הכנס מספר רכיב..."
           />
         </div>
         <div className="input-group">
-          <label>Component Name</label>
+          <label>:שם</label>
           <input
             type="text"
             value={inputName}
             onChange={(e) => setInputName(e.target.value)}
-            placeholder="Enter component name"
+            placeholder="הכנס שם רכיב"
           />
         </div>
         <div className="input-group">
-          <label>Component Count</label>
+          <label>:כמות</label>
           <input
             type="number"
             value={inputCount}
             onChange={(e) => setInputCount(e.target.value)}
-            placeholder="Enter component count"
+            placeholder="הכנס כמות"
           />
         </div>
-        <button onClick={handleAddComponent}>Add Component</button>
+        <div id='storange_buttons_container'>
+          <button className='storage_button' onClick={handleAddComponent}>הוסף רכיב</button>
+          <button className='storage_button'>שלח דיווח</button>
+        </div>
         {error && <p className="error">{error}</p>}
+
+        <div className="all_components">
+        <h2>Component List</h2>
+        <ul>
+        {allComponents.map((comp, index) => (
+        <li key={`${index}`}>
+          <b>Name:</b> {comp.component_name} <br />
+          <b>ID:</b> {comp.component_num}<br />
+          <b>Count:</b> {comp.component_count}
+        </li>
+      ))}
+        </ul>
+      </div>
+
       </div>
     </div>
   );

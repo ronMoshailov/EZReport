@@ -39,7 +39,7 @@ const LoginPage = ({position, setPosition}) => {
                     navigate('/dashboard'); // Redirect to dashboard on success
                 } else {
                     setIsValid(false);
-                    setErrorMessage('מספר עובד לא קיים');
+                    setErrorMessage('מספר עמדה לא קיים');
                 }
             } else {
                 setErrorMessage('שגיאה בבדיקה');
@@ -60,7 +60,7 @@ const LoginPage = ({position, setPosition}) => {
                 <label htmlFor="employee-number">:מספר עמדה</label>
                 <input 
                     type="number" 
-                    id="employee-number" 
+                    id="login_input" 
                     placeholder="הכנס מספר עמדה" 
                     value={position} 
                     onChange={handleInputChange} 
