@@ -3,129 +3,196 @@
     padding: 20px;
     background-color: #f0f4f7;
   }
-  
-  .left-panel {
-    flex: 1;
-    margin-right: 20px;
-  }
-  
-  .left-panel h2 {
-    font-size: 24px;
-    margin-bottom: 10px;
-  }
-  
-  .left-panel ul {
-    max-height: 88vh; /* Adjust the height as desired */
-    overflow-y: auto; /* Enables vertical scrolling */
-    padding: 0;
-    list-style: none;
-    margin: 0;
-  }
-  
-  .left-panel li {
-    padding: 10px;
-    background-color: #fff;
-    margin-bottom: 8px;
-    border-radius: 4px;
-  }
-  
-  .all_components {
-    flex: 1;
-    margin-right: 20px;
-  }
-  
-  .all_components h2 {
-    font-size: 24px;
-    margin-bottom: 10px;
-  }
-  
-  .all_components ul {
-    max-height: 54vh; /* Adjust the height as desired */
-    overflow-y: auto; /* Enables vertical scrolling */
-    padding: 0;
-    list-style: none;
-    margin: 0;
-  }
-  
-  .all_components li {
-    padding: 10px;
-    background-color: #fff;
-    margin-bottom: 8px;
-    border-radius: 4px;
-    text-align: right;
+
+  .component-page{  
+    .left-panel {
+      flex: 1;
+      margin-right: 20px;
+      margin-left: 20px;
+
+    }
+    
+    .left-panel h2 {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+    
+    .left-panel ul {
+      max-height: 88vh; /* Adjust the height as desired */
+      overflow-y: auto; /* Enables vertical scrolling */
+      padding: 0;
+      list-style: none;
+      margin: 0;
+    }
+    
+    .left-panel li {
+      padding: 10px;
+      background-color: #fff;
+      margin-bottom: 8px;
+      border-radius: 4px;
+      text-align: right;
+    }
+    
+    .all_components {
+      display: flex;
+      flex-direction: column;
+      height: calc(59vh); // Full page height minus any offsets (adjust as needed)
+      margin-right: 20px;
+      overflow: hidden; // Ensures content doesn’t overflow
+    
+      h2 {
+        font-size: 24px;
+        margin-bottom: 10px;
+      }
+    
+      ul {
+        flex: 1;             // Allows ul to grow and fill remaining space
+        overflow-y: auto;    // Enables vertical scrolling for overflow content
+        padding: 0;
+        list-style: none;
+        margin: 0;
+      }
+    }
+      
+    .all_components li {
+      padding: 10px;
+      background-color: #fff;
+      margin-bottom: 8px;
+      border-radius: 4px;
+      text-align: right;
+      }
+
+    .right-panel {
+      flex: 1;
+    }
+    
+    .right-panel h2 {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+    
+    .add_component_container{
+      margin-right: 20px;
     }
 
-  .right-panel {
-    flex: 1;
-  }
-  
-  .right-panel h2 {
-    font-size: 24px;
-    margin-bottom: 10px;
-  }
-  
-  .input-group {
-    margin-bottom: 10px;
-  }
-  
-  .input-group label {
-    display: block;
-    font-size: 16px;
-    margin-bottom: 5px;
-  }
-  
-  .input-group input {
-    width: 100%;
-    padding: 8px;
-    font-size: 14px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  
-  .storage_button {
-    display: inline-block;
-    padding: 10px 20px;
-    margin: 10px 5px;
-    font-size: 16px;
-    font-weight: bold;
-    text-align: center;
-    color: #fff;
-    background-color: #007BFF; // Blue color for primary action
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-  }
-  
-  .storage_button:hover {
-    background-color: #0056b3; // Darker blue on hover
-  }
-  
-  .storage_button:active {
-    background-color: #004494; // Even darker blue on click
-    transform: translateY(2px); // Gives a slight "pressed" effect
-  }
-  
-  .storage_button:last-of-type {
-    background-color: #28A745; // Green color for "הוסף דיווח"
-  }
-  
-  .storage_button:last-of-type:hover {
-    background-color: #218838; // Darker green on hover
-  }
-  
-  .storage_button:last-of-type:active {
-    background-color: #1E7E34; // Even darker green on click
-  }
-  
-  #storange_buttons_container{
-    display: flex;
-    justify-content: space-evenly;
-  }
+    .input-group {
+      margin-bottom: 10px;
+    }
+    
+    .input-group label {
+      display: block;
+      font-size: 16px;
+      margin-bottom: 5px; 
+    }
+    
+    .input-group input {
+      width: 100%;
+      padding: 8px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      max-width: 98%;
+    }
+    
+    .storage_button {
+      display: inline-block;
+      padding: 10px 20px;
+      margin: 10px 5px;
+      font-size: 16px;
+      font-weight: bold;
+      text-align: center;
+      color: #fff;
+      background-color: #007BFF; // Blue color for primary action
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    
+    .storage_button:hover {
+      background-color: #0056b3; // Darker blue on hover
+    }
+    
+    .storage_button:active {
+      background-color: #004494; // Even darker blue on click
+      transform: translateY(2px); // Gives a slight "pressed" effect
+    }
+    
+    .storage_button:last-of-type {
+      background-color: #28A745; // Green color for "הוסף דיווח"
+    }
+    
+    .storage_button:last-of-type:hover {
+      background-color: #218838; // Darker green on hover
+    }
+    
+    .storage_button:last-of-type:active {
+      background-color: #1E7E34; // Even darker green on click
+    }
+    
+    #storange_buttons_container{
+      display: flex;
+      justify-content: space-evenly;
+    }
 
-  .error {
-    color: red;
-    margin-top: 10px;
+    .error {
+      color: red;
+      margin-top: 10px;
+      text-align: center;
+    }
+    
+    .success {
+      color: rgb(0, 218, 0);
+      margin-top: 10px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+  
+    .search-bar {
+      width: 100%;
+      padding: 10px 15px;    /* Adds padding for a comfortable click area */
+      margin: 10px 0;        /* Adds some vertical space */
+      font-size: 16px;       /* Sets a readable font size */
+      color: #333;           /* Text color */
+      border-radius: 30px;    /* Smooth rounded corners */
+      box-sizing: border-box; /* Prevents padding from affecting width */
+      transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transition */
+    
+      /* Placeholder styling */
+      &::placeholder {
+        color: #999;          /* Soft grey placeholder text */
+        font-style: italic;   /* Italicized placeholder for emphasis */
+      }
+    
+      /* Focus effect */
+      &:focus {
+        outline: none;        /* Removes default outline */
+        border-color: #4a90e2; /* Highlights border */
+        box-shadow: 0 0 5px rgba(74, 144, 226, 0.5); /* Soft blue shadow */
+      }
+    }  
+  }
+  
+  .component-item {
+    position: relative;  // Enables positioning for the "X" button
+  
+    .remove-button {
+      position: absolute;
+      top: 5px;
+      left: 5px;
+      background: none;
+      border: solid 1px red;
+      color: red;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 30px;
+      font-weight: bold;
+  
+      &:hover {
+        color: darkred;
+      }
+    }
   }
   

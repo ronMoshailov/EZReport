@@ -12,8 +12,15 @@ const reportSchema = new mongoose.Schema({
         required: true
     },
     components: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Component'  // Refers to the Component model
+        component: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Component', // Refers to the Component model
+            required: true
+        },
+        component_count: {
+            type: Number,
+            required: true
+        }
     }],
     status: {
         type: String,
@@ -43,6 +50,10 @@ const reportSchema = new mongoose.Schema({
     mini_report_list: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'MiniReport'  // Refers to the MiniReport model
+    }],
+    report_storage_list: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'ReportStorage'  // Refers to the MiniReport model
     }],
     history: [{
         type: mongoose.Schema.Types.ObjectId,

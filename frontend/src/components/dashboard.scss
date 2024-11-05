@@ -1,62 +1,65 @@
 /* Layout container for dashboard and sidebar */
-.layout {
-    display: flex;  /* Flexbox to position sidebar and dashboard side by side */
-    min-height: 100vh;  /* Full viewport height */
-    text-align: right;
-  }
-  
-  /* Main dashboard content styles */
+.dashboard-layout {
+  display: flex;  /* Flexbox to position sidebar and dashboard side by side */
+  min-height: 100vh;  /* Full viewport height */
+  text-align: right;
+
   .dashboard-content {
     flex: 1;  /* Allow dashboard content to take the remaining space */
     padding: 20px;
     background-color: #f0f4f7;
     direction: rtl;
-  }
-  
-  .dashboard-content h1{
-    border-bottom: 2px solid;
-  }
 
-  .cards-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));  /* Responsive grid for cards */
-    gap: 20px;
-  }
-  
-  #headerDashboard {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 20px;
-    background-color: #f8f9fa;
-    border-bottom: 2px solid #dee2e6;
-    
-    h1 {
-      margin: 0;
-      font-size: 24px;
-      color: #333;
-      font-weight: 600;
+    .cards-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));  /* Responsive grid for cards */
+      gap: 20px;
+
+      .card{
+        margin-top: 5px;
+      }
+    }
+
+    #headerDashboard {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 20px;
+      background-color: #f8f9fa;
+      border-bottom: 2px solid #dee2e6;
+      
+      h1 {
+        margin: 0;
+        font-size: 24px;
+        color: #333;
+        font-weight: 600;
+        border-bottom: 2px solid;
+      }
+
+      .search-bar {
+        width: 100%;
+        max-width: 400px;
+        padding: 10px 15px;    /* Adds padding for a comfortable click area */
+        margin: 10px 0;        /* Adds some vertical space */
+        font-size: 16px;       /* Sets a readable font size */
+        color: #333;           /* Text color */
+        border-radius: 30px;    /* Smooth rounded corners */
+        box-sizing: border-box; /* Prevents padding from affecting width */
+        transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transition */
+      
+        /* Placeholder styling */
+        &::placeholder {
+          color: #999;          /* Soft grey placeholder text */
+          font-style: italic;   /* Italicized placeholder for emphasis */
+        }
+      
+        /* Focus effect */
+        &:focus {
+          outline: none;        /* Removes default outline */
+          border-color: #4a90e2; /* Highlights border */
+          box-shadow: 0 0 5px rgba(74, 144, 226, 0.5); /* Soft blue shadow */
+        }
+      }  
     }
   }
-  
-  .search-bar {
-    padding: 8px 12px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    outline: none;
-    transition: border-color 0.2s ease-in-out;
-    width: 100%;
-    max-width: 300px;
-    background-color: #fff;
-    color: #333;
-  
-    &:focus {
-      border-color: #007bff;  // Change color on focus for better accessibility
-    }
-  
-    &::placeholder {
-      color: #999;
-    }
-  }
-  
+}

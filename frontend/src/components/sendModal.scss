@@ -1,12 +1,14 @@
-.form-group{
-    margin-bottom: 20px;
-    display: flex;
-    /* justify-content: normal; */
-    align-items: center;
-    direction: rtl;
+.send-modal-container{
+    .form-group{
+        margin-bottom: 20px;
+        display: flex;
+        /* justify-content: normal; */
+        align-items: center;
+        direction: rtl;
+    
+        input{
+            margin-right: 10px;
+            width: 77%;
+        } 
+    }
 }
-
-.form-group input{
-    margin-right: 10px;
-    width: 77%;
-} 

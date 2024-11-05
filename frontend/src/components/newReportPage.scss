@@ -3,30 +3,31 @@
     background-color: #f0f4f7;
     min-height: 100vh;
     direction: rtl;  /* Step 1: Ensure the page follows right-to-left direction */
+
+    .form-group {
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: start;  /* Step 2: Align items to the right */
+        align-items: center;  /* Vertically align label and input */
+
+        #comments{
+            height: 50px;  /* Step 1: Adjust the height to make the input taller */
+        }
+
+        label {
+            margin-left: 10px;  /* Step 3: Add spacing to the left of the label */
+            min-width: 150px;  /* Optional: Set minimum width for consistent alignment */
+        }
+    
+        input {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 100%;
+            max-width: 400px;
+            display: block;
+            flex: 1;
+        }
+    }
 }
 
-.form-group {
-    margin-bottom: 20px;
-    display: flex;
-    justify-content: start;  /* Step 2: Align items to the right */
-    align-items: center;  /* Vertically align label and input */
-}
-
-.new-report-page label {
-    margin-left: 10px;  /* Step 3: Add spacing to the left of the label */
-    min-width: 150px;  /* Optional: Set minimum width for consistent alignment */
-}
-
-.new-report-page input {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    width: 100%;
-    max-width: 400px;
-    display: block;
-    flex: 1;
-}
-
-#comments{
-    height: 50px;  /* Step 1: Adjust the height to make the input taller */
-}
