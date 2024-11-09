@@ -3,7 +3,11 @@ const { STATUS, STATIONS } = require('./enums');
 
 // Define the Report schema
 const reportSchema = new mongoose.Schema({
-    id: {
+    // id: {
+    //     type: String,
+    //     required: true
+    // },
+    serialNumber: {
         type: String,
         required: true
     },
@@ -17,7 +21,7 @@ const reportSchema = new mongoose.Schema({
             ref: 'Component', // Refers to the Component model
             required: true
         },
-        component_count: {
+        stock: {
             type: Number,
             required: true
         }
@@ -27,37 +31,33 @@ const reportSchema = new mongoose.Schema({
         enum: Object.values(STATUS),  // Enforce valid values from STATUS enum
         default: STATUS.OPEN
     },
-    current_station: {
+    current_workspace: {
         type: String,
         enum: Object.values(STATIONS)  // Enforce valid values from STATIONS enum
     },
-    product_num: {
-        type: String,
-        required: true
-    },
-    product_name: {
-        type: String,
-        required: true
-    },
-    product_completed_count: {
+    // product_name: {
+    //     type: String,
+    //     required: true
+    // },
+    completed: {
         type: Number,
         default: 0
     },
-    product_ordered_count: {
+    ordered: {
         type: Number,
         required: true
     },
-    mini_report_list: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'MiniReport'  // Refers to the MiniReport model
-    }],
+    // mini_report_list: [{
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: 'MiniReport'  // Refers to the MiniReport model
+    // }],
     report_storage_list: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'ReportStorage'  // Refers to the MiniReport model
     }],
-    history: [{
+    transferDetails: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'TransitionBetweenStations'  // Refers to TransitionBetweenStations model
+        ref: 'transferDetails'  // Refers to TransitionBetweenStations model
     }],
     openDate: {
         type: Date,
@@ -73,7 +73,10 @@ const reportSchema = new mongoose.Schema({
     enable: {
         type: Boolean,
         default: true
-    }    
+    },
+    lastComment: {
+        type: String,
+    }
 });
 
 // Create and export the Report model

@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
 
 // Define the schema
-const positionSchema = new mongoose.Schema({
+const workspaceSchema = new mongoose.Schema({
 
-    position_number: {
+    workspace_number: {
         type: Number,
         required: true,
         unique: true
@@ -16,5 +16,5 @@ const positionSchema = new mongoose.Schema({
 });
 
 // Create and export the model
-const Position = mongoose.model('Position', positionSchema);
-module.exports = Position;
+const Workspace = mongoose.model('Workspace', workspaceSchema);
+module.exports = Workspace;

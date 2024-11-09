@@ -4,39 +4,39 @@
     background-color: #f0f4f7;
   }
 
-  .component-page{  
+  .component-page{
     .left-panel {
       flex: 1;
       margin-right: 20px;
       margin-left: 20px;
 
-    }
-    
-    .left-panel h2 {
-      font-size: 24px;
-      margin-bottom: 10px;
-    }
-    
-    .left-panel ul {
-      max-height: 88vh; /* Adjust the height as desired */
-      overflow-y: auto; /* Enables vertical scrolling */
-      padding: 0;
-      list-style: none;
-      margin: 0;
-    }
-    
-    .left-panel li {
-      padding: 10px;
-      background-color: #fff;
-      margin-bottom: 8px;
-      border-radius: 4px;
-      text-align: right;
+      h2 {
+        font-size: 24px;
+        margin-bottom: 10px;
+      }
+
+      ul {
+        max-height: 88vh; /* Adjust the height as desired */
+        overflow-y: auto; /* Enables vertical scrolling */
+        padding: 0;
+        list-style: none;
+        margin: 0;
+      }
+
+      li {
+        padding: 10px;
+        background-color: #fff;
+        margin-bottom: 8px;
+        border-radius: 4px;
+        text-align: right;
+      }
+
     }
     
     .all_components {
       display: flex;
       flex-direction: column;
-      height: calc(59vh); // Full page height minus any offsets (adjust as needed)
+      height: calc(56vh); // Full page height minus any offsets (adjust as needed)
       margin-right: 20px;
       overflow: hidden; // Ensures content doesn’t overflow
     
@@ -52,15 +52,15 @@
         list-style: none;
         margin: 0;
       }
+
+      li {
+        padding: 10px;
+        background-color: #fff;
+        margin-bottom: 8px;
+        border-radius: 4px;
+        text-align: right;
+        }
     }
-      
-    .all_components li {
-      padding: 10px;
-      background-color: #fff;
-      margin-bottom: 8px;
-      border-radius: 4px;
-      text-align: right;
-      }
 
     .right-panel {
       flex: 1;
@@ -77,22 +77,38 @@
 
     .input-group {
       margin-bottom: 10px;
+
+      .comment-textarea {
+        width: 100%;         // Full width of the container
+        resize: none;        // Prevents resizing by the user (optional)
+        border-radius: 4px;
+        line-height: 1.5;    // Adjusts line height
+        overflow-y: auto;    // Adds a scrollbar if the text exceeds 2 lines
+        direction: rtl;
+        border: 1px solid #ccc;
+        max-width: 98%;
+        padding: 8px;
+        font-size: 14px;
+      }
+
+      label {
+        display: block;
+        font-size: 16px;
+        margin-bottom: 5px; 
+        direction: rtl;
+      }
+
+      input {
+        width: 100%;
+        padding: 8px;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        max-width: 98%;
+      }
+
     }
     
-    .input-group label {
-      display: block;
-      font-size: 16px;
-      margin-bottom: 5px; 
-    }
-    
-    .input-group input {
-      width: 100%;
-      padding: 8px;
-      font-size: 14px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      max-width: 98%;
-    }
     
     .storage_button {
       display: inline-block;
@@ -173,6 +189,69 @@
         box-shadow: 0 0 5px rgba(74, 144, 226, 0.5); /* Soft blue shadow */
       }
     }  
+
+    .modal-container-components {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.6); /* Slightly darker overlay */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000; /* Ensures modal is above other elements */
+    }
+    
+    .modal-components {
+      background: #fff;
+      padding: 20px 30px;
+      border-radius: 12px;
+      width: 450px;
+      max-height: 80%;
+      overflow-y: auto;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Adds a soft shadow */
+      text-align: right; /* Aligns text to the right */
+      direction: rtl; /* Ensures proper alignment for Hebrew/RTL languages */
+
+      h2 {
+        margin: 0 0 15px;
+        font-size: 22px;
+        font-weight: bold;
+        color: #333;
+      }
+
+      ul {
+        list-style: none; /* Removes default bullet points */
+        padding: 0;
+        margin: 0;
+      }
+
+      li {
+        margin-bottom: 15px; /* Adds spacing between list items */
+        font-size: 16px;
+        color: #444;
+      }
+
+      b {
+        color: #222; /* Makes bold text slightly darker */
+      }
+    }
+    
+    .close-btn {
+      float: left; /* Moves close button to the left */
+      background: none;
+      border: none;
+      font-size: 20px;
+      color: #666;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    
+    .close-btn:hover {
+      color: #000; /* Darkens color on hover for better feedback */
+    }
+    
   }
   
   .component-item {

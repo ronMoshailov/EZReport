@@ -2,11 +2,11 @@ import React from 'react';
 import './card.scss';
 
 // Card component to display operation number, date, and a send button
-const Card = ({ numberOperation, date, onClick, onClickSend }) => {
+const Card = ({ serialNumber, date, onClick, onClickSend }) => {
   return (
     // Main card container with an onClick handler
     <div className="card" onClick={onClick}>
-      <h3>פקע: {numberOperation}</h3>           {/* Display operation number in Hebrew */}
+      <h3>פקע: {serialNumber}</h3>           {/* Display operation number in Hebrew */}
       <p>תאריך פתיחה: {date}</p>                {/* Display formatted opening date */}
       
       {/* Send button, with an arrow icon */}

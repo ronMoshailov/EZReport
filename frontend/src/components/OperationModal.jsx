@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import './modal.scss';  // Assuming you have styles for the modal
+import './OperationModal.scss';  // Assuming you have styles for the modal
 import { useNavigate } from 'react-router-dom';  // Import useNavigate for navigation
 
-const Modal = ({ onClose, selectedReport, position }) => {
+const Modal = ({ onClose, report_id, workspace }) => {
 
+    /* States */
     const [selectedOption, setSelectedOption] = useState('');
     const [employee, setEmployee] = useState('');
     const [loading, setLoading] = useState(false);
@@ -39,7 +40,7 @@ const Modal = ({ onClose, selectedReport, position }) => {
               if (!response.ok) throw new Error('Failed to fetch reports');
               const data = await response.json();
               if (data.exist) {
-                console.log('The employee exists. Name:', data.employee[0].name);
+                console.log('The employee exists. Name:', data.employee[0].fullName);
                 setLoading(false);
             }
         } catch (err) {
@@ -47,14 +48,14 @@ const Modal = ({ onClose, selectedReport, position }) => {
             setErrorMessage('שגיאה בשרת');        
         }
 
-        if (selectedOption === 'new-report' && position === 'Production') {
+        if (selectedOption === 'new-report' && workspace === 'Production') {
 
             navigate('/new-report-page');
-        } else if(selectedOption === 'new-report' && position === 'Storage'){
-            navigate('/newStorageReport');
+        } else if(selectedOption === 'new-report' && workspace === 'Storage'){
+            navigate('/newStorageReport', { state: { report_id: report_id } });
         }
-            else {
-                setErrorMessage('סוג הפעולה לא נבחרה.');
+        else {
+            setErrorMessage('סוג הפעולה לא נבחרה.');
         };
     }
 

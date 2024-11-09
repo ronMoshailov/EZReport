@@ -3,7 +3,7 @@ const express = require('express');
 // Require routes
 const reportsRouter = require('./routes/reportRoutess'); // Assuming this is the path to the route file
 const EmployeeRoutes = require('./routes/EmployeeRoutes'); // Assuming this is the path to the route file
-const positionRoutes = require('./routes/positionRoutes');
+const positionRoutes = require('./routes/workspaceRoutes');
 const componentRoutes = require('./routes/componentRoutes');
 const reportStorageRoutes = require('./routes/reportStorageRoute');
 

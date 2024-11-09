@@ -2,15 +2,15 @@ const mongoose = require('mongoose');
 
 // Define the schema
 const componentSchema = new mongoose.Schema({
-    component_num: {
+    serialNumber: {
         type: Number,
         required: true
     },
-    component_name: {
+    name: {
         type: String,
         required: true
     },
-    component_count: {
+    stock: {
         type: Number,
         required: true
     }
@@ -19,3 +19,4 @@ const componentSchema = new mongoose.Schema({
 // Create and export the model
 const Component = mongoose.model('Component', componentSchema);
 module.exports = Component;
+

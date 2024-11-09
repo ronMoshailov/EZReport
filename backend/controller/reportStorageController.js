@@ -1,16 +1,17 @@
-const ReportStorage = require('../model/reportStorage');
+const ReportStorage = require('../model/ReportStorage');
 
 const addReportStorage = async (req, res) => {
-  const { employee_id, components_list } = req.body;
+  const { employee_id, components_list, comment } = req.body;
   const date = new Date();
 
-  console.log('Received components_list:', components_list);
+  // console.log('Received components_list:', components_list);
 
   try {
     const newReport = new ReportStorage({
       employee_id,
       date,
-      components_list
+      components_list,
+      comment
     });
 
     await newReport.save();

@@ -2,25 +2,25 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './loginPage.scss';
 
-const LoginPage = ({ position, setPosition }) => {
+const LoginPage = ({ workspace, setWorkspace }) => {
 
     // State variables
     const [errorMessage, setErrorMessage] = useState(''); // Holds any error messages
     const [loading, setLoading] = useState(false);        // Indicates loading state during server call
-    const [isValid, setIsValid] = useState(null);         // Tracks if position is valid
+    const [isValid, setIsValid] = useState(null);         // Tracks if Workspace is valid
 
     // Router navigation setup
     const navigate = useNavigate();
     
-    // Update position when input changes
+    // Update Workspace when input changes
     const handleInputChange = (e) => {
-        setPosition(e.target.value);
+        setWorkspace(e.target.value);
     };
     
     // Handle form submission
     const handleSubmit = async () => {
-        // If position is empty, display error and stop submission
-        if (!position) {
+        // If workspace is empty, display error and stop submission
+        if (!workspace) {
             setErrorMessage('הכנס בבקשה מספר עמדה תקין');
             return;
         }
@@ -28,16 +28,17 @@ const LoginPage = ({ position, setPosition }) => {
         setLoading(true);
         setErrorMessage('');
         
-        // Make server request to check if position exists
+        // Make server request to check if workspace exists
         try {
-            const response = await fetch(`http://localhost:5000/api/isPositionExist/${position}`);
+            const response = await fetch(`http://localhost:5000/api/isWorkspaceExist/${workspace}`);
             
             if (response.ok) { // Server returned 200 status
-                const position_data = await response.json();
+                const workspace_data = await response.json();
                 
-                if (position_data.exists) { // Position exists on server
+                if (workspace_data !== undefined) { // Workspace exists on server
                     setIsValid(true);       // Set as valid
-                    setPosition(position_data.name); // Update position name
+                    setWorkspace(workspace_data.name); // Update Workspace name
+                    // console.log(`workspace name is ${workspace_data.name}`)
                     navigate('/dashboard'); // Redirect to dashboard
                 } else {
                     setIsValid(false); // Set as invalid
@@ -58,13 +59,13 @@ const LoginPage = ({ position, setPosition }) => {
             <div className="modal">
                 <button className="close-btn">✕</button> {/* Close button */}
                 
-                {/* Label and input for position number */}
+                {/* Label and input for workspace number */}
                 <label className='bold' htmlFor="employee-number">:מספר עמדה</label>
                 <input 
                     type="number" 
                     id="login_input" 
                     placeholder="הכנס מספר עמדה" 
-                    value={position} 
+                    value={workspace} 
                     onChange={handleInputChange} 
                     required 
                 />

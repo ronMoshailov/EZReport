@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 
 // Define the schema
-const transitionBetweenStationsSchema = new mongoose.Schema({
-    send_worker_name: {
+const transferDetailsSchema = new mongoose.Schema({
+    send_worker_id: {
         type: String,
         required: true
     },
@@ -10,23 +10,23 @@ const transitionBetweenStationsSchema = new mongoose.Schema({
         type: Date,
         required: true
     },
-    send_station: {
+    send_workspace: {
         type: String,
         required: true
     },
-    receive_worker: {
+    received_worker_id: {
         type: String,
         default: null,
     },
-    receive_date: {
+    received_date: {
         type: Date,
         default: null,
     },
-    receive_station: {
+    received_workspace: {
         type: String,
         default: null,
     },
-    isFinished: {
+    isReceived: {
         type: Boolean,
         required: true,
         default: true
@@ -34,5 +34,5 @@ const transitionBetweenStationsSchema = new mongoose.Schema({
 });
 
 // Create and export the model
-const TransitionBetweenStations = mongoose.model('TransitionBetweenStations', transitionBetweenStationsSchema);
-module.exports = TransitionBetweenStations;
+const TransferDetails = mongoose.model('transferDetails', transferDetailsSchema);
+module.exports = TransferDetails;

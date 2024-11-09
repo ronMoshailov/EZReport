@@ -7,24 +7,24 @@ import React, { useState, useEffect } from 'react';
 
 function App() {
 
-  const [position, setPosition] = useState(() => {
-    return localStorage.getItem('position') || '';
+  const [workspace, setWorkspace] = useState(() => {
+    return localStorage.getItem('workspace') || '';
   });
 
   useEffect(() => {
-    if (position) {
-      localStorage.setItem('position', position);
+    if (workspace) {
+      localStorage.setItem('workspace', workspace);
     }
-  }, [position]);
+  }, [workspace]);
 
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<LoginPage position={position} setPosition={setPosition}/>} />
-        <Route path="/dashboard" element={<Dashboard position={position} isQueue={false} />} />
-        <Route path="/queue" element={<Dashboard position={position} isQueue={true} />} />
-        <Route path="/new-report-page" element={<NewReportPage position={position}/>} />  {/* New Report Page */}
-        <Route path="/newStorageReport" element={<NewStorageReport position={position}/>} />  {/* New Report Page */}
+        <Route path="/" element={<LoginPage workspace={workspace} setWorkspace={setWorkspace}/>} />
+        <Route path="/dashboard" element={<Dashboard workspace={workspace} isQueue={false} />} />
+        <Route path="/queue" element={<Dashboard workspace={workspace} isQueue={true} />} />
+        <Route path="/new-report-page" element={<NewReportPage workspace={workspace}/>} />  {/* New Report Page */}
+        <Route path="/newStorageReport" element={<NewStorageReport workspace={workspace}/>} />  {/* New Report Page */}
       </Routes>
     </Router>
   );

@@ -17,11 +17,14 @@ const reportStorageSchema = new mongoose.Schema({
             ref: 'Component', // Refers to the Component model
             required: true
         },
-        component_count: {
+        stock: {
             type: Number,
             required: true
         }
-    }]
+    }],
+    comment: {
+        type: String,
+    },
 });
 
 // Create and export the model
