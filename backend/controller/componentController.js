@@ -64,6 +64,27 @@ const getComponent = async (req, res) => {
     }
   };
   
+  const addBackToStock = async (req, res) => {
+    const { component_id, stock } = req.body;
+    try {
+      const updatedComponent = await Component.findByIdAndUpdate(
+        component_id,
+        { $inc: { stock: stock } }, // Increment the stock by the provided amount
+        { new: true } // Return the updated document
+      );
+  
+      if (!updatedComponent) {
+        return res.status(404).json({ message: 'Component not found.' });
+      }
+  
+      res.status(200).json({ message: 'Stock updated successfully.', updatedComponent });
+    } catch (error) {
+      console.error('Error updating stock:', error.message);
+      res.status(500).json({ message: 'Internal server error', error: error.message });
+    }
+  };
+  
+  
   // const getAllComponent = async (req, res) => {
   //   try {
   //     const components = await Component.find();
@@ -73,4 +94,4 @@ const getComponent = async (req, res) => {
   //   }
   // }
 
-  module.exports = {getComponent, getComponentByID, decreaseStock};
+  module.exports = {getComponent, getComponentByID, decreaseStock, addBackToStock};

@@ -103,15 +103,28 @@ const addComponents = async (req, res) => {
       return res.status(404).json({ message: "Report not found." });
     }
 
-    // Append components_list to the `components` array
-    report.components.push(...components_list);
+    // Create a map of existing components in the report for quick lookup
+    const componentMap = new Map(report.components.map(comp => [comp.component.toString(), comp]));
+
+    // Iterate through the incoming components_list
+    components_list.forEach(newComponent => {
+      const existingComponent = componentMap.get(newComponent.component);
+
+      if (existingComponent) {
+        // Update stock if component already exists
+        existingComponent.stock += newComponent.stock;
+      } else {
+        // Add new component to the `components` array
+        report.components.push(newComponent);
+      }
+    });
 
     // Save the updated report
     await report.save();
 
-    res.status(200).json({ message: "Components added successfully.", report });
+    res.status(200).json({ message: "Components updated successfully.", report });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ message: `Internal server error: ${err.message}` });
   }
 };
 
@@ -186,24 +199,50 @@ const toggleEnable = async (req, res) => {
 };
 
 const getReportComponents = async (req, res) => {
-  const { report_id } = req.params; // Extract report ID from request parameters
+  const { report_id } = req.params;
 
   try {
-    // Find the report by ID and only include the `components` field
-    const report = await Report.findById(report_id).select('components');
+    const report = await Report.findById(report_id)
+      .populate('components.component', '_id name serialNumber') // Populate the component details
+      .select('components');
 
-    // If the report doesn't exist, send a 404 response
     if (!report) {
       return res.status(404).json({ message: 'Report not found' });
     }
 
-    // Send the components list as the response
+    const componentsList = report.components.map((comp) => ({
+      _id: comp.component._id, // Include the _id
+      name: comp.component.name,
+      serialNumber: comp.component.serialNumber,
+      stock: comp.stock,
+    }));
+
     res.status(200).json({
       message: 'Components list retrieved successfully',
-      components_list: report.components,
+      components_list: componentsList,
     });
   } catch (error) {
-    console.error('Error retrieving components list:', error.message);
+    console.error('Error retrieving components:', error.message);
+    res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+};
+
+const removeComponentFromReport = async (req, res) => {
+  const { report_id, component_id } = req.body;
+  try {
+    const updatedReport = await Report.findByIdAndUpdate(
+      report_id,
+      { $pull: { components: { component: component_id } } }, // Remove component from array
+      { new: true } // Return the updated report
+    );
+
+    if (!updatedReport) {
+      return res.status(404).json({ message: 'Report not found.' });
+    }
+
+    res.status(200).json({ message: 'Component removed from report successfully.', updatedReport });
+  } catch (error) {
+    console.error('Error removing component from report:', error.message);
     res.status(500).json({ message: 'Internal server error', error: error.message });
   }
 };
@@ -279,4 +318,4 @@ const getReportComponents = async (req, res) => {
 
 
 // Export the controller functions
-module.exports = { getReports , updateReportWorkspace, addComment, addComponents, getLastTransferDetail, toggleEnable, getReportComponents};
+module.exports = { getReports , updateReportWorkspace, addComment, addComponents, getLastTransferDetail, toggleEnable, getReportComponents, removeComponentFromReport};

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getReports , updateReportWorkspace, addComment, addComponents, getLastTransferDetail, toggleEnable, getReportComponents } = require('../controller/reportController');
+const { getReports , updateReportWorkspace, addComment, addComponents, getLastTransferDetail, toggleEnable, getReportComponents, removeComponentFromReport } = require('../controller/reportController');
 
 router.post('/getReports', getReports);
 router.post('/updateReportWorkspace', updateReportWorkspace);
@@ -12,5 +12,6 @@ router.post('/addComponents', addComponents);
 router.get('/getLastTransferDetail/:report_id', getLastTransferDetail);
 router.post('/toggleEnable', toggleEnable);
 router.get('/getReportComponents/:report_id', getReportComponents);
+router.post('/removeComponentFromReport', removeComponentFromReport);
 
 module.exports = router;

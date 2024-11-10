@@ -196,29 +196,60 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: rgba(0, 0, 0, 0.6); /* Slightly darker overlay */
+      background-color: rgba(0, 0, 0, 0.5);
       display: flex;
       justify-content: center;
       align-items: center;
-      z-index: 1000; /* Ensures modal is above other elements */
+      z-index: 1000;
     }
     
     .modal-components {
-      background: #fff;
-      padding: 20px 30px;
-      border-radius: 12px;
-      width: 450px;
-      max-height: 80%;
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 8px;
+      width: 400px;
+      max-height: 80vh;
       overflow-y: auto;
-      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2); /* Adds a soft shadow */
-      text-align: right; /* Aligns text to the right */
-      direction: rtl; /* Ensures proper alignment for Hebrew/RTL languages */
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+      text-align: right;
+      direction: rtl; /* Support for RTL languages */
+        
+      .remove-btn {
+        position: absolute;
+        left: 10px;
+        top: 10px;
+        background: #ff4d4f;
+        color: #fff;
+        border: none;
+        border-radius: 50%;
+        width: 25px;
+        height: 25px;
+        cursor: pointer;
+        font-size: 14px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .remove-btn:hover {
+        background: #e63946;
+      }
+
+      .filter-input {
+        width: 90%; /* Adjust width to fit within the modal */
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        text-align: right;
+      }
 
       h2 {
         margin: 0 0 15px;
         font-size: 22px;
         font-weight: bold;
         color: #333;
+        border-bottom: solid 1px;
       }
 
       ul {
@@ -233,21 +264,26 @@
         color: #444;
       }
 
+      ul li {
+        position: relative;
+        padding: 10px;
+        border-bottom: 1px solid #ccc;
+      }
+      
       b {
         color: #222; /* Makes bold text slightly darker */
       }
     }
     
     .close-btn {
-      float: left; /* Moves close button to the left */
+      float: left;
       background: none;
       border: none;
       font-size: 20px;
-      color: #666;
       cursor: pointer;
-      font-weight: bold;
+      color: #ff0000;
     }
-    
+
     .close-btn:hover {
       color: #000; /* Darkens color on hover for better feedback */
     }

@@ -64,6 +64,13 @@ const ComponentPage = () => {
     setIsModalOpen(false);
   };
 
+  const handleFilterModalComponents = (query) => {
+    const filtered = componentsToShow.filter((component) =>
+      component.serialNumber.toString().includes(query)
+    );
+    setComponentsToShow(filtered);
+  };
+  
   // Function to close the modal
   const handleCloseComponentsModal = () => setIsComponentsModalOpen(false);
 
@@ -160,7 +167,6 @@ const ComponentPage = () => {
 
   const showReportComponents = async (report_id) => {
     try {
-      // Fetch components list for the report
       const response = await fetch(`http://localhost:5000/api/getReportComponents/${report_id}`, {
         method: 'GET',
         headers: {
@@ -173,35 +179,15 @@ const ComponentPage = () => {
       }
   
       const data = await response.json();
-      const componentsList = data.components_list;
   
-      // Fetch details for each component using their ID
-      const detailedComponents = await Promise.all(
-        componentsList.map(async (component) => {
-          const res = await fetch(`http://localhost:5000/api/getComponentByID/${component.component}`, {
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json' },
-          });
-  
-          if (!res.ok) throw new Error(`Failed to fetch component details. Status: ${res.status}`);
-  
-          const detailedComponent = await res.json();
-          return {
-            name: detailedComponent.name,
-            serialNumber: detailedComponent.serialNumber,
-            stock: component.stock, // Include stock from the report
-          };
-        })
-      );
-  
-      // Update state with the detailed components and open the modal
-      setComponentsToShow(detailedComponents);
-      setIsComponentsModalOpen(true);
+      // Update componentsToShow with the complete component details, including _id
+      setComponentsToShow(data.components_list); 
+      setIsComponentsModalOpen(true); // Open the modal
     } catch (error) {
       console.error('Error fetching components:', error.message);
     }
   };
-    
+        
 
   // Submit the report
   const handleSubmitModal = async () => {
@@ -331,6 +317,63 @@ const ComponentPage = () => {
     setIsModalOpen(true); // Open the modal for employee input
   };
 
+  const handleRemoveFromReport = async (component, index) => {
+    try {
+      console.log(`The handleRemoveFromReport function received: [component: ${component}, index:${index}]`);
+      console.log(component);
+  
+      // Step 1: Send a request to the backend to restore the stock
+      const restoreStockResponse = await fetch('http://localhost:5000/api/addBackToStock', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          component_id: component._id, // Use _id for accuracy
+          stock: component.stock,
+        }),
+      });
+  
+      if (!restoreStockResponse.ok) {
+        throw new Error('Failed to update stock in the backend.');
+      }
+  
+      // Get the updated component data from the backend
+      const restoreStockData = await restoreStockResponse.json();
+      const updatedComponent = restoreStockData.updatedComponent;
+  
+      // Step 2: Update the `allComponents` state with the new stock value
+      setAllComponents((prev) =>
+        prev.map((comp) =>
+          comp._id === updatedComponent._id
+            ? { ...comp, stock: updatedComponent.stock } // Update stock
+            : comp
+        )
+      );
+  
+      console.log('Stock restored for component:', updatedComponent);
+  
+      // Step 3: Send a request to the backend to remove the component from the report
+      const removeResponse = await fetch('http://localhost:5000/api/removeComponentFromReport', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          report_id,                 // Report ID
+          component_id: component._id, // Use the component's _id
+        }),
+      });
+  
+      if (!removeResponse.ok) {
+        throw new Error('Failed to remove component from report in the backend.');
+      }
+  
+      // Step 4: Remove the component from `componentsToShow` on the client side
+      setComponentsToShow((prev) => prev.filter((_, i) => i !== index));
+  
+      console.log('Component successfully removed from report and stock updated.');
+    } catch (error) {
+      console.error('Error removing component from report:', error.message);
+    }
+  };
+      
   /* Return */    
   return (
     <div className="component-page">
@@ -465,18 +508,23 @@ const ComponentPage = () => {
             <button className="close-btn" onClick={handleCloseComponentsModal}>✕</button>
             <h2>רשימת רכיבים</h2>
             <ul>
-              {componentsToShow.map((component, index) => (
-                <li key={`component-${component.serialNumber}-${index}`}>
-                  <b>שם:</b> {component.name} <br />
-                  <b>מספר רכיב:</b> {component.serialNumber} <br />
-                  <b>כמות:</b> {component.stock} <br />
-                </li>
-              ))}
+            {componentsToShow.map((component, index) => (
+              <li key={`component-${component.serialNumber}-${index}`}>
+                <button
+                  className="remove-btn"
+                  onClick={() => handleRemoveFromReport(component, index)}
+                >
+                  ✕
+                </button>
+                <b>שם:</b> {component.name} <br />
+                <b>מספר רכיב:</b> {component.serialNumber} <br />
+                <b>כמות:</b> {component.stock} <br />
+              </li>
+            ))}
             </ul>
           </div>
         </div>
       )}
-
     </div>
   );
 };
