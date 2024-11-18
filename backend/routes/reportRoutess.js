@@ -1,17 +1,21 @@
 const express = require('express');
 const router = express.Router();
-const { getReports , updateReportWorkspace, addComment, addComponents, getLastTransferDetail, toggleEnable, getReportComponents, removeComponentFromReport } = require('../controller/reportController');
+const { getAllReports, addComponentsToReport, getLastTransferDetail, getReportComponents, removeComponentAndReturnToStock, processWorkspaceTransfer } = require('../controller/reportController');
 
-router.post('/getReports', getReports);
-router.post('/updateReportWorkspace', updateReportWorkspace);
-router.post('/addTransitionBetweenStations', updateReportWorkspace);
+router.post('/getAllReports', getAllReports);
+// router.post('/updateReportWorkspace', updateReportWorkspaceController);
+// router.post('/addTransitionBetweenStations', updateReportWorkspace);
 // router.post('/getReport/:id', getReport);
 // router.post('/getTransmission/:id', getTransmission);
-router.post('/addComment', addComment);
-router.post('/addComponents', addComponents);
+// router.post('/addComment', addComment);
+// router.post('/addComponents', addComponents);
 router.get('/getLastTransferDetail/:report_id', getLastTransferDetail);
-router.post('/toggleEnable', toggleEnable);
+// router.post('/toggleEnable', toggleEnable);
 router.get('/getReportComponents/:report_id', getReportComponents);
-router.post('/removeComponentFromReport', removeComponentFromReport);
+router.post('/removeComponentAndReturnToStock', removeComponentAndReturnToStock);
+router.post('/addComponentsToReport', addComponentsToReport);
+router.post('/processWorkspaceTransfer', processWorkspaceTransfer);
+// router.post('/handleReportAndComponents', handleReportAndComponents);
+// router.post('/addStorageReport', addStorageReport);
 
 module.exports = router;

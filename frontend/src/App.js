@@ -12,9 +12,8 @@ function App() {
   });
 
   useEffect(() => {
-    if (workspace) {
+    if (workspace)
       localStorage.setItem('workspace', workspace);
-    }
   }, [workspace]);
 
   return (

@@ -1,132 +1,130 @@
 const Report = require('../model/Report');  // Import the User model
 const mongoose = require('mongoose');
+const { removeComponentAndUpdateStock, handleAddComponentsToReport, fetchReportsByWorkspace, updateReportWorkspace, toggleEnable } = require('../libs/reportLib');
+const { createTransferDocument } = require('../libs/transferDetailsLib');
 
-// Get all reports
-const getReports = async (req, res) => {
-  const { workspace, isQueue } = req.body;                                                              // Get data
-  console.log(`Data received in 'getReports' is: [workspace: ${workspace}, isQueue: ${isQueue}]`);      // Log
-  
-  try {
-    const reports = await Report.find({ current_workspace: workspace, enable: !isQueue });              // Get all reports from mongoDB
-    res.status(200).json(reports);                                                                      // Receiving the reports was successful
+// In libs
 
-  } catch (err) {
-    res.status(500).json({ message: err.message });                                                     // Receiving the reports was failed
-  }
-};
-
-// Update report's workspace after transmition
-const updateReportWorkspace = async (req, res) => {
-
-  // Get data
-  const { report_id, newTransition_id } = req.body;
-
-  // Log the recieved data
-  console.log(`Starting update the report workspace. The received data is [report_id: ${report_id}, newTransition_id: ${newTransition_id}]`);
-
-  // Map next workspace
-  const nextWorkspacenMap = {
-    Packing: 'Out of our system!',
-    Production: 'Packing',
-    Storage: 'Production',
-  };
+/**
+ * Get all reports by workspace and queue status.
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ */
+const getAllReports = async (req, res) => {
+  const { workspace, isQueue } = req.body;
+  console.log(`Data received in 'getAllReports': workspace=${workspace}, isQueue=${isQueue}`);
 
   try {
-    // Retrieve the current workspace
-    const report = await Report.findById(report_id);
-    if (!report) {
-      return res.status(404).json({ message: 'Report not found' });
-    }
-
-    // Determine the next workspace
-    const current_workspace = report.current_workspace;
-    const next_workspace = nextWorkspacenMap[current_workspace];
-
-    if (!next_workspace) {
-      return res.status(400).json({ message: `No mapping found for the current workspace: ${current_workspace}` });
-    }
-
-    // Update the report
-    report.current_workspace = next_workspace; // Update workspace
-    report.enable = !report.enable; // Toggle enable field
-    report.transferDetails.push(newTransition_id); // Add transition ID to the array
-
-    // Save the updated document
-    await report.save();
-
-    res.status(200).json({ message: 'Report updated successfully', report });
+    // Use the library function to fetch reports
+    const reports = await fetchReportsByWorkspace(workspace, isQueue);
+    res.status(200).json(reports); // Respond with the reports
   } catch (error) {
-    console.error('Error updating report:', error.message);
-    res.status(500).json({ message: 'Error updating report', error: error.message });
+    console.error('Error in getAllReports:', error.message);
+    res.status(500).json({ message: error.message });
   }
 };
 
-const addComment = async (req, res) => {
-  const { report_id, comment } = req.body;  // Get workspace from the request body
-
-  // console.log('The report_id is empty: ' + report_id);
-
-  if (!report_id) {
-    return res.status(400).json({ message: 'report_id are required.' });
-  }
-
+// Storage
+const removeComponentAndReturnToStock = async (req, res) => {
+  const { report_id, component_id, stock } = req.body;                                                                                                      // Extract input data
+  console.log(`The data received in 'removeComponentAndReturnToStock' is: [report_id: ${report_id}, component_id: ${component_id}, stock: ${stock}]`);      // Log
   try {
-    // console.log('Trying to get all reports..');
-    const response = await Report.findByIdAndUpdate( report_id, { $set: { lastComment: comment } });
+    await removeComponentAndUpdateStock(report_id, component_id, stock);                                        // Call the lib function to perform the operation
 
-    if (!response) {
-      return res.status(404).json({ message: "Report not found." });
-    }
-
-    res.status(200).json({ message: "Comment updated successfully." });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
-
-const addComponents = async (req, res) => {
-  const { report_id, components_list } = req.body; // Extract `report_id` and `components_list` from the request body
-
-  if (!report_id) {
-    return res.status(400).json({ message: 'report_id is required.' });
-  }
-
-  if (!Array.isArray(components_list) || components_list.length === 0) {
-    return res.status(400).json({ message: 'components_list must be a non-empty array.' });
-  }
-
-  try {
-    // Find the report by ID
-    const report = await Report.findById(report_id);
-
-    if (!report) {
-      return res.status(404).json({ message: "Report not found." });
-    }
-
-    // Create a map of existing components in the report for quick lookup
-    const componentMap = new Map(report.components.map(comp => [comp.component.toString(), comp]));
-
-    // Iterate through the incoming components_list
-    components_list.forEach(newComponent => {
-      const existingComponent = componentMap.get(newComponent.component);
-
-      if (existingComponent) {
-        // Update stock if component already exists
-        existingComponent.stock += newComponent.stock;
-      } else {
-        // Add new component to the `components` array
-        report.components.push(newComponent);
-      }
+    res.status(200).json({                                                                // 200
+      message: 'Component removed from report and stock updated successfully.'            // 200
     });
-
-    // Save the updated report
-    await report.save();
-
-    res.status(200).json({ message: "Components updated successfully.", report });
-  } catch (err) {
-    res.status(500).json({ message: `Internal server error: ${err.message}` });
+  } catch (error) {                                                                       // Error
+    console.error('Error removing component and updating stock:', error.message);         // Error
+    res.status(500).json({ message: 'Internal server error', error: error.message });     // Error
   }
 };
+
+const addComponentsToReport = async (req, res) => {
+  const { employee_id, report_id, components_list, comment } = req.body;
+  console.log(`Receieve data: [employee_id: ${employee_id}, report_id: ${report_id}, comment: ${comment}]`)
+  try {
+    const result = await handleAddComponentsToReport({ employee_id, report_id, components_list, comment });
+
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+/**
+ * Controller to fetch a report's components.
+ * Responds with the components list or an error message.
+ */
+const getReportComponents = async (req, res) => {
+  const { report_id } = req.params;
+
+  try {
+    const componentsList = await fetchReportComponents(report_id); // Use the lib to fetch the components
+
+    res.status(200).json({
+      message: 'Components list retrieved successfully',
+      components_list: componentsList,
+    });
+  } catch (error) {
+    console.error('Error in getReportComponents:', error.message);
+    res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+};
+
+/**
+ * Handles the process of creating a transfer document, updating a report's workspace,
+ * and toggling the report's enable status within a single transaction.
+ */
+const processWorkspaceTransfer = async (req, res) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const { send_worker_id, send_workspace, report_id } = req.body;
+
+    if (!send_worker_id || !send_workspace || !report_id) {
+      return res.status(400).json({ message: 'Missing required fields' });
+    }
+
+    // Step 1: Create the transfer document
+    const transferData = {
+      send_worker_id,
+      send_workspace,
+      send_date: new Date().toISOString(),
+      isReceived: false,
+    };
+    const newTransfer = await createTransferDocument(transferData, session);
+    
+    // Step 2: Update the report with the new transition and workspace
+    await updateReportWorkspace(report_id, newTransfer._id, session);
+
+    console.log('Start toggle enable');
+    // Step 3: Optionally toggle the enable field of the report
+    // await toggleEnable(report_id, session);
+
+    // Commit the transaction
+    await session.commitTransaction();
+    session.endSession();
+
+    res.status(200).json({
+      message: 'Workspace transfer processed successfully',
+      newTransitionId: newTransfer._id,
+    });
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    console.error('Error processing workspace transfer:', error.message);
+    res.status(500).json({ message: 'Internal server error', error: error.message });
+  }
+};
+
+
+
+
+
+
+
 
 const getLastTransferDetail = async (req, res) => {
   const { report_id } = req.params;
@@ -171,81 +169,6 @@ const getLastTransferDetail = async (req, res) => {
   }
 };
 
-const toggleEnable = async (req, res) => {
-  const { report_id } = req.body;
-
-  try {
-    // Fetch the report
-    const report = await Report.findById(report_id);
-
-    if (!report) {
-      return res.status(404).json({ message: 'Report not found' });
-    }
-
-    // Toggle the `enable` field
-    report.enable = !report.enable;
-
-    // Save the updated report
-    const updatedReport = await report.save();
-
-    res.status(200).json({
-      message: 'Report enable field toggled successfully',
-      updatedReport,
-    });
-  } catch (error) {
-    console.error('Error toggling enable field:', error.message);
-    res.status(500).json({ message: 'Internal server error', error: error.message });
-  }
-};
-
-const getReportComponents = async (req, res) => {
-  const { report_id } = req.params;
-
-  try {
-    const report = await Report.findById(report_id)
-      .populate('components.component', '_id name serialNumber') // Populate the component details
-      .select('components');
-
-    if (!report) {
-      return res.status(404).json({ message: 'Report not found' });
-    }
-
-    const componentsList = report.components.map((comp) => ({
-      _id: comp.component._id, // Include the _id
-      name: comp.component.name,
-      serialNumber: comp.component.serialNumber,
-      stock: comp.stock,
-    }));
-
-    res.status(200).json({
-      message: 'Components list retrieved successfully',
-      components_list: componentsList,
-    });
-  } catch (error) {
-    console.error('Error retrieving components:', error.message);
-    res.status(500).json({ message: 'Internal server error', error: error.message });
-  }
-};
-
-const removeComponentFromReport = async (req, res) => {
-  const { report_id, component_id } = req.body;
-  try {
-    const updatedReport = await Report.findByIdAndUpdate(
-      report_id,
-      { $pull: { components: { component: component_id } } }, // Remove component from array
-      { new: true } // Return the updated report
-    );
-
-    if (!updatedReport) {
-      return res.status(404).json({ message: 'Report not found.' });
-    }
-
-    res.status(200).json({ message: 'Component removed from report successfully.', updatedReport });
-  } catch (error) {
-    console.error('Error removing component from report:', error.message);
-    res.status(500).json({ message: 'Internal server error', error: error.message });
-  }
-};
 
 
 
@@ -254,68 +177,7 @@ const removeComponentFromReport = async (req, res) => {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// Controllers that I didn't use
-// const getTransmission = async (req, res) => {
-//   try {
-//     // Step 1: Retrieve the report by `_id`
-//     const reportId = req.params.id;
-//     const report = await Report.findById(reportId).populate('history'); // Populate history if it's a reference
-
-//     // If no report is found, return a 404 response
-//     if (!report) {
-//       return res.status(404).json({ message: 'Report not found' });
-//     }
-
-//     // Step 2: Filter the history array to get entries with `isFinished` set to `false`
-//     const unfinishedTransitions = report.history.filter(entry => !entry.isFinished);
-
-//     // Step 3: Return only the unfinished transitions
-//     res.status(200).json({
-//       message: 'Unfinished transitions retrieved successfully',
-//       unfinishedTransitions
-//     });
-//   } catch (error) {
-//     console.error('Error fetching report:', error.message);
-//     res.status(500).json({ message: 'Internal server error' });
-//   }
-// };
-
-
-// const getReport = async (req, res) => {
-//   try {
-//     // Extract `_id` from request parameters
-//     const reportId = req.params.id;
-
-//     // Find the report by `_id` and populate `history` to include full documents
-//     const report = await Report.findById(reportId);
-
-//     // If no report is found, return a 404 response
-//     if (!report) {
-//       return res.status(404).json({ message: 'Report not found' });
-//     }
-
-//     // Return the report as a JSON response
-//     res.status(200).json(report);
-//   } catch (error) {
-//     console.error('Error fetching report:', error.message);
-//     res.status(500).json({ message: 'Internal server error' });
-//   }
-// };
 
 
 // Export the controller functions
-module.exports = { getReports , updateReportWorkspace, addComment, addComponents, getLastTransferDetail, toggleEnable, getReportComponents, removeComponentFromReport};
+module.exports = { getAllReports, getLastTransferDetail, getReportComponents, removeComponentAndReturnToStock, addComponentsToReport, processWorkspaceTransfer};

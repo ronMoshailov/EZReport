@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import Card from './card';
 import Slidebar from './slidebar';
 import OperationModal from './OperationModal';
-import SendModal from './sendModal';
+import Modal_Transfer_Workspace from './modal_Transfer_Workspace';
+import functions from './functions';
+import { fetchAllReports } from './APIs';
 import './dashboard.scss';
 import './slidebar.scss';
 
-const Dashboard = ({workspace, isQueue}) => {
+const { handleEscKey } = functions;
 
+const Dashboard = ({workspace, isQueue}) => {
 
     /* States */
     const [reports, setReports] = useState([]);
@@ -28,13 +30,28 @@ const Dashboard = ({workspace, isQueue}) => {
       Storage: 'מחסן'
     };
 
-
     /* Functions */
     const triggerRefresh = () => setRefreshReports((prev) => !prev);
 
+    // // Fetch all reports
+    const handleFetchReports = async () => {
+      try {
+        const [check, data] = await fetchAllReports(workspace, isQueue);
+
+        if (check)
+          setReports(data);
+        else
+          setError(data);
+      } catch (err) {
+        setError('An unexpected error occurred.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
     // Function to handle card click and show modal
     const handleClickOnCard = (report) => {
-      if (!isQueue) { // Only open modal if not in queue
+      if (!isQueue) {
         setReport(report);  
         setIsModalOpen(true);
       }
@@ -53,6 +70,9 @@ const Dashboard = ({workspace, isQueue}) => {
       setIsSendModalOpen(false);
     };
 
+    // Add Esc press key listener
+    const addEscListener = (event) => handleEscKey(event, handleCloseModal);
+
   // Filtered reports based on search query
   const filteredReports = reports.filter((report) =>
     report.serialNumber.toLowerCase().includes(searchQuery.toLowerCase())
@@ -60,55 +80,14 @@ const Dashboard = ({workspace, isQueue}) => {
 
 
   /* useEffect */
-  // useEffect hook to fetch reports when component mounts or dependencies change
   useEffect(() => {
-    const fetchReports = async () => {
-      try {
-        // console.log('Trying to fetch all related reports. current workspace is: ' + workspace);
+    handleFetchReports();
+  }, [workspace, isQueue, refreshReports]); // Add dependencies
 
-        // Send POST request to fetch reports based on `workspace` and `isQueue` state
-        const response = await fetch('http://localhost:5000/api/getReports', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ workspace, isQueue }) // Pass `workspace` and `isQueue` in the request body
-        });
-
-        // Check if response is successful, throw error if not
-        if (!response.ok) throw new Error('Failed to fetch reports');
-
-        // Parse response data and update state
-        const data = await response.json();
-        // console.log(data);
-        setReports(data);
-        setLoading(false); // Set loading state to false after fetching
-      } catch (err) {
-        // Handle any errors by setting error message and updating loading state
-        setError(err.message);
-        setLoading(false);
-      }
-    };
-
-    // Call fetchReports function to initiate fetch
-    fetchReports();
-  }, [workspace, isQueue, refreshReports]); // Re-fetch when `workspace`, `isQueue`, or `refreshReports` changes
-
-  // useEffect hook to handle "Escape" key press for closing modals
   useEffect(() => {
-    const handleEscKey = (event) => {
-      if (event.key === 'Escape') { // Check if the pressed key is "Escape"
-        handleCloseModal(); // Close modal if Escape is pressed
-      }
-    };
-
-    // Add keydown event listener to listen for Escape key press
-    window.addEventListener('keydown', handleEscKey);
-
-    // Clean up event listener on component unmount
-    return () => window.removeEventListener('keydown', handleEscKey);
+    window.addEventListener('keydown', addEscListener);                   // Add keydown event listener to listen for Escape key press
+    return () => window.removeEventListener('keydown', addEscListener);   // Clean up event listener on component unmount
   }, []);
-
 
   // Display loading/error state if necessary
   if (loading) return <p>Loading reports...</p>;
@@ -123,10 +102,10 @@ const Dashboard = ({workspace, isQueue}) => {
           <h1>עמדת {workspaceMap[workspace]}</h1> {/* Display workspace using workspaceMap */}
           <input
             type="text"
-            placeholder="פקודת עבודה לחיפוש..." // Placeholder text in Hebrew
+            placeholder="פקודת עבודה לחיפוש..."                 // Placeholder text in Hebrew
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)} // Update search query on input change
-            className="search-bar" // Add styling in CSS if needed
+            onChange={(e) => setSearchQuery(e.target.value)}    // Update search query on input change
+            className="search-bar"                              // Add styling in CSS if needed
           />
         </div>
         
@@ -134,11 +113,11 @@ const Dashboard = ({workspace, isQueue}) => {
         <div className="cards-container">
           {filteredReports.map(report => (
             <Card
-              key={report._id} // Unique key for each card
-              serialNumber={report.serialNumber} // Pass report ID to the card component
-              date={new Date(report.openDate).toLocaleDateString()} // Format the report's date
-              onClick={() => handleClickOnCard(report)} // Handle click event for opening report
-              onClickSend={() => handleMoveWorkspaceButton(report)} // Handle send button click on card
+              key={report._id}                                          // Unique key for each card
+              serialNumber={report.serialNumber}                        // Pass report ID to the card component
+              date={new Date(report.openDate).toLocaleDateString()}     // Format the report's date
+              onClick={() => handleClickOnCard(report)}                 // Handle click event for opening report
+              onClickSend={() => handleMoveWorkspaceButton(report)}     // Handle send button click on card
             />
           ))}
         </div>
@@ -150,10 +129,10 @@ const Dashboard = ({workspace, isQueue}) => {
       </div>
 
       {/* Modal for report details, only visible when isModalOpen and not in queue */}
-      {isModalOpen && !isQueue && <OperationModal onClose={handleCloseModal} report_id={report._id} workspace={workspace}/>}
+      {isModalOpen && !isQueue && <OperationModal onClose={addEscListener} report_id={report._id} workspace={workspace}/>}
 
       {/* Send modal for moving reports, only visible when isSendModalOpen */}
-      {isSendModalOpen && <SendModal onClose={handleCloseModal} selectedReport={report} isReceived={isReceived} onSuccess={triggerRefresh} />}
+      {isSendModalOpen && <Modal_Transfer_Workspace onClose={handleCloseModal} selectedReport={report} isReceived={isReceived} onSuccess={triggerRefresh}/>}
     </div>
   );
 };

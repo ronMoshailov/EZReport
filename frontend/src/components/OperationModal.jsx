@@ -22,7 +22,7 @@ const Modal = ({ onClose, report_id, workspace }) => {
     const handleSubmit = async () => {
             // Set loading and errors
             setLoading(true);
-            setErrorMessage('');        
+            setErrorMessage('');
         try{
             console.log('Employee number: ' + employee);
             const response = await fetch('http://localhost:5000/api/isEmployeeExist', {
@@ -40,7 +40,8 @@ const Modal = ({ onClose, report_id, workspace }) => {
               if (!response.ok) throw new Error('Failed to fetch reports');
               const data = await response.json();
               if (data.exist) {
-                console.log('The employee exists. Name:', data.employee[0].fullName);
+                console.log(data);
+                console.log('The employee exists. Name:', data.employee.fullName);
                 setLoading(false);
             }
         } catch (err) {

@@ -1,7 +1,8 @@
 import React from 'react';
 import './newReportPage.scss';  // Import the styles
 
-const NewReportPage = () => {
+const NewReportPage = ({workspace}) => {
+
     return (
         <div className="new-report-page">
             <h1>דיווח חדש מספר 0007</h1>
