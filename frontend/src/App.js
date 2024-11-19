@@ -1,8 +1,8 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LoginPage from './components/loginPage';
 import Dashboard from './components/dashboard';
-import NewReportPage from './components/NewReportPage'
-import NewStorageReport from './components/newStorageReport'
+import NewReportPage from './components/workspacePages/NewReportPage'
+import NewStorageReport from './components/workspacePages/newStorageReport'
 import React, { useState, useEffect } from 'react';
 
 function App() {
@@ -11,10 +11,9 @@ function App() {
     return localStorage.getItem('workspace') || '';
   });
 
-  useEffect(() => {
-    if (workspace)
-      localStorage.setItem('workspace', workspace);
-  }, [workspace]);
+  const [reportId, setReportId] = useState(() => {
+    return localStorage.getItem('reportId') || '';
+  });
 
   return (
     <Router>

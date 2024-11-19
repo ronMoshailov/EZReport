@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { isWorkspaceExist } from './APIs.js';
+import { isWorkspaceExist } from './APIs/API_workspace';
 import './loginPage.scss';
 
 const LoginPage = ({workspace, setWorkspace}) => {
@@ -10,6 +10,13 @@ const LoginPage = ({workspace, setWorkspace}) => {
     const [loading, setLoading] = useState(false);        // Indicates loading state during server call
     const [isValid, setIsValid] = useState(null);         // Tracks if Workspace is valid
     
+    // useEffect
+    useEffect(() => {
+        localStorage.setItem('employee_number', '');
+        localStorage.setItem('workspace', '');
+        localStorage.setItem('report_id', '');
+      }, []);
+
     // Router navigation setup
     const navigate = useNavigate();
 

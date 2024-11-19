@@ -1,6 +1,6 @@
 const Report = require('../model/Report');  // Import the User model
 const mongoose = require('mongoose');
-const { removeComponentAndUpdateStock, handleAddComponentsToReport, fetchReportsByWorkspace, updateReportWorkspace, toggleEnable } = require('../libs/reportLib');
+const { removeComponentAndUpdateStock, handleAddComponentsToReport, fetchReportsByWorkspace, updateReportWorkspace, fetchReportComponents } = require('../libs/reportLib');
 const { createTransferDocument } = require('../libs/transferDetailsLib');
 
 // In libs
@@ -170,14 +170,5 @@ const getLastTransferDetail = async (req, res) => {
 };
 
 
-
-
-
-
-
-
-
-
-
 // Export the controller functions
-module.exports = { getAllReports, getLastTransferDetail, getReportComponents, removeComponentAndReturnToStock, addComponentsToReport, processWorkspaceTransfer};
+module.exports = { getAllReports, getLastTransferDetail, getReportComponents, removeComponentAndReturnToStock, addComponentsToReport, processWorkspaceTransfer };

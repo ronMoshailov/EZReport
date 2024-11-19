@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './OperationModal.scss';  // Assuming you have styles for the modal
 import { useNavigate } from 'react-router-dom';  // Import useNavigate for navigation
 
-const Modal = ({ onClose, report_id, workspace }) => {
+const Modal = ({ onClose, report_id, report_serialNum, report_completed, workspace }) => {
 
     /* States */
     const [selectedOption, setSelectedOption] = useState('');
@@ -40,9 +40,8 @@ const Modal = ({ onClose, report_id, workspace }) => {
               if (!response.ok) throw new Error('Failed to fetch reports');
               const data = await response.json();
               if (data.exist) {
-                console.log(data);
-                console.log('The employee exists. Name:', data.employee.fullName);
                 setLoading(false);
+                localStorage.setItem('employee_number', data.employee.number_employee);
             }
         } catch (err) {
             console.log('There was an error:', err);
@@ -50,7 +49,8 @@ const Modal = ({ onClose, report_id, workspace }) => {
         }
 
         if (selectedOption === 'new-report' && workspace === 'Production') {
-
+            localStorage.setItem('report_serialNum', report_serialNum);
+            localStorage.setItem('report_completed', report_completed);
             navigate('/new-report-page');
         } else if(selectedOption === 'new-report' && workspace === 'Storage'){
             navigate('/newStorageReport', { state: { report_id: report_id } });

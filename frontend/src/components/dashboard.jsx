@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import Card from './card';
+import CardReport from './cardReport';
 import Slidebar from './slidebar';
-import OperationModal from './OperationModal';
-import Modal_Transfer_Workspace from './modal_Transfer_Workspace';
+import OperationModal from './modals/OperationModal';
+import Modal_Transfer_Workspace from './modals/modal_Transfer_Workspace';
 import functions from './functions';
-import { fetchAllReports } from './APIs';
+import { fetchAllReports } from './APIs/API_report';
 import './dashboard.scss';
 import './slidebar.scss';
 
@@ -54,9 +54,9 @@ const Dashboard = ({workspace, isQueue}) => {
       if (!isQueue) {
         setReport(report);  
         setIsModalOpen(true);
+        };
       }
-    };
-
+  
     // Function to handle sending card click and show modal
     const handleMoveWorkspaceButton = (report) => {
       setReport(report);
@@ -86,6 +86,8 @@ const Dashboard = ({workspace, isQueue}) => {
 
   useEffect(() => {
     window.addEventListener('keydown', addEscListener);                   // Add keydown event listener to listen for Escape key press
+    localStorage.setItem('employee_number', '');
+    localStorage.setItem('report_id', '');
     return () => window.removeEventListener('keydown', addEscListener);   // Clean up event listener on component unmount
   }, []);
 
@@ -112,7 +114,7 @@ const Dashboard = ({workspace, isQueue}) => {
         {/* Container for displaying reports as cards */}
         <div className="cards-container">
           {filteredReports.map(report => (
-            <Card
+            <CardReport
               key={report._id}                                          // Unique key for each card
               serialNumber={report.serialNumber}                        // Pass report ID to the card component
               date={new Date(report.openDate).toLocaleDateString()}     // Format the report's date
@@ -129,7 +131,7 @@ const Dashboard = ({workspace, isQueue}) => {
       </div>
 
       {/* Modal for report details, only visible when isModalOpen and not in queue */}
-      {isModalOpen && !isQueue && <OperationModal onClose={addEscListener} report_id={report._id} workspace={workspace}/>}
+      {isModalOpen && !isQueue && <OperationModal onClose={addEscListener} report_id={report._id} report_serialNum={report.serialNumber} report_completed={ report.completed } workspace={workspace}/>}
 
       {/* Send modal for moving reports, only visible when isSendModalOpen */}
       {isSendModalOpen && <Modal_Transfer_Workspace onClose={handleCloseModal} selectedReport={report} isReceived={isReceived} onSuccess={triggerRefresh}/>}

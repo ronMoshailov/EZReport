@@ -66,10 +66,10 @@ const reportSchema = new mongoose.Schema({
     closeDate: {
         type: Date
     },
-    activity: {
-        type: Array,
-        default: []  // Placeholder for future activities array
-    },
+    // activity: {
+    //     type: Array,
+    //     default: []  // Placeholder for future activities array
+    // },
     enable: {
         type: Boolean,
         default: true

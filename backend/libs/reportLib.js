@@ -2,6 +2,7 @@ const Report = require('../model/Report');
 const Component = require('../model/Component');
 const mongoose = require('mongoose');
 const ReportStorage = require('../model/ReportStorage');
+const { fetchComponentByID } = require('../libs/componentLib');
 
 /**
  * Fetch all reports by workspace and queue status.
@@ -187,6 +188,44 @@ const toggleEnable = async (reportId, session) => {
   await report.save({ session });
 };
 
+/**
+ * Fetches the `components` array from a report by its `_id`, replacing `component` IDs with full component data.
+ * @param {string} report_id - The `_id` of the report.
+ * @returns {Promise<Array>} - The components array with resolved component details.
+ * @throws {Error} - Throws an error if the report is not found or any database issue occurs.
+ */
+const fetchReportComponents = async (report_id) => {
+  try {
+    // Fetch the report document by ID and project only the `components` field
+    const report = await Report.findById(report_id, { components: 1 });
+
+    if (!report) {
+      throw new Error("Report not found");
+    }
+
+    component_array = report.components;
+    console.log(component_array);
+    // Map over the `components` array and replace the `component` ID with the full component data
+    const componentsWithDetails = await Promise.all(
+      component_array.map(async (item) => {
+        const componentData = await fetchComponentByID(item.component); // Fetch component details
+    
+        // Return only the relevant fields for the component
+        return {
+          stock: item.stock, // Keep the stock property
+          name: componentData.name, // Include only the name of the component
+          serialNumber: componentData.serialNumber, // Include only the serial number
+        };
+      })
+    );
+    
+
+    return componentsWithDetails; // Return the updated components array
+  } catch (err) {
+    console.error(`Error fetching report components: ${err.message}`);
+    throw err; // Rethrow the error for the caller to handle
+  }
+};
 
 
 
@@ -216,6 +255,4 @@ const toggleEnable = async (reportId, session) => {
 
 
 
-
-
-module.exports = { removeComponentAndUpdateStock , handleAddComponentsToReport, fetchReportsByWorkspace, updateReportWorkspace, updateReportWorkspace, toggleEnable };
+module.exports = { removeComponentAndUpdateStock , handleAddComponentsToReport, fetchReportsByWorkspace, updateReportWorkspace, updateReportWorkspace, toggleEnable, fetchReportComponents };

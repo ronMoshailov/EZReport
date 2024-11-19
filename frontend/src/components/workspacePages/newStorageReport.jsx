@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import './newStorageReport.scss'
-import {fetchReportComponents, fetchAllComponents, handleRemoveComponentFromReport, isEmployeeExist, fetchAndComponents} from './APIs'
-import ComponentsModal from './ComponentsModal'; // Import the modal component
+import {fetchReportComponents, handleRemoveComponentFromReport, fetchAndComponents} from '../APIs/API_report'
+import { fetchAllComponents } from '../APIs/API_components'
+import { isEmployeeExist } from '../APIs/API_employee'
+import ComponentsModal from '../modals/ComponentsModal'; // Import the modal component
 
 const ComponentPage = () => {
   const location = useLocation();
