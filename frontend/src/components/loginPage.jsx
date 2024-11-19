@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { isWorkspaceExist } from './APIs.js';
+import { isWorkspaceExist } from './APIs/API_workspace';
 import './loginPage.scss';
 
 const LoginPage = ({workspace, setWorkspace}) => {

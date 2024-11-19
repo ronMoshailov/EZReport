@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import Card from './card';
+import CardReport from './cardReport';
 import Slidebar from './slidebar';
-import OperationModal from './OperationModal';
-import Modal_Transfer_Workspace from './modal_Transfer_Workspace';
+import OperationModal from './modals/OperationModal';
+import Modal_Transfer_Workspace from './modals/modal_Transfer_Workspace';
 import functions from './functions';
-import { fetchAllReports } from './APIs';
+import { fetchAllReports } from './APIs/API_report';
 import './dashboard.scss';
 import './slidebar.scss';
 
@@ -112,7 +112,7 @@ const Dashboard = ({workspace, isQueue}) => {
         {/* Container for displaying reports as cards */}
         <div className="cards-container">
           {filteredReports.map(report => (
-            <Card
+            <CardReport
               key={report._id}                                          // Unique key for each card
               serialNumber={report.serialNumber}                        // Pass report ID to the card component
               date={new Date(report.openDate).toLocaleDateString()}     // Format the report's date

@@ -1,8 +1,8 @@
 // Modal_Transfer_Workspace.jsx
 import React, { useState } from 'react';
 import './modal_Transfer_Workspace.scss';
-import { isEmployeeExist } from './APIs';
-import { getLastTransferDetail } from './API_workspace';
+import { isEmployeeExist } from '../APIs/API_employee';
+import { getLastTransferDetail, makeReceivedWorkspace, makeSendWorkspace } from '../APIs/API_workspace';
 
 const Modal_Transfer_Workspace = ({ onClose, selectedReport, isReceived, onSuccess }) => {
   /* States */
@@ -36,14 +36,16 @@ const Modal_Transfer_Workspace = ({ onClose, selectedReport, isReceived, onSucce
 
       // Decide whether to send or receive
       if (isReceived) {
-        console.log('handleReceiveWorkspace');
+        // console.log('handleReceiveWorkspace');
         await handleReceiveWorkspace(employeeData.employee._id);
       } else {
-        console.log('handleSendWorkspace');
+        // console.log('handleSendWorkspace');
         await handleSendWorkspace(employeeData.employee._id);
       }
 
+      console.log('onSuccess fire!!');
       onSuccess(); // Trigger parent refresh
+      console.log('onClose fire!!');
       onClose();   // Close modal
     } catch (err) {
       console.error('Error during submission:', err.message);
@@ -66,33 +68,20 @@ const Modal_Transfer_Workspace = ({ onClose, selectedReport, isReceived, onSucce
   // Handle receiving workspace actions
   const handleReceiveWorkspace = async (employee_id) => {
     try {
-      const transferdetails_id = await fetchLastTransferDetail(selectedReport._id);
-      // await makeReceivedWorkspace(transferdetails_id, employee_id, selectedReport.current_workspace);
+      const transferdetails_id = await fetchLastTransferDetail(selectedReport._id);                                         // Last transfer document.
+      await makeReceivedWorkspace(transferdetails_id, employee_id, selectedReport.current_workspace, selectedReport._id);   // 
     } catch (err) {
       console.error('Error during workspace receiving:', err.message);
       throw err;
     }
+
+    // toggleEnableAPI
   };
 
   // Handle sending workspace actions
   const handleSendWorkspace = async (employee_id) => {
-    console.log(`handleSendWorkspace -> [employee_id: ${employee_id}]`);
     try {
-      const response = await fetch('http://localhost:5000/api/processWorkspaceTransfer', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          send_worker_id: employee_id,
-          send_workspace: selectedReport.current_workspace,
-          report_id: selectedReport._id,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error(`Failed to process workspace transfer. Status: ${response.status}`);
-      }
-
-      console.log('Workspace transfer processed successfully.');
+      await makeSendWorkspace(employee_id, selectedReport.current_workspace, selectedReport._id);
     } catch (err) {
       console.error('Error during workspace sending:', err.message);
       throw err;

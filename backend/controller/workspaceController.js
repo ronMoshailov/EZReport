@@ -1,5 +1,6 @@
 const TransferDetails = require('../model/TransferDetails');
 const { findWorkspaceByNumber } = require('../libs/workspaceLib');
+const Report = require('../model/Report');
 
 /**
  * Controller to check if a workspace exists.
@@ -53,7 +54,7 @@ const isWorkspaceExist = async (req, res) => {
 
 
 const receivedWorkspace = async (req, res) => {
-    const { transferdetails_id, received_worker_id, received_workspace } = req.body;
+    const { transferdetails_id, received_worker_id, received_workspace, report_id } = req.body;
     received_date = new Date().toISOString();
 
     // console.log(transferdetails_id);
@@ -87,6 +88,16 @@ const receivedWorkspace = async (req, res) => {
             updatedTransition: transition
         });
 
+        // Find the report and toggle the `enable` field
+        const report = await Report.findById(report_id);
+
+        if (!report) {
+          return res.status(404).json({ message: 'Report not found' });
+        }
+
+        // Toggle the enable field
+        report.enable = !report.enable;
+        await report.save();
 
     } catch (error) {
         console.error('Error updating transition:', error.message);

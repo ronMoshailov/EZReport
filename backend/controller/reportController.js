@@ -170,14 +170,5 @@ const getLastTransferDetail = async (req, res) => {
 };
 
 
-
-
-
-
-
-
-
-
-
 // Export the controller functions
-module.exports = { getAllReports, getLastTransferDetail, getReportComponents, removeComponentAndReturnToStock, addComponentsToReport, processWorkspaceTransfer};
+module.exports = { getAllReports, getLastTransferDetail, getReportComponents, removeComponentAndReturnToStock, addComponentsToReport, processWorkspaceTransfer };
