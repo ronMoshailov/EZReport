@@ -3,16 +3,12 @@ import LoginPage from './components/loginPage';
 import Dashboard from './components/dashboard';
 import NewReportPage from './components/workspacePages/NewReportPage'
 import NewStorageReport from './components/workspacePages/newStorageReport'
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 function App() {
 
   const [workspace, setWorkspace] = useState(() => {
     return localStorage.getItem('workspace') || '';
-  });
-
-  const [reportId, setReportId] = useState(() => {
-    return localStorage.getItem('reportId') || '';
   });
 
   return (
