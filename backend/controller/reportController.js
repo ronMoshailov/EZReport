@@ -2,6 +2,7 @@ const Report = require('../model/Report');  // Import the User model
 const mongoose = require('mongoose');
 const { removeComponentAndUpdateStock, handleAddComponentsToReport, fetchReportsByWorkspace, updateReportWorkspace, fetchReportComponents } = require('../libs/reportLib');
 const { createTransferDocument } = require('../libs/transferDetailsLib');
+const { fetchReportStorageList, fetchCommentsFromReportStorage } = require('../libs/reportStorageLib');
 
 // In libs
 
@@ -169,6 +170,28 @@ const getLastTransferDetail = async (req, res) => {
   }
 };
 
+/**
+ * Retrieves all comments from the `reportstorage` collection linked to a specific report.
+ * @param {Object} req - The request object containing the `report_id` in params.
+ * @param {Object} res - The response object to send the data or errors.
+ */
+const getReportComments = async (req, res) => {
+  const { report_id } = req.params;
+
+  try {
+    // Step 1: Fetch the report's storage list IDs
+    const reportStorageList = await fetchReportStorageList(report_id);
+
+    // Step 2: Fetch the comments from the reportstorage collection
+    const comments = await fetchCommentsFromReportStorage(reportStorageList);
+
+    // Step 3: Send the comments in the response
+    res.status(200).json(comments);
+  } catch (error) {
+    console.error('Error in getReportComments:', error.message);
+    res.status(500).json({ message: error.message || 'Internal server error' });
+  }
+};
 
 // Export the controller functions
-module.exports = { getAllReports, getLastTransferDetail, getReportComponents, removeComponentAndReturnToStock, addComponentsToReport, processWorkspaceTransfer };
+module.exports = { getAllReports, getLastTransferDetail, getReportComponents, removeComponentAndReturnToStock, addComponentsToReport, processWorkspaceTransfer, getReportComments };

@@ -35,6 +35,11 @@ const reportSchema = new mongoose.Schema({
         type: String,
         enum: Object.values(STATIONS)  // Enforce valid values from STATIONS enum
     },
+    report_production_list: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'ReportProduction', // Refers to the ReportProduction model
+        default: [] // Initialize as an empty array by default
+    }],
     // product_name: {
     //     type: String,
     //     required: true

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './OperationModal.scss';  // Assuming you have styles for the modal
 import { useNavigate } from 'react-router-dom';  // Import useNavigate for navigation
 
-const Modal = ({ onClose, report_id, report_serialNum, report_completed, workspace }) => {
+const Modal = ({ onClose, report_id, report_serialNum, report_completed, report_ordered, workspace }) => {
 
     /* States */
     const [selectedOption, setSelectedOption] = useState('');
@@ -51,6 +51,8 @@ const Modal = ({ onClose, report_id, report_serialNum, report_completed, workspa
         if (selectedOption === 'new-report' && workspace === 'Production') {
             localStorage.setItem('report_serialNum', report_serialNum);
             localStorage.setItem('report_completed', report_completed);
+            localStorage.setItem('report_ordered', report_ordered);
+            localStorage.setItem('report_id', report_id);
             navigate('/new-report-page');
         } else if(selectedOption === 'new-report' && workspace === 'Storage'){
             navigate('/newStorageReport', { state: { report_id: report_id } });

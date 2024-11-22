@@ -120,4 +120,19 @@ const fetchAndComponents = async (employee_id, report_id, componentsToAdd, input
   }
 };
 
-export { fetchAllReports, fetchReportComponents, handleRemoveComponentFromReport, toggleReportEnable, fetchAndComponents };
+const displayReportComments = async (report_id) =>{
+  // Make a request to the API to fetch comments
+  const response = await fetch(`http://localhost:5000/api/displayReportComments/${report_id}`);
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch comments: ${response.statusText}`);
+  }
+
+  // Parse the response data
+  const comments = await response.json();
+
+  // Return comments (Example: Console log or Update UI)
+  return comments;
+}
+
+export { fetchAllReports, fetchReportComponents, handleRemoveComponentFromReport, toggleReportEnable, fetchAndComponents, displayReportComments };

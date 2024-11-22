@@ -5,6 +5,7 @@ const reportsRouter = require('./routes/reportRoutess'); // Assuming this is the
 const EmployeeRoutes = require('./routes/EmployeeRoutes'); // Assuming this is the path to the route file
 const positionRoutes = require('./routes/workspaceRoutes');
 const componentRoutes = require('./routes/componentRoutes');
+const ReportProductionRoute = require('./routes/ReportProductionRoute');
 // const reportStorageRoutes = require('./routes/reportStorageRoute');
 
 // Require methods
@@ -34,7 +35,7 @@ app.use('/api', reportsRouter);
 app.use('/api', EmployeeRoutes);
 app.use('/api', positionRoutes);
 app.use('/api', componentRoutes);
-// app.use('/api', reportStorageRoutes);
+app.use('/api', ReportProductionRoute);
 
 // Start the server
 app.listen(PORT, () => {

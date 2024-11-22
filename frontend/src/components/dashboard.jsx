@@ -131,7 +131,7 @@ const Dashboard = ({workspace, isQueue}) => {
       </div>
 
       {/* Modal for report details, only visible when isModalOpen and not in queue */}
-      {isModalOpen && !isQueue && <OperationModal onClose={addEscListener} report_id={report._id} report_serialNum={report.serialNumber} report_completed={ report.completed } workspace={workspace}/>}
+      {isModalOpen && !isQueue && <OperationModal onClose={addEscListener} report_id={report._id} report_serialNum={report.serialNumber} report_completed={ report.completed } report_ordered={ report.ordered } workspace={workspace}/>}
 
       {/* Send modal for moving reports, only visible when isSendModalOpen */}
       {isSendModalOpen && <Modal_Transfer_Workspace onClose={handleCloseModal} selectedReport={report} isReceived={isReceived} onSuccess={triggerRefresh}/>}
