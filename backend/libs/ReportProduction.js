@@ -1,7 +1,7 @@
 const ReportProduction = require('../model/ReportProduction'); // Replace with the correct path to the Report model
 const Report = require('../model/Report'); // Replace with the correct path to the Report model
 const mongoose = require('mongoose'); // Import mongoose for sessions
-
+const { findEmployeeById } = require('./employeeLib');
 /**
  * Creates a new production report with a transaction.
  * @param {string} report_id - The ID of the report to update.
@@ -13,12 +13,19 @@ const mongoose = require('mongoose'); // Import mongoose for sessions
  */
 const createProdReport = async (report_id, employee_id, completedCount, comment) => {
   const session = await mongoose.startSession(); // Start a session for the transaction
-
-  try {
+console.log(1);
+  try { 
         session.startTransaction(); // Begin the transaction
 
         const date = new Date();
+        console.log(2);
 
+        employee_id = await findEmployeeById(employee_id);
+        employee_id = employee_id._id;
+        console.log('employee_id');
+        console.log(employee_id);
+        
+        console.log(3);
         // Create the new reportProduction document
         const newReportProduction = new ReportProduction({
         report_id,
@@ -27,7 +34,6 @@ const createProdReport = async (report_id, employee_id, completedCount, comment)
         completedCount,
         comment, // Optional: Only included if provided
         });
-
 
         // Save the document to the database
         const savedReportProduction = await newReportProduction.save({ session }); // Save with the session

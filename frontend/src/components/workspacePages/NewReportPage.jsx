@@ -1,14 +1,19 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './newReportPage.scss'; // Import the styles
 import { useNavigate } from 'react-router-dom';
 import { displayReportComments } from '../APIs/API_report';
 import CommentsModal from '../modals/CommentsModal'; // Import the CommentsModal component
+import { sendProductionReport } from '../APIs/API_report';
 
 const NewReportPage = () => {
   // States
-  const [newCompleted, setNewCompleted] = useState('');
+  const [newCompleted, setNewCompleted] = useState(0);
   const [comments, setComments] = useState([]); // Store comments as an array
   const [isCommentsModalOpen, setIsCommentsModalOpen] = useState(false); // State to toggle modal visibility
+  const [newComment, setNewComment] = useState('');
+  const [reportId, setReportId] = useState(0);
+  const [completed, setCompleted] = useState(Number(localStorage.getItem('report_completed')));
+  const [error, setError] = useState('');
 
   // Get date
   const now = new Date();
@@ -16,6 +21,12 @@ const NewReportPage = () => {
   const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are 0-based
   const day = String(now.getDate()).padStart(2, '0');
   const formattedDate = `${day}-${month}-${year}`;
+
+  // useEffect
+  useEffect(() => {
+    const report_id = localStorage.getItem('report_id');
+    setReportId(report_id);
+  }, []);
 
   // Router navigation setup
   const navigate = useNavigate();
@@ -31,32 +42,35 @@ const NewReportPage = () => {
       alert('הכמות לא תקינה');
       return;
     }
-    if (
-      Number(newCompleted) +
-        Number(localStorage.getItem('report_completed')) >
-      Number(localStorage.getItem('report_ordered'))
-    ) {
+    if ( Number(newCompleted) + completed > Number(localStorage.getItem('report_ordered')) ) {
       alert('הכמות שהוכנסה גבוהה ממה שהוזמן');
       return;
     }
-
-    
+    const employee_num = localStorage.getItem('employee_number');
+    console.log(reportId, employee_num, newCompleted, newComment);
+    const answer = sendProductionReport(reportId, employee_num, Number(newCompleted), newComment)
+    if (answer){
+      setCompleted(completed + Number(newCompleted));
+      localStorage.setItem('report_completed', completed + Number(newCompleted));
+      // setNewCompleted(completed + Number(newCompleted));
+      setError('');
+      return;
+    }
+    setError('Failed');
   };
 
   // Handle show comments
   const handleShowComments = async () => {
     try {
-      // Retrieve the report_id from localStorage
-      const report_id = localStorage.getItem('report_id');
 
-      if (!report_id) {
+      if (!reportId) {
         console.error('No report_id found in localStorage');
         alert('Please select a report first.');
         return;
       }
 
       // Fetch comments
-      const fetchedComments = await displayReportComments(report_id);
+      const fetchedComments = await displayReportComments(reportId);
 
       // Update the comments state
       setComments(fetchedComments);
@@ -106,7 +120,7 @@ const NewReportPage = () => {
             <input
               type="text"
               placeholder="תקינים"
-              value={localStorage.getItem('report_completed')}
+              value={completed}
               disabled
             />
           </div>
@@ -143,7 +157,15 @@ const NewReportPage = () => {
               id="comments"
               type="text"
               placeholder="הערות"
+              value={newComment}
+              onChange={(e) => {setNewComment(e.target.value)}}
             />
+          </div>
+
+          <div className='form=group'>
+            {error && 
+              <label>{error}</label>
+            }
           </div>
         </div>
       </div>

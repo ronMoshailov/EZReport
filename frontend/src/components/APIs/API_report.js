@@ -135,4 +135,35 @@ const displayReportComments = async (report_id) =>{
   return comments;
 }
 
-export { fetchAllReports, fetchReportComponents, handleRemoveComponentFromReport, toggleReportEnable, fetchAndComponents, displayReportComments };
+const sendProductionReport = async (report_id, employee_id, completedCount, comment) => {
+  try {
+    // Send a POST request to add components to the specified report
+    const response = await fetch('http://localhost:5000/api/createProductionReport', {
+      method: 'POST', // Use POST to send data to the server
+      headers: {
+        'Content-Type': 'application/json', // Specify that the content type is JSON
+      },
+      body: JSON.stringify({
+        report_id,              // Employee ID performing the action
+        employee_id,                // Report ID to which components are being added
+        completedCount, // List of components with their details (e.g., ID and stock)
+        comment,    // Additional comment provided by the user
+      }),
+    });
+
+    // Check if the response indicates a failure
+    if (!response.ok) {
+      throw new Error(`Failed to process the report. Status: ${response.status}`);
+    }
+    
+    // Parse and return the JSON response from the server
+    // return await response.json();
+    return true;
+  } catch (error) {
+    // Log any errors encountered during the request
+    console.error('Error adding components to the report:', error.message);
+    throw error; // Re-throw the error for further handling if needed
+  }
+};
+
+export { fetchAllReports, fetchReportComponents, handleRemoveComponentFromReport, toggleReportEnable, fetchAndComponents, displayReportComments, sendProductionReport };
