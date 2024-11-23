@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import './newReportPage.scss'; // Import the styles
 import { useNavigate } from 'react-router-dom';
 import { displayReportComments } from '../APIs/API_report';
@@ -14,6 +14,10 @@ const NewReportPage = () => {
   const [reportId, setReportId] = useState(0);
   const [completed, setCompleted] = useState(Number(localStorage.getItem('report_completed')));
   const [error, setError] = useState('');
+  const [employeeNum, setEmployeeNum] = useState(localStorage.getItem('employee_number') || '');
+  const [reportSerialNum, setReportSerialNum] = useState(localStorage.getItem('report_serialNum') || '');
+  const [reportOrdered, setReportOrdered] = useState(Number(localStorage.getItem('report_ordered') || 0));
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Get date
   const now = new Date();
@@ -24,9 +28,21 @@ const NewReportPage = () => {
 
   // useEffect
   useEffect(() => {
-    const report_id = localStorage.getItem('report_id');
-    setReportId(report_id);
+    setReportId(localStorage.getItem('report_id') || 0);
+    setCompleted(Number(localStorage.getItem('report_completed') || 0));
   }, []);
+
+  const validateInputs = () => {
+    if (!newCompleted || isNaN(newCompleted) || newCompleted <= 0) {
+      setError('הזן כמות תקינה');
+      return false;
+    }
+    if (!newComment.trim()) {
+      setError('הזן הערה');
+      return false;
+    }
+    return true;
+  };
 
   // Router navigation setup
   const navigate = useNavigate();
@@ -36,50 +52,51 @@ const NewReportPage = () => {
     navigate('/dashboard');
   };
 
+  const handleCommentModalClose = useCallback(() => setIsCommentsModalOpen(false), []);
+
   const handleSubmit = async () => {
-    // Check count
-    if (newCompleted <= 0) {
-      alert('הכמות לא תקינה');
-      return;
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+    
+    try {
+      // Check count
+      if (!validateInputs()) {
+        return;
+      }
+      setError(''); // Clear previous errors
+
+      if ( Number(newCompleted) + completed > reportOrdered ) {
+        alert('הכמות שהוכנסה גבוהה ממה שהוזמן');
+        return;
+      }
+      console.log(reportId, employeeNum, newCompleted, newComment);
+      const answer = await sendProductionReport(reportId, employeeNum, Number(newCompleted), newComment)
+      console.log(`answer: ${answer}`);
+      if (answer){
+        setCompleted(completed + Number(newCompleted));
+        localStorage.setItem('report_completed', completed + Number(newCompleted));
+        // setNewCompleted(completed + Number(newCompleted));
+        setError('');
+        return;
+      }
+      setError('Failed');
+    } catch (err) {
+      console.error('Error submitting production report:', err.message);
+    } finally {
+      setIsSubmitting(false);
     }
-    if ( Number(newCompleted) + completed > Number(localStorage.getItem('report_ordered')) ) {
-      alert('הכמות שהוכנסה גבוהה ממה שהוזמן');
-      return;
-    }
-    const employee_num = localStorage.getItem('employee_number');
-    console.log(reportId, employee_num, newCompleted, newComment);
-    const answer = sendProductionReport(reportId, employee_num, Number(newCompleted), newComment)
-    if (answer){
-      setCompleted(completed + Number(newCompleted));
-      localStorage.setItem('report_completed', completed + Number(newCompleted));
-      // setNewCompleted(completed + Number(newCompleted));
-      setError('');
-      return;
-    }
-    setError('Failed');
   };
 
   // Handle show comments
   const handleShowComments = async () => {
     try {
-
-      if (!reportId) {
-        console.error('No report_id found in localStorage');
-        alert('Please select a report first.');
-        return;
-      }
-
-      // Fetch comments
-      const fetchedComments = await displayReportComments(reportId);
-
-      // Update the comments state
-      setComments(fetchedComments);
-
-      // Open the comments modal
       setIsCommentsModalOpen(true);
+      setComments([]); // Clear previous comments
+      const fetchedComments = await displayReportComments(reportId);
+      setComments(fetchedComments);
     } catch (error) {
       console.error('Error fetching comments:', error.message);
-      alert('An error occurred while fetching comments. Please try again later.');
+      alert('שגיאה בהצגת ההערות');
     }
   };
 
@@ -92,22 +109,12 @@ const NewReportPage = () => {
         <div className="form-column">
           <div className="form-group">
             <label>מספר עובד לדיווח</label>
-            <input
-              type="text"
-              placeholder="הכנס מספר עובד"
-              value={localStorage.getItem('employee_number')}
-              disabled
-            />
+            <input type="text" placeholder="הכנס מספר עובד" value={employeeNum} disabled />
           </div>
 
           <div className="form-group">
             <label>מקט</label>
-            <input
-              type="text"
-              placeholder="הכנס מקט"
-              value={localStorage.getItem('report_serialNum')}
-              disabled
-            />
+            <input type="text" placeholder="הכנס מקט" value={reportSerialNum} disabled />
           </div>
 
           <div className="form-group">
@@ -117,22 +124,12 @@ const NewReportPage = () => {
 
           <div className="form-group">
             <label>תקינים</label>
-            <input
-              type="text"
-              placeholder="תקינים"
-              value={completed}
-              disabled
-            />
+            <input type="text" placeholder="תקינים" value={completed} disabled />
           </div>
 
           <div className="form-group">
             <label>הוזמנו</label>
-            <input
-              type="text"
-              placeholder="הוזמנו"
-              value={localStorage.getItem('report_ordered')}
-              disabled
-            />
+            <input type="text" placeholder="הוזמנו" value={reportOrdered} disabled />
           </div>
 
         </div>
@@ -141,10 +138,7 @@ const NewReportPage = () => {
         <div className="form-column">
           <div className="form-group">
             <label>כמות יחידות</label>
-            <input
-              type="Number"
-              placeholder="כמות יחידות"
-              value={newCompleted}
+            <input type="Number" placeholder="כמות יחידות" value={newCompleted}
               onChange={(e) => {
                 setNewCompleted(e.target.value);
               }}
@@ -153,18 +147,14 @@ const NewReportPage = () => {
 
           <div className="form-group">
             <label>הערות</label>
-            <input
-              id="comments"
-              type="text"
-              placeholder="הערות"
-              value={newComment}
+            <input id="comments" type="text" placeholder="הערות" value={newComment}
               onChange={(e) => {setNewComment(e.target.value)}}
             />
           </div>
 
-          <div className='form=group'>
+          <div className='form-group'>
             {error && 
-              <label>{error}</label>
+              <label id='errorMsg'>{error}</label>
             }
           </div>
         </div>
@@ -178,15 +168,15 @@ const NewReportPage = () => {
         <button className="comment-button" onClick={handleShowComments}>
           הצג הערות
         </button>
-        <button className="submit-button" onClick={handleSubmit}>
-          שלח
+        <button className="submit-button" onClick={handleSubmit} disabled={isSubmitting}>
+          {isSubmitting ? 'שולח...' : 'שלח'}
         </button>
       </div>
 
       {/* Comments Modal */}
       <CommentsModal
         isOpen={isCommentsModalOpen}
-        onClose={() => setIsCommentsModalOpen(false)}
+        onClose={handleCommentModalClose}
         comments={comments}
       />
     </div>

@@ -42,7 +42,12 @@
             display: block;
             flex: 1;
           }
+          #errorMsg{
+            color:red;
+            font-weight: bold;
+          }
         }
+        
       }
     }
   
