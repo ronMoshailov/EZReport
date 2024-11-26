@@ -204,21 +204,23 @@ const fetchReportComponents = async (report_id) => {
     }
 
     component_array = report.components;
-    console.log(component_array);
+
     // Map over the `components` array and replace the `component` ID with the full component data
     const componentsWithDetails = await Promise.all(
       component_array.map(async (item) => {
         const componentData = await fetchComponentByID(item.component); // Fetch component details
-    
         // Return only the relevant fields for the component
         return {
           stock: item.stock, // Keep the stock property
           name: componentData.name, // Include only the name of the component
           serialNumber: componentData.serialNumber, // Include only the serial number
+          _id: componentData._id
         };
       })
     );
-    
+    console.log('component_array');
+    console.log(component_array);
+
 
     return componentsWithDetails; // Return the updated components array
   } catch (err) {

@@ -1,42 +1,39 @@
-import React from 'react';
+import React, { useState} from 'react';
 import PropTypes from 'prop-types';
 import './ComponentsModal.scss';
 
-const ComponentsModal = ({ 
-  isOpen, 
-  onClose, 
-  title = 'רשימת רכיבים', 
-  placeholder = 'חפש לפי מספר רכיב', 
-  components = [], 
-  onFilterChange, 
-  onRemove 
-}) => {
-  if (!isOpen) return null; // Only render if modal is open
+const ComponentsModal = ({ isOpen, onClose, components = [], onRemove }) => {
+
+  const [filterText, setFilterText] = useState('');
+
+  if (!isOpen) return null;
+
+  const filteredComponents = components.filter((comp) =>
+    comp.serialNumber.toString().includes(filterText) ||
+    comp.name.toLowerCase().includes(filterText.toLowerCase())
+  );
 
   return (
     <div className="modal-container-components">
       <div className="modal-components">
-        {/* Close Button */}
+        
         <button className="close-btn" onClick={onClose}>✕</button>
-
-        {/* Title */}
-        <h2>{title}</h2>
-
-        {/* Search Input */}
+        <h2>רשימת רכיבים</h2>
         <input
           type="text"
-          placeholder={placeholder}
-          onChange={(e) => onFilterChange && onFilterChange(e.target.value)}
+          placeholder='חפש לפי מספר רכיב'
+          onChange={(e) => setFilterText(e.target.value)}
+          value={filterText}
           className="filter-input"
         />
 
         {/* Components List */}
         <ul>
-          {components.map((component, index) => (
+          {filteredComponents.map((component, index) => (
             <li key={`component-${component.serialNumber}-${index}`}>
               <button
                 className="remove-btn"
-                onClick={() => onRemove(component, index)}
+                onClick={() => onRemove(component)}
               >
                 ✕
               </button>
@@ -55,8 +52,6 @@ const ComponentsModal = ({
 ComponentsModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
-  title: PropTypes.string,
-  placeholder: PropTypes.string,
   components: PropTypes.arrayOf(
     PropTypes.shape({
       serialNumber: PropTypes.number.isRequired,

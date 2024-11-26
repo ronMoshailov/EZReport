@@ -1,0 +1,104 @@
+.modal-container-components {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); // Semi-transparent background
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  
+    .modal-components {
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 10px;
+      width: 400px;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+      text-align: right; // Support for RTL content
+      direction: rtl;
+  
+      .close-btn {
+        top: 15px;
+        left: 15px;
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: #ff0000;
+  
+        &:hover {
+          color: #990000;
+        }
+      }
+
+      h2 {
+        margin: 0 0 15px;
+        font-size: 22px;
+        font-weight: bold;
+        color: #333;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 10px;
+      }
+  
+      .filter-input {
+        width: 94%;
+        padding: 10px;
+        margin-bottom: 20px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+  
+        &:focus {
+          border-color: #4caf50; // Green outline when focused
+          outline: none;
+        }
+      }
+  
+      ul {
+        list-style: none; // Removes bullet points
+        padding: 0;
+        margin: 0;
+  
+        li {
+          position: relative;
+          padding: 15px;
+          border: 1px solid #ddd;
+          border-radius: 8px;
+          margin-bottom: 10px;
+          font-size: 16px;
+          background-color: #f9f9f9;
+          transition: box-shadow 0.3s ease;
+  
+          &:hover {
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); // Add subtle shadow on hover
+          }
+  
+          .remove-btn {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: #ff4d4f;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            font-size: 14px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+  
+            &:hover {
+              background-color: #e63946;
+            }
+          }
+        }
+      }
+    }
+  }
+  

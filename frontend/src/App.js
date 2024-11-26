@@ -1,24 +1,24 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import LoginPage from './components/loginPage';
 import Dashboard from './components/dashboard';
-import NewReportPage from './components/workspacePages/NewReportPage'
-import NewStorageReport from './components/workspacePages/newStorageReport'
+import ReportingProduction from './components/workspacePages/reportingProduction'
+import ReportingStorage from './components/workspacePages/reportingStorage'
+import ErrorPage from './components/errorPage';
+import NotFoundPage from './components/notFoundPage';
 import React, { useState } from 'react';
 
 function App() {
 
-  const [workspace, setWorkspace] = useState(() => {
-    return localStorage.getItem('workspace') || '';
-  });
-
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<LoginPage workspace={workspace} setWorkspace={setWorkspace}/>} />
-        <Route path="/dashboard" element={<Dashboard workspace={workspace} isQueue={false} />} />
-        <Route path="/queue" element={<Dashboard workspace={workspace} isQueue={true} />} />
-        <Route path="/new-report-page" element={<NewReportPage workspace={workspace}/>} />  {/* New Report Page */}
-        <Route path="/newStorageReport" element={<NewStorageReport workspace={workspace}/>} />  {/* New Report Page */}
+        <Route path="/" element={<LoginPage/>} />
+        <Route path="/error" element={<ErrorPage/>} />
+        <Route path="/dashboard" element={<Dashboard isQueue={false} />} />
+        <Route path="/queue" element={<Dashboard isQueue={true} />} />
+        <Route path="/ReportingStorage" element={<ReportingStorage />} />  {/* New Report Page */}
+        <Route path="/ReportingProduction" element={<ReportingProduction />} />  {/* New Report Page */}
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Router>
   );

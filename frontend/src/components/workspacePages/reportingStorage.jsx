@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
-import './newStorageReport.scss'
+import { useLocation, useNavigate } from 'react-router-dom';
+import './reportingStorage.scss'
 import {fetchReportComponents, handleRemoveComponentFromReport, fetchAndComponents} from '../APIs/API_report'
 import { fetchAllComponents } from '../APIs/API_components'
 import { isEmployeeExist } from '../APIs/API_employee'
@@ -20,10 +20,11 @@ const ComponentPage = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState(localStorage.getItem('employee_number') || '');
   const [isComponentsModalOpen, setIsComponentsModalOpen] = useState(false);
   const [componentsToShow, setComponentsToShow] = useState([]);
   const [filterAllComponents, setFilterAllComponents] = useState('');
+  const [loading, setLoading] = useState(false);
 
   /* Messages */
   const missing_data_msg = 'נתונים חסרים';
@@ -34,10 +35,14 @@ const ComponentPage = () => {
   const employee_err_msg = 'עובד לא קיים או מספר עובד שגוי';
   const success_msg = `השליחה הצליחה`;
 
+  const navigate = useNavigate();
+
   // useEffect
   useEffect(() => {
     handleFetchAllComponents();
     window.addEventListener('keydown', handleEscKey);                   // Add keydown event listener to listen for Escape key press
+    if (inputValue == '')
+      navigate('/error')
     return () => window.removeEventListener('keydown', handleEscKey);   // Clean up event listener on component unmount
   }, []);
 
@@ -189,7 +194,9 @@ const ComponentPage = () => {
 
   // Submit the report
   const handleSubmitStorageReport = async () => {
-
+    if(loading === true)
+      return;
+    setLoading(true);
     try {
       
       // Check if the employee exists
@@ -222,8 +229,10 @@ const ComponentPage = () => {
   
       // Refresh the components list
       await handleFetchAllComponents();
+      setLoading(false);
     } catch (err) {
       setError(err.message);
+      setLoading(false);
     }
   };
 
@@ -259,6 +268,7 @@ const ComponentPage = () => {
   const handleRemoveFromReport = async (component) => {
     try {
       // Call the function to remove the component from the report
+      console.log(component);
       await handleRemoveComponentFromReport(report_id, component._id, component.stock);
       
       console.log('Component removed successfully.');
@@ -403,20 +413,16 @@ const ComponentPage = () => {
 
       {/* Modal for employee ID input, shown when `isModalOpen` is true */}
       {isModalOpen &&
-        <div className="modal-container">
-          <div className="modal">
-            {/* Close modal button */}
-            <button className="close-btn" onClick={handleCloseCheckEmployeeModal}>✕</button>
-            <h2>{'הקלד מספר עובד'}</h2>
+        <div className="modal-container-send-reporting">
+          <div className="modal-components">
 
-            {/* Input field for entering employee ID */}
-            <div className="form-group">
-              <label>מספר עובד:</label>
-              <input id="sendModalInput" type="Number" value={inputValue} onChange={(e) => setInputValue(e.target.value)}/>
+            <button className="close-btn" onClick={handleCloseCheckEmployeeModal}>✕</button>
+            <h2>{'האם אתה בטוח?'}</h2>
+            <div className='button-container'>
+              <button className="submit-btn btn" onClick={handleSubmitStorageReport}>שלח</button>
+              <button className="cancel-btn btn" onClick={handleCloseCheckEmployeeModal}>ביטול</button>
             </div>
 
-            {/* Submit button for modal */}
-            <button className="submit-btn" onClick={handleSubmitStorageReport}>המשך</button>
           </div>
         </div>
       }
@@ -425,12 +431,7 @@ const ComponentPage = () => {
         <ComponentsModal
           isOpen={isComponentsModalOpen}
           onClose={handleCloseComponentsModal}
-          title="רשימת רכיבים"
-          placeholder="חפש לפי מספר רכיב"
           components={componentsToShow}
-          onFilterChange={(query) => {
-            // Handle filtering logic here, if needed
-          }}
           onRemove={handleRemoveFromReport}
         />
     </div>

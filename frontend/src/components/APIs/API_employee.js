@@ -11,6 +11,10 @@ const isEmployeeExist = async (inputValue) => {
       headers: { 'Content-Type': 'application/json' },  // Set content type to JSON
       body: JSON.stringify({ data: inputValue })  // Pass the input value in the request body
     });
+    
+    if (response.status == '404'){
+      return [false, 'מספר עובד לא קיים'];
+    }
 
     // Check if the response is successful
     if (!response.ok) throw new Error(`Failed to fetch employee data. Status: ${response.status}`);

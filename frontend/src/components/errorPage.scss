@@ -1,0 +1,48 @@
+.error-page-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Full screen height */
+    background-color: #f0f4f7;
+
+    .error-box {
+        text-align: center;
+        background-color: #ffffff;
+        padding: 30px 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      
+        h1 {
+          font-size: 36px;
+          color: #e63946; /* Red color for error */
+          margin-bottom: 15px;
+        }
+      
+        p {
+          font-size: 18px;
+          color: #333;
+          margin-bottom: 20px;
+        }
+      
+        .reconnect-button {
+          padding: 10px 20px;
+          font-size: 16px;
+          font-weight: bold;
+          color: #fff;
+          background-color: #007bff; /* Blue button */
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+          transition: background-color 0.3s;
+      
+          &:hover {
+            background-color: #0056b3; /* Darker blue on hover */
+          }
+      
+          &:active {
+            transform: translateY(2px); /* Button press effect */
+          }
+        }
+    }
+}
+  

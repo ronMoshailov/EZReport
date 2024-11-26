@@ -1,5 +1,5 @@
 /* Fullscreen overlay to dim the background */
-.modal-container {
+.modal-container-operation {
     position: fixed;
     top: 0;
     left: 0;
@@ -10,20 +10,6 @@
     justify-content: center;
     align-items: center;
     z-index: 1000;
-
-    .submit-btn {
-        margin-top: 20px;
-        padding: 10px 20px;
-        border: none;
-        background-color: #007bff;
-        color: white;
-        border-radius: 5px;
-        cursor: pointer;
-
-        &:hover {
-            background-color: #0056b3;
-          }
-    }
 
     .modal {
         background-color: #eaf7fc;
@@ -61,5 +47,26 @@
                 width: 95%;
             }
         }
+
+        .error-message{
+            color:red;
+            font-weight: bold;
+        }
     }
+    
+    .submit-btn {
+        margin-top: 20px;
+        padding: 10px 20px;
+        border: none;
+        background-color: #007bff;
+        color: white;
+        border-radius: 5px;
+        cursor: pointer;
+
+        &:hover {
+            background-color: #0056b3;
+          }
+    }
+
+    
 }

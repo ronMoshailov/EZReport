@@ -8,13 +8,8 @@ const CommentsModal = ({ isOpen, onClose, comments }) => {
   return (
     <div className="modal-container-comments">
       <div className="modal-comments">
-        {/* Close Button */}
-        <button className="close-btn" onClick={onClose}>
-          ✕
-        </button>
-        {/* Modal Title */}
+        <button className="close-btn" onClick={onClose}>✕</button>
         <h2 className="modal-title">הערות</h2>
-        {/* Comments List */}
         {comments && comments.length > 0 ? (
           <ol className="comments-list">
             {comments.map((comment, index) => (

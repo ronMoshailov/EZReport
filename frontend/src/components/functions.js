@@ -5,4 +5,4 @@ const handleEscKey = (event, closeFunction) => {
 };
 
 
-export default { handleEscKey };
+export { handleEscKey };

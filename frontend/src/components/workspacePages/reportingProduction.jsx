@@ -1,23 +1,26 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import './newReportPage.scss'; // Import the styles
 import { useNavigate } from 'react-router-dom';
 import { displayReportComments } from '../APIs/API_report';
-import CommentsModal from '../modals/CommentsModal'; // Import the CommentsModal component
 import { sendProductionReport } from '../APIs/API_report';
+import CommentsModal from '../modals/CommentsModal'; 
+import './reportingProduction.scss'; 
 
 const NewReportPage = () => {
+
   // States
-  const [newCompleted, setNewCompleted] = useState(0);
-  const [comments, setComments] = useState([]); // Store comments as an array
-  const [isCommentsModalOpen, setIsCommentsModalOpen] = useState(false); // State to toggle modal visibility
-  const [newComment, setNewComment] = useState('');
-  const [reportId, setReportId] = useState(0);
-  const [completed, setCompleted] = useState(Number(localStorage.getItem('report_completed')));
-  const [error, setError] = useState('');
-  const [employeeNum, setEmployeeNum] = useState(localStorage.getItem('employee_number') || '');
-  const [reportSerialNum, setReportSerialNum] = useState(localStorage.getItem('report_serialNum') || '');
-  const [reportOrdered, setReportOrdered] = useState(Number(localStorage.getItem('report_ordered') || 0));
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [oldCompleted, setOldCompleted] = useState(Number(localStorage.getItem('report_completed')) || '');     // Holds the old completed quantity
+  const [employeeNum, setEmployeeNum] = useState(localStorage.getItem('employee_number') || '');                // Holds the employee number
+  const [reportSerialNum, setReportSerialNum] = useState(localStorage.getItem('report_serialNum') || '');       // Holds the report serial number
+  const [reportOrdered, setReportOrdered] = useState(Number(localStorage.getItem('report_ordered')) || '');     // Holds the ordered quantity
+  const [reportId, setReportId] = useState(0);                                                                  // Holds the id of the report
+  const [newCompleted, setNewCompleted] = useState(0);                                                          // Holds the new completed quantity
+  const [newComment, setNewComment] = useState('');                                                             // Holds the new comment for this reporting
+  const [comments, setComments] = useState([]);                                                                 // Holds all the comments for the previous workspace
+  const [isCommentsModalOpen, setIsCommentsModalOpen] = useState(false);                                        // Show/Hide the comments from the previous workspace
+  const [error, setError] = useState('');                                                                       // Holds the error message
+  const [isSubmitting, setIsSubmitting] = useState(false);                                                      // Holds the state if the client in the middle of submitting
+
+  const navigate = useNavigate();                         // Router navigation setup
 
   // Get date
   const now = new Date();
@@ -28,8 +31,13 @@ const NewReportPage = () => {
 
   // useEffect
   useEffect(() => {
-    setReportId(localStorage.getItem('report_id') || 0);
-    setCompleted(Number(localStorage.getItem('report_completed') || 0));
+    if (oldCompleted === '' || employeeNum === '' || reportSerialNum === '' || reportOrdered === ''){
+      console.log(oldCompleted);
+      console.log(employeeNum);
+      console.log(reportSerialNum);
+      console.log(reportOrdered);
+      navigate('/error')
+    }
   }, []);
 
   const validateInputs = () => {
@@ -44,8 +52,6 @@ const NewReportPage = () => {
     return true;
   };
 
-  // Router navigation setup
-  const navigate = useNavigate();
 
   // Handle delete
   const handleDelete = () => {
@@ -65,7 +71,7 @@ const NewReportPage = () => {
       }
       setError(''); // Clear previous errors
 
-      if ( Number(newCompleted) + completed > reportOrdered ) {
+      if ( Number(newCompleted) + oldCompleted > reportOrdered ) {
         alert('הכמות שהוכנסה גבוהה ממה שהוזמן');
         return;
       }
@@ -73,8 +79,8 @@ const NewReportPage = () => {
       const answer = await sendProductionReport(reportId, employeeNum, Number(newCompleted), newComment)
       console.log(`answer: ${answer}`);
       if (answer){
-        setCompleted(completed + Number(newCompleted));
-        localStorage.setItem('report_completed', completed + Number(newCompleted));
+        setOldCompleted(oldCompleted + Number(newCompleted));
+        localStorage.setItem('report_completed', oldCompleted + Number(newCompleted));
         // setNewCompleted(completed + Number(newCompleted));
         setError('');
         return;
@@ -124,7 +130,7 @@ const NewReportPage = () => {
 
           <div className="form-group">
             <label>תקינים</label>
-            <input type="text" placeholder="תקינים" value={completed} disabled />
+            <input type="text" placeholder="תקינים" value={oldCompleted} disabled />
           </div>
 
           <div className="form-group">

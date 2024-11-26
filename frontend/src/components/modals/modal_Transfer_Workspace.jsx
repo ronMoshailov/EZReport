@@ -5,12 +5,12 @@ import { isEmployeeExist } from '../APIs/API_employee';
 import { getLastTransferDetail, makeReceivedWorkspace, makeSendWorkspace } from '../APIs/API_workspace';
 
 const Modal_Transfer_Workspace = ({ onClose, selectedReport, isReceived, onSuccess }) => {
+  
   /* States */
   const [employeeNumber, setEmployeeNumber] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  /* Functions */
   // Validate employee existence and perform send/receive action
   const handleSubmit = async () => {
     setError('');

@@ -1,0 +1,357 @@
+
+.component-page{
+  display: flex;
+  padding: 20px;
+  background-color: #f0f4f7;
+
+  .left-panel {
+    flex: 1;
+    margin-right: 20px;
+    margin-left: 20px;
+
+    h2 {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    ul {
+      max-height: 88vh; /* Adjust the height as desired */
+      overflow-y: auto; /* Enables vertical scrolling */
+      padding: 0;
+      list-style: none;
+      margin: 0;
+
+      .filter-input {
+        width: 90%; /* Adjust width to fit within the modal */
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        text-align: right;
+      }
+      
+      li {
+        padding: 10px;
+        background-color: #fff;
+        margin-bottom: 8px;
+        border-radius: 4px;
+        text-align: right; 
+      }
+
+      .component-item {
+        position: relative;  // Enables positioning for the "X" button
+      
+        .remove-button {
+          position: absolute;
+          top: 5px;
+          left: 5px;
+          background: none;
+          border: solid 1px red;
+          color: red;
+          font-size: 16px;
+          cursor: pointer;
+          border-radius: 30px;
+          font-weight: bold;
+      
+          &:hover {
+            color: darkred;
+          }
+        }
+      }
+    }
+  }
+
+  .right-panel {
+    flex: 1;
+  
+    .add_component_container{
+      margin-right: 20px;
+
+      h2 {
+        font-size: 24px;
+        margin-bottom: 10px;
+      }
+    }
+
+    .input-group {
+      margin-bottom: 10px;
+  
+      .comment-textarea {
+        width: 100%;         // Full width of the container
+        resize: none;        // Prevents resizing by the user (optional)
+        border-radius: 4px;
+        line-height: 1.5;    // Adjusts line height
+        overflow-y: auto;    // Adds a scrollbar if the text exceeds 2 lines
+        direction: rtl;
+        border: 1px solid #ccc;
+        max-width: 98%;
+        padding: 8px;
+        font-size: 14px;
+      }
+  
+      label {
+        display: block;
+        font-size: 16px;
+        margin-bottom: 5px; 
+        direction: rtl;
+      }
+  
+      input {
+        width: 100%;
+        padding: 8px;
+        font-size: 14px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        max-width: 98%;
+      }
+  
+    }
+
+    #storange_buttons_container{
+      display: flex;
+      justify-content: space-evenly;
+  
+      .storage_button {
+        display: inline-block;
+        padding: 10px 20px;
+        margin: 10px 5px;
+        font-size: 16px;
+        font-weight: bold;
+        text-align: center;
+        color: #fff;
+        background-color: #007BFF; // Blue color for primary action
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+      }
+      
+      .storage_button:hover {
+        background-color: #0056b3; // Darker blue on hover
+      }
+      
+      .storage_button:active {
+        background-color: #004494; // Even darker blue on click
+        transform: translateY(2px); // Gives a slight "pressed" effect
+      }
+      
+      .storage_button:last-of-type {
+        background-color: #28A745; // Green color for "הוסף דיווח"
+      }
+      
+      .storage_button:last-of-type:hover {
+        background-color: #218838; // Darker green on hover
+      }
+      
+      .storage_button:last-of-type:active {
+        background-color: #1E7E34; // Even darker green on click
+      }  
+    }
+    .error {
+      color: red;
+      margin-top: 10px;
+      text-align: center;
+    }
+    
+    .success {
+      color: rgb(0, 218, 0);
+      margin-top: 10px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .all_components {
+      display: flex;
+      flex-direction: column;
+      height: calc(56vh); // Full page height minus any offsets (adjust as needed)
+      margin-right: 20px;
+      overflow: hidden; // Ensures content doesn’t overflow
+    
+      h2 {
+        font-size: 24px;
+        margin-bottom: 10px;
+      }
+    
+      ul {
+        flex: 1;             // Allows ul to grow and fill remaining space
+        overflow-y: auto;    // Enables vertical scrolling for overflow content
+        padding: 0;
+        list-style: none;
+        margin: 0;
+
+        li {
+          padding: 10px;
+          background-color: #fff;
+          margin-bottom: 8px;
+          border-radius: 4px;
+          text-align: right;
+          }
+      }
+    }
+  }
+
+  // General css of the page
+  .search-bar {
+    width: 100%;
+    padding: 10px 15px;    /* Adds padding for a comfortable click area */
+    margin: 10px 0;        /* Adds some vertical space */
+    font-size: 16px;       /* Sets a readable font size */
+    color: #333;           /* Text color */
+    border-radius: 30px;    /* Smooth rounded corners */
+    box-sizing: border-box; /* Prevents padding from affecting width */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transition */
+  
+    /* Placeholder styling */
+    &::placeholder {
+      color: #999;          /* Soft grey placeholder text */
+      font-style: italic;   /* Italicized placeholder for emphasis */
+    }
+  
+    /* Focus effect */
+    &:focus {
+      outline: none;        /* Removes default outline */
+      border-color: #4a90e2; /* Highlights border */
+      box-shadow: 0 0 5px rgba(74, 144, 226, 0.5); /* Soft blue shadow */
+    }
+  } 
+  
+  .close-btn {
+    float: left;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #ff0000;
+  }
+
+  .close-btn:hover {
+    color: #000; /* Darkens color on hover for better feedback */
+  }
+  
+  // Component modal
+  .modal-container-send-reporting {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  
+  
+  .modal-components {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    width: 400px;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+    text-align: right;
+    direction: rtl; /* Support for RTL languages */
+      
+    h2 {
+      margin: 0 0 15px;
+      font-size: 22px;
+      font-weight: bold;
+      color: #333;
+      border-bottom: solid 1px;
+    }
+
+    ul {
+      list-style: none; /* Removes default bullet points */
+      padding: 0;
+      margin: 0;
+
+      li {
+        margin-bottom: 15px; /* Adds spacing between list items */
+        font-size: 16px;
+        color: #444;
+        position: relative;
+        padding: 10px;
+        border-bottom: 1px solid #ccc;
+
+        .remove-btn {
+          position: absolute;
+          left: 10px;
+          top: 10px;
+          background: #ff4d4f;
+          color: #fff;
+          border: none;
+          border-radius: 50%;
+          width: 25px;
+          height: 25px;
+          cursor: pointer;
+          font-size: 14px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+    
+        .remove-btn:hover {
+          background: #e63946;
+        }
+        }
+
+      }
+
+      .button-container{
+        display: flex;
+        .btn{
+          color: #fff;
+          border: none;
+          border-radius: 10px;
+          padding: 10px 20px;
+          font-size: 16px;
+          font-weight: bold;
+          cursor: pointer; 
+          margin: 10px 5px; 
+          transition: background-color 0.3s ease, transform 0.2s ease; 
+          width: 50%;
+
+        }
+        .submit-btn{
+          background-color: #4caf50;
+          &:hover {
+            background-color: #3e8e41; 
+          }
+    
+          &:active {
+            transform: translateY(2px); 
+          }
+    
+          &:disabled {
+            background-color: #ccc; 
+            cursor: not-allowed; 
+          }
+
+        }
+        .cancel-btn{
+          background-color: red;
+          &:hover {
+            background-color: #9e2424; 
+          }
+    
+          &:active {
+            transform: translateY(2px); 
+          }
+    
+          &:disabled {
+            background-color: #ccc; 
+            cursor: not-allowed; 
+          }
+
+        }
+      }
+    }
+
+
+  }
+}
+  
+
+  
