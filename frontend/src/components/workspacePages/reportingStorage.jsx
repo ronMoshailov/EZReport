@@ -378,9 +378,10 @@ const ComponentPage = () => {
 
           {/* Buttons for adding component and submitting report */}
           <div id='storange_buttons_container'>
-            <button className='storage_button' onClick={handleAddComponent}>הוסף רכיב</button>
-            <button className='storage_button' onClick={handleSendReport}>שלח דיווח</button>
-            <button className='storage_button' onClick={() => showReportComponents(report_id)}>הצג רכיבים בהזמנה</button>
+            <button className='addComponent-btn btn' onClick={handleAddComponent}>הוסף רכיב</button>
+            <button className='btn send-btn' onClick={handleSendReport}>שלח דיווח</button>
+            <button className='showComponents-btn btn' onClick={() => showReportComponents(report_id)}>הצג רכיבים בהזמנה</button>
+            <button className='btn cancel-btn' onClick={() => navigate('/dashboard')}>חזור</button>
           </div>
           {/* Display error and success messages if present */}
           {error && <p className="error">{error}</p>}

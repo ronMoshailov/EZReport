@@ -62,9 +62,9 @@ const OperationModal = ({ onClose, report_id, report_serialNum, report_completed
             localStorage.setItem('report_serialNum', report_serialNum);                     // Save the report serial number in localStorage
             localStorage.setItem('report_completed', report_completed);                     // Save the completed quantity in localStorage
             localStorage.setItem('report_ordered', report_ordered);                         // Save the ordered quantity in localStorage
-            navigate('/new-report-page');                                                   // Go to the production page
+            navigate('/ReportingProduction');                                                   // Go to the production page
         } else if(selectedOption === 'new-report' && workspace === 'Storage'){              // If thr Storage wants to make new reporting
-            navigate('/newStorageReport', { state: { report_id: report_id } });             // Go to the storage page
+            navigate('/ReportingStorage', { state: { report_id: report_id } });             // Go to the storage page
         }
         else {
             setErrorMessage('סוג הפעולה לא נבחרה.');

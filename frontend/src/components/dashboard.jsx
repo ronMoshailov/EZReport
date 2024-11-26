@@ -36,10 +36,10 @@ const Dashboard = ({isQueue}) => {
       localStorage.removeItem('employee_number');                           // Clean the local storage
       localStorage.removeItem('report_id');                                 // Clean the local storage
       localStorage.removeItem('report_completed');                          // Clean the local storage
-      if(workspace == null)
+      if(workspace == null){
         console.log('The data was missing.');
         navigate('/error');
-      // return () => window.removeEventListener('keydown', addEscListener);   // Clean up event listener on component unmount
+      }
     }, []);
 
     /* Data used in program */
