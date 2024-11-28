@@ -36,30 +36,7 @@
         border-bottom: 2px solid;
       }
 
-      .search-bar {
-        width: 100%;
-        max-width: 400px;
-        padding: 10px 15px;    /* Adds padding for a comfortable click area */
-        margin: 10px 0;        /* Adds some vertical space */
-        font-size: 16px;       /* Sets a readable font size */
-        color: #333;           /* Text color */
-        border-radius: 30px;    /* Smooth rounded corners */
-        box-sizing: border-box; /* Prevents padding from affecting width */
-        transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transition */
-      
-        /* Placeholder styling */
-        &::placeholder {
-          color: #999;          /* Soft grey placeholder text */
-          font-style: italic;   /* Italicized placeholder for emphasis */
-        }
-      
-        /* Focus effect */
-        &:focus {
-          outline: none;        /* Removes default outline */
-          border-color: #4a90e2; /* Highlights border */
-          box-shadow: 0 0 5px rgba(74, 144, 226, 0.5); /* Soft blue shadow */
-        }
-      }  
+
     }
   }
 }

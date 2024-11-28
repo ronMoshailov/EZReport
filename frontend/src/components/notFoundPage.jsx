@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './notFoundPage.scss'; 
 
@@ -8,6 +8,10 @@ const NotFoundPage = () => {
   const handleGoHome = () => {
     navigate('/'); 
   };
+
+  useEffect(() => {
+    localStorage.clear();
+  }, []);
 
   return (
     <div className="not-found-page">

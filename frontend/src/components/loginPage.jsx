@@ -11,12 +11,13 @@ const LoginPage = () => {
     const [workspace, setWorkspace] = useState('');         // Holds the workspace
 
     useEffect(() => {
-        localStorage.removeItem('employee_number');         // Clean the local storage
-        localStorage.removeItem('workspace');               // Clean the local storage
-        localStorage.removeItem('report_id');               // Clean the local storage
-        localStorage.removeItem('report_completed');        // Clean the local storage
-        localStorage.removeItem('report_serialNum');        // Clean the local storage
-        localStorage.removeItem('report_ordered');          // Clean the local storage
+        // localStorage.removeItem('employee_number');         // Clean the local storage
+        // localStorage.removeItem('workspace');               // Clean the local storage
+        // localStorage.removeItem('report_id');               // Clean the local storage
+        // localStorage.removeItem('report_completed');        // Clean the local storage
+        // localStorage.removeItem('report_serialNum');        // Clean the local storage
+        // localStorage.removeItem('report_ordered');          // Clean the local storage
+        localStorage.clear();
       }, []);
 
     const navigate = useNavigate();                         // Router navigation setup
@@ -72,7 +73,7 @@ const LoginPage = () => {
                   {loading ? 'המתן' : 'המשך'} 
                 </button>
                 {errorMessage &&                                    // Error message
-                <p className="error-message">
+                <p className="errorMessage">
                     {errorMessage}
                 </p>
                 }

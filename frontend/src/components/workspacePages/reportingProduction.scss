@@ -51,56 +51,5 @@
       }
     }
   
-    .buttons-container {
-      margin-top: 30px;
-      display: flex;
-      justify-content: space-between; // Align the buttons to opposite corners
-  
-      button {
-        padding: 10px 20px;
-        font-size: 16px;
-        font-weight: bold;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-  
-        &:hover {
-          opacity: 0.9;
-        }
-  
-        &:active {
-          transform: translateY(2px); // Add a pressed effect
-        }
-      }
-  
-      .delete-button {
-        background-color: #e63946; // Red color for delete
-        color: #fff;
-  
-        &:hover {
-          background-color: #c62d3a;
-        }
-      }
-  
-      .submit-button {
-        background-color: #4caf50; // Green color for submit
-        color: #fff;
-  
-        &:hover {
-          background-color: #3e8e41;
-        }
-      }
 
-      .comment-button {
-        background-color: #b921ff; // Green color for submit
-        color: #fff;
-  
-        &:hover {
-          background-color: #7600ad;
-        }
-      }
-
-    }
-  }
-  
+}

@@ -115,7 +115,6 @@ const handleAddComponentsToReport = async ({ employee_id, report_id, components_
     }
 
     // Step 4: Add comment to the report
-    report.lastComment = comment;
     report.report_storage_list.push(newReportStorage._id); // Add directly instead of `findByIdAndUpdate`
     await report.save({ session });
 

@@ -1,15 +1,14 @@
 /* Sidebar styles */
 .sidebar {
-    width: 200px;
-    background-color: #eaf7fc;
-    padding: 20px;
-    position: relative;  /* Fix the sidebar in place */
-    right: 0;  /* Position the sidebar to the right */
-    top: 0;
-    height: 100vh;  /* Full height */
-    box-shadow: -5px 0 5px rgba(0, 0, 0, 0.1);
-  }
-  
+  width: 200px;
+  background-color: #eaf7fc;
+  padding: 20px;
+  position: relative;  /* Fix the sidebar in place */
+  right: 0;  /* Position the sidebar to the right */
+  top: 0;
+  height: 100vh;  /* Full height */
+  box-shadow: -5px 0 5px rgba(0, 0, 0, 0.1);
+
   .sidebar-content {
     display: flex;
     flex-direction: column;
@@ -19,21 +18,22 @@
     align-content: space-around;
     flex-wrap: wrap;
     align-items: center;
+
+    #slider_logo{
+      width: -webkit-fill-available;
+    }
+
+    a {
+      font-size: 18px;
+      margin: 15px 0;
+      text-decoration: none;
+      color: #333;
+
+      &:hover {
+        background-color: #dceeff;
+        padding: 5px 10px;
+        border-radius: 5px;
+      }
+    }
   }
-  
-  .sidebar-content a {
-    font-size: 18px;
-    margin: 15px 0;
-    text-decoration: none;
-    color: #333;
-  }
-  
-  .sidebar-content a:hover {
-    background-color: #dceeff;
-    padding: 5px 10px;
-    border-radius: 5px;
-  }
-  
-  #slider_logo{
-    width: -webkit-fill-available;
-  }
+}

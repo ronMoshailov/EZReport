@@ -30,18 +30,13 @@
     // }
     }
 
-    label , .error-message{
+    label{
       display: block;
       margin-bottom: 5px;
       font-size: 14px;
       text-align: right;
     }
     
-    .error-message{
-      text-align: center;
-      color: red;
-      font-weight: bold;
-    }
     #login_input{
       width: 100%;
       padding: 10px;

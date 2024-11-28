@@ -32,40 +32,38 @@
 
     #sendIcon {
         display: flex;
-        justify-content: center; /* Center the icon horizontally */
-        align-items: center;  /* Center the icon vertically */
-        width: 40px;  /* Adjust the width */
-        height: 40px; /* Make height equal for a square button */
-        background-color: #007bff;  /* Primary blue color */
-        border: none;  /* Remove default button border */
-        border-radius: 50%;  /* Round button */
-        color: white;  /* Icon color */
-        font-size: 25px;  /* Increase icon size */
-        cursor: pointer;  /* Show pointer on hover */
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);  /* Add shadow for depth */
-        transition: background-color 0.3s ease, transform 0.2s ease;  /* Smooth transitions */
+        justify-content: center;
+        align-items: center;
+        width: 40px;
+        height: 40px;
+        background-color: #007bff;
+        border: none;
+        border-radius: 50%;
+        color: white;
+        font-size: 25px;
+        cursor: pointer;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: background-color 0.3s ease, transform 0.2s ease;
         margin-right: auto;
     }
     
     #sendIcon:hover {
-        background-color: #0056b3;  /* Darker blue on hover */
+        background-color: #0056b3;
     }
     
     #sendIcon:active {
-        background-color: #004494;  /* Even darker blue when active (clicked) */
-        transform: translateY(1px);  /* Move down slightly on click */
+        background-color: #004494;
+        transform: translateY(1px);
     }
 
-}
+    &:hover {
+        transform: translateY(-5px);
+    }
 
-.card:hover {
-    transform: translateY(-5px);
+    h3 {
+        font-size: 20px;
+        margin-bottom: 10px;
+        color: #333;
+    }
 }
-
-.card h3 {
-    font-size: 20px;
-    margin-bottom: 10px;
-    color: #333;
-}
-
 

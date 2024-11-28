@@ -110,74 +110,6 @@
     #storange_buttons_container{
       display: flex;
       justify-content: space-evenly;
-      
-      .btn{
-        display: inline-block;
-        padding: 10px 20px;
-        margin: 10px 5px;
-        font-size: 16px;
-        font-weight: bold;
-        text-align: center;
-        color: #fff;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s ease, transform 0.2s ease;
-        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-      }
-      
-      .cancel-btn{
-        background-color: #ff0000; // Blue color for primary action
-      }
-      .cancel-btn:hover{
-        background-color: #b60000; // Blue color for primary action
-      }
-      .cancel-btn:active{
-        background-color: #ff3f3f; // Blue color for primary action
-      }
-      
-      .send-btn{
-        background-color: rgb(34, 206, 34); // Blue color for primary action
-      }
-      .send-btn:hover{
-        background-color: rgb(0, 143, 0); // Blue color for primary action
-      }
-      .send-btn:active{
-        background-color: rgb(0, 223, 0); // Blue color for primary action
-      }
-
-      .showComponents-btn{
-        background-color: #0400ff; // Blue color for primary action
-      }
-      .showComponents-btn:hover{
-        background-color: #0003b6; // Blue color for primary action
-      }
-      .showComponents-btn:active{
-        background-color: #3f42ff; // Blue color for primary action
-      }
-
-      .addComponent-btn{
-        background-color: #ff9900; // Blue color for primary action
-      }
-      .addComponent-btn:hover{
-        background-color: #b68600; // Blue color for primary action
-      }
-      .addComponent-btn:active{
-        background-color: #ffac3f; // Blue color for primary action
-      }
-
-    }
-    .error {
-      color: red;
-      margin-top: 10px;
-      text-align: center;
-    }
-    
-    .success {
-      color: rgb(0, 218, 0);
-      margin-top: 10px;
-      text-align: center;
-      font-weight: bold;
     }
 
     .all_components {
@@ -211,43 +143,8 @@
   }
 
   // General css of the page
-  .search-bar {
-    width: 100%;
-    padding: 10px 15px;    /* Adds padding for a comfortable click area */
-    margin: 10px 0;        /* Adds some vertical space */
-    font-size: 16px;       /* Sets a readable font size */
-    color: #333;           /* Text color */
-    border-radius: 30px;    /* Smooth rounded corners */
-    box-sizing: border-box; /* Prevents padding from affecting width */
-    transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transition */
-  
-    /* Placeholder styling */
-    &::placeholder {
-      color: #999;          /* Soft grey placeholder text */
-      font-style: italic;   /* Italicized placeholder for emphasis */
-    }
-  
-    /* Focus effect */
-    &:focus {
-      outline: none;        /* Removes default outline */
-      border-color: #4a90e2; /* Highlights border */
-      box-shadow: 0 0 5px rgba(74, 144, 226, 0.5); /* Soft blue shadow */
-    }
-  } 
-  
-  .close-btn {
-    float: left;
-    background: none;
-    border: none;
-    font-size: 20px;
-    cursor: pointer;
-    color: #ff0000;
-  }
 
-  .close-btn:hover {
-    color: #000; /* Darkens color on hover for better feedback */
-  }
-  
+
   // Component modal
   .modal-container-send-reporting {
     position: fixed;

@@ -3,10 +3,6 @@ const { STATUS, STATIONS } = require('./enums');
 
 // Define the Report schema
 const reportSchema = new mongoose.Schema({
-    // id: {
-    //     type: String,
-    //     required: true
-    // },
     serialNumber: {
         type: String,
         required: true
@@ -40,10 +36,6 @@ const reportSchema = new mongoose.Schema({
         ref: 'ReportProduction', // Refers to the ReportProduction model
         default: [] // Initialize as an empty array by default
     }],
-    // product_name: {
-    //     type: String,
-    //     required: true
-    // },
     completed: {
         type: Number,
         default: 0
@@ -52,10 +44,6 @@ const reportSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    // mini_report_list: [{
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: 'MiniReport'  // Refers to the MiniReport model
-    // }],
     report_storage_list: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'ReportStorage'  // Refers to the MiniReport model
@@ -71,17 +59,10 @@ const reportSchema = new mongoose.Schema({
     closeDate: {
         type: Date
     },
-    // activity: {
-    //     type: Array,
-    //     default: []  // Placeholder for future activities array
-    // },
     enable: {
         type: Boolean,
         default: true
     },
-    lastComment: {
-        type: String,
-    }
 });
 
 // Create and export the Report model

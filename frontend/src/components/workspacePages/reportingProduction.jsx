@@ -168,13 +168,13 @@ const NewReportPage = () => {
 
       {/* Action Buttons */}
       <div className="buttons-container">
-        <button className="delete-button" onClick={handleDelete}>
+        <button className="btn cancel-btn" onClick={handleDelete}>
           מחק
         </button>
-        <button className="comment-button" onClick={handleShowComments}>
+        <button className="btn showComment-btn" onClick={handleShowComments}>
           הצג הערות
         </button>
-        <button className="submit-button" onClick={handleSubmit} disabled={isSubmitting}>
+        <button className="btn send-btn" onClick={handleSubmit} disabled={isSubmitting}>
           {isSubmitting ? 'שולח...' : 'שלח'}
         </button>
       </div>

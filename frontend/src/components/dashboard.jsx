@@ -126,11 +126,9 @@ const Dashboard = ({isQueue}) => {
         </div>
       </div>
       
-      <div className="sidebar">                                         {/* Sidebar component for additional navigation options */}
         <Slidebar 
           setIsReceived={setIsReceived}                                 // Pass setIsReceived function to Slidebar
         />
-      </div>
 
       {/* Modal for report details, only visible when isOperationModal and not in queue */}
       {isOperationModal && !isQueue && 

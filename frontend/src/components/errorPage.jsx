@@ -8,7 +8,8 @@ const ErrorPage = () => {
   const handleReconnect = () => {
     navigate('/'); // Redirects to the login page at '/'
   };
-
+  localStorage.clear();
+  
   return (
     <div className="error-page-container">
       <div className="error-box">

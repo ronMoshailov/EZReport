@@ -21,19 +21,7 @@
       text-align: right; // Support for RTL content
       direction: rtl;
   
-      .close-btn {
-        top: 15px;
-        left: 15px;
-        background: none;
-        border: none;
-        font-size: 24px;
-        cursor: pointer;
-        color: #ff0000;
-  
-        &:hover {
-          color: #990000;
-        }
-      }
+
 
       h2 {
         margin: 0 0 15px;
@@ -43,20 +31,7 @@
         border-bottom: 1px solid #ccc;
         padding-bottom: 10px;
       }
-  
-      .filter-input {
-        width: 94%;
-        padding: 10px;
-        margin-bottom: 20px;
-        font-size: 16px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-  
-        &:focus {
-          border-color: #4caf50; // Green outline when focused
-          outline: none;
-        }
-      }
+
   
       ul {
         list-style: none; // Removes bullet points

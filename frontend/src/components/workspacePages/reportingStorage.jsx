@@ -322,7 +322,7 @@ const ComponentPage = () => {
           placeholder="חפש רכיב לפי שם או מספר..."
           value={filterQuery}
           onChange={(e) => setFilterQuery(e.target.value)} // Update filter query state
-          className="search-bar"
+          className="search-bar noMaxWidth"
         />
 
           {/* Render each selected component in a list item */}
@@ -377,15 +377,15 @@ const ComponentPage = () => {
           </div>
 
           {/* Buttons for adding component and submitting report */}
-          <div id='storange_buttons_container'>
+          <div className='buttons-container'>
             <button className='addComponent-btn btn' onClick={handleAddComponent}>הוסף רכיב</button>
             <button className='btn send-btn' onClick={handleSendReport}>שלח דיווח</button>
             <button className='showComponents-btn btn' onClick={() => showReportComponents(report_id)}>הצג רכיבים בהזמנה</button>
             <button className='btn cancel-btn' onClick={() => navigate('/dashboard')}>חזור</button>
           </div>
           {/* Display error and success messages if present */}
-          {error && <p className="error">{error}</p>}
-          {success && <p className="success">{success}</p>}
+          {error && <p className="errorMessage">{error}</p>}
+          {success && <p className="successMessage">{success}</p>}
         </div>
 
         {/* Section displaying all available components */}
@@ -397,7 +397,7 @@ const ComponentPage = () => {
             placeholder="חפש לפי מספר רכיב..." 
             value={filterAllComponents} // Use the filter state here
             onChange={(e) => setFilterAllComponents(e.target.value)} // Update state on input change
-            className="search-bar"
+            className="search-bar noMaxWidth"
           />
           <ul>
             {/* Render each available component in a list item */}
@@ -420,8 +420,8 @@ const ComponentPage = () => {
             <button className="close-btn" onClick={handleCloseCheckEmployeeModal}>✕</button>
             <h2>{'האם אתה בטוח?'}</h2>
             <div className='button-container'>
-              <button className="submit-btn btn" onClick={handleSubmitStorageReport}>שלח</button>
               <button className="cancel-btn btn" onClick={handleCloseCheckEmployeeModal}>ביטול</button>
+              <button className="submit-btn btn" onClick={handleSubmitStorageReport}>שלח</button>
             </div>
 
           </div>

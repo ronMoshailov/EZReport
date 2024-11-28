@@ -24,7 +24,7 @@ const ComponentsModal = ({ isOpen, onClose, components = [], onRemove }) => {
           placeholder='חפש לפי מספר רכיב'
           onChange={(e) => setFilterText(e.target.value)}
           value={filterText}
-          className="filter-input"
+          className="search-bar"
         />
 
         {/* Components List */}
