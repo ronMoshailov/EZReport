@@ -1,4 +1,4 @@
-const ReportProduction = require('../model/ReportProduction'); // Replace with the correct path to the Report model
+const ReportProduction = require('../model/ReportingProduction'); // Replace with the correct path to the Report model
 const Report = require('../model/Report'); // Replace with the correct path to the Report model
 const mongoose = require('mongoose'); // Import mongoose for sessions
 const { findEmployeeById } = require('./employeeLib');
@@ -13,19 +13,15 @@ const { findEmployeeById } = require('./employeeLib');
  */
 const createProdReport = async (report_id, employee_id, completedCount, comment) => {
   const session = await mongoose.startSession(); // Start a session for the transaction
-console.log(1);
+
   try { 
         session.startTransaction(); // Begin the transaction
 
         const date = new Date();
-        console.log(2);
 
         employee_id = await findEmployeeById(employee_id);
         employee_id = employee_id._id;
-        console.log('employee_id');
-        console.log(employee_id);
         
-        console.log(3);
         // Create the new reportProduction document
         const newReportProduction = new ReportProduction({
         report_id,
@@ -47,15 +43,15 @@ console.log(1);
           report.report_production_list = []; // Initialize as an empty array if undefined
         }
 
-        if (report.completed + completedCount > report.ordered){
+        if (report.producedCount + completedCount > report.orderedCount){
           console.log(`The total amount is greater than the ordered amount.`);
           throw new Error(`The total amount is greater than the ordered amount.`);
         }
-        report.report_production_list.push(savedReportProduction._id); // Add directly instead of `findByIdAndUpdate`
-        report.completed += completedCount;
+        report.reportingProduction_list.push(savedReportProduction._id); // Add directly instead of `findByIdAndUpdate`
+        report.producedCount += completedCount;
         report.markModified('report_production_list'); // Ensure Mongoose detects the change
         await report.save({ session }); // Save the updated report with the session
-        
+
         // Commit the transaction
         await session.commitTransaction();
         session.endSession();

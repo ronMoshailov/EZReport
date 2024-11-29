@@ -14,6 +14,5 @@ const findWorkspaceByNumber = async (workspaceNumber) => {
     return await Workspace.findOne({ workspace_number: workspaceNumber });
   };
   
-
   module.exports = { findWorkspaceByNumber };
   

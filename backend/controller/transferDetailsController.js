@@ -8,13 +8,9 @@ const { createNewTransition, createTransition } = require('../libs/transferDetai
 const sendWorkspace = async (req, res) => {
   const { send_worker_id, send_workspace, isReceived } = req.body;
 
-  console.log(`Starting server send data. Received data: [send_worker_id: ${send_worker_id}, send_workspace: ${send_workspace}]`);
-
   try {
     // Call the lib to create a new transition
     const newTransition = await createTransition({ send_worker_id, send_workspace, isReceived });
-
-    console.log('New transition created:', newTransition);
 
     res.status(200).json({
       message: 'Transition added to report transferDetails successfully',

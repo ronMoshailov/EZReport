@@ -8,8 +8,7 @@ const { createProdReport } = require('../libs/ReportProduction'); // Adjust the 
 const createProductionReport = async (req, res) => {
   try {
     const { report_id, employee_id, completedCount, comment } = req.body;
-    console.log(`createProductionReport: [report_id: ${report_id}, employee_id: ${employee_id}, completedCount: ${completedCount}, comment: ${comment}]`);
-    
+
     // Validate required fields
     if (!report_id || !employee_id || !completedCount) {
       return res.status(400).json({ message: 'Missing required fields: report_id, employee_id, or completedCount' });

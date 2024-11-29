@@ -8,7 +8,6 @@ const isEmployeeExist = async (req, res) => {
       return res.status(404).json({ exist: false });
     }
 
-    console.log(employee);
     return res.status(200).json({ exist: true, employee });
   } catch (err) {
     res.status(500).json({ message: 'Internal server error' });

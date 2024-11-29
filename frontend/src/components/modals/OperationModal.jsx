@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';  // Import useNavigate for navig
 import { isEmployeeExist } from '../APIs/API_employee';
 import { handleEscKey } from '../functions';
 
-const OperationModal = ({ onClose, report_id, report_serialNum, report_completed, report_ordered, workspace, setIsOperationModal }) => {
+const OperationModal = ({ onClose, report_id, report_serialNum, report_packedCount, report_producedCount, report_orderedCount, workspace, setIsOperationModal }) => {
 
     /* States */
     const [selectedOption, setSelectedOption] = useState('');                                           // Holds the selected option
@@ -41,7 +41,6 @@ const OperationModal = ({ onClose, report_id, report_serialNum, report_completed
         
         try{
             const data = await isEmployeeExist(employee);                                   // Call API to check if employee exist
-            console.log(data);
             if (data.exist) {                                                               // If exist
                 setLoading(false);                                                          // Stop the loading
                 localStorage.setItem('employee_number', data.employee.number_employee);     // Save the employee number in localStorage 
@@ -60,11 +59,16 @@ const OperationModal = ({ onClose, report_id, report_serialNum, report_completed
         localStorage.setItem('report_id', report_id);                                       // Save the report id in localStorage 
         if (selectedOption === 'new-report' && workspace === 'Production') {                // If thr production wants to make new reporting
             localStorage.setItem('report_serialNum', report_serialNum);                     // Save the report serial number in localStorage
-            localStorage.setItem('report_completed', report_completed);                     // Save the completed quantity in localStorage
-            localStorage.setItem('report_ordered', report_ordered);                         // Save the ordered quantity in localStorage
-            navigate('/ReportingProduction');                                                   // Go to the production page
+            localStorage.setItem('report_producedCount', report_producedCount);             // Save the completed quantity in localStorage
+            localStorage.setItem('report_orderedCount', report_orderedCount);               // Save the ordered quantity in localStorage
+            navigate('/ReportingProduction');                                               // Go to the production page
         } else if(selectedOption === 'new-report' && workspace === 'Storage'){              // If thr Storage wants to make new reporting
             navigate('/ReportingStorage', { state: { report_id: report_id } });             // Go to the storage page
+        } else if(selectedOption === 'new-report' && workspace === 'Packing'){
+            localStorage.setItem('report_serialNum', report_serialNum);                     // Save the report serial number in localStorage
+            localStorage.setItem('report_packedCount', report_packedCount);                 // Save the completed quantity in localStorage
+            localStorage.setItem('report_orderedCount', report_orderedCount);               // Save the ordered quantity in localStorage
+            navigate('/ReportingPacking');                                                  // Go to the production page
         }
         else {
             setErrorMessage('סוג הפעולה לא נבחרה.');

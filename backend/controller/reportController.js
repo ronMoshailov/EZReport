@@ -13,7 +13,6 @@ const { fetchReportStorageList, fetchCommentsFromReportStorage } = require('../l
  */
 const getAllReports = async (req, res) => {
   const { workspace, isQueue } = req.body;
-  console.log(`Data received in 'getAllReports': workspace=${workspace}, isQueue=${isQueue}`);
 
   try {
     // Use the library function to fetch reports
@@ -28,7 +27,7 @@ const getAllReports = async (req, res) => {
 // Storage
 const removeComponentAndReturnToStock = async (req, res) => {
   const { report_id, component_id, stock } = req.body;                                                                                                      // Extract input data
-  console.log(`The data received in 'removeComponentAndReturnToStock' is: [report_id: ${report_id}, component_id: ${component_id}, stock: ${stock}]`);      // Log
+
   try {
     await removeComponentAndUpdateStock(report_id, component_id, stock);                                        // Call the lib function to perform the operation
 
@@ -43,10 +42,11 @@ const removeComponentAndReturnToStock = async (req, res) => {
 
 const addComponentsToReport = async (req, res) => {
   const { employee_id, report_id, components_list, comment } = req.body;
-  console.log(`Receieve data: [employee_id: ${employee_id}, report_id: ${report_id}, comment: ${comment}]`)
-  try {
-    const result = await handleAddComponentsToReport({ employee_id, report_id, components_list, comment });
 
+  try {
+
+    const result = await handleAddComponentsToReport({ employee_id, report_id, components_list, comment });
+    
     res.status(200).json(result);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -100,10 +100,6 @@ const processWorkspaceTransfer = async (req, res) => {
     // Step 2: Update the report with the new transition and workspace
     await updateReportWorkspace(report_id, newTransfer._id, session);
 
-    console.log('Start toggle enable');
-    // Step 3: Optionally toggle the enable field of the report
-    // await toggleEnable(report_id, session);
-
     // Commit the transaction
     await session.commitTransaction();
     session.endSession();
@@ -131,8 +127,6 @@ const getLastTransferDetail = async (req, res) => {
   const { report_id } = req.params;
 
   try {
-    // Log raw request
-    console.log('Received GET request with params:', req.params);
 
     // Fetch report from the database
     const report = await Report.findOne(
@@ -140,16 +134,11 @@ const getLastTransferDetail = async (req, res) => {
       { transferDetails: { $slice: -1 } }
     );
 
-    // Log the fetched report
-    console.log('Fetched report:', report);
-
     if (!report || !report.transferDetails || report.transferDetails.length === 0) {
-      console.log('No transfer details found for this report.');
       return res.status(404).json({ message: 'No transfer details found for this report.' });
     }
 
     const lastTransferDetail = report.transferDetails[0];
-    console.log('Last transfer detail ID:', lastTransferDetail);
 
     // Validate ObjectId
     if (!mongoose.Types.ObjectId.isValid(lastTransferDetail)) {
@@ -180,11 +169,9 @@ const getReportComments = async (req, res) => {
 
   try {
     // Step 1: Fetch the report's storage list IDs
-    const reportStorageList = await fetchReportStorageList(report_id);
-
+    const reportingStorage_list = await fetchReportStorageList(report_id);
     // Step 2: Fetch the comments from the reportstorage collection
-    const comments = await fetchCommentsFromReportStorage(reportStorageList);
-
+    const comments = await fetchCommentsFromReportStorage(reportingStorage_list);
     // Step 3: Send the comments in the response
     res.status(200).json(comments);
   } catch (error) {

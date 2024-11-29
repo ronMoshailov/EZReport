@@ -9,7 +9,6 @@ const Report = require('../model/Report');
  */
 const isWorkspaceExist = async (req, res) => {
     const workspaceNumber = parseInt(req.params.id, 10);
-    console.log(`The data that received in 'isWorkspaceExist' is: [workspaceNumber: ${workspaceNumber}]`);
 
     try {
       const workspace = await findWorkspaceByNumber(workspaceNumber);
@@ -57,15 +56,12 @@ const receivedWorkspace = async (req, res) => {
     const { transferdetails_id, received_worker_id, received_workspace, report_id } = req.body;
     received_date = new Date().toISOString();
 
-    // console.log(transferdetails_id);
-    console.log(`The received data is: transferdetails: ${transferdetails_id}, received_worker_id: ${received_worker_id}, received_workspace:${received_workspace}`);
     if (!received_worker_id || !received_workspace) {
         return res.status(400).json({ message: 'Missing required fields: send_worker_id, received_date, or send_workspace.' });
     }
 
     try {
         // Retrieve the transition by its ID and populate `transferDetails`
-        console.log('Trying to find transfer details.');
         const transition = await TransferDetails.findById(transferdetails_id);
 
         // If no transition is found, return a 404 response
@@ -73,13 +69,11 @@ const receivedWorkspace = async (req, res) => {
             return res.status(404).json({ message: 'transitionDetails not found' });
         }
 
-        console.log('Trying to insert the new data.');
         transition.received_worker_id = received_worker_id;
         transition.received_date = received_date;
         transition.received_workspace = received_workspace;
         transition.isReceived = !transition.isReceived;
 
-        console.log('Trying to save.');
         await transition.save();
 
         // Respond with the updated transition data
@@ -96,7 +90,7 @@ const receivedWorkspace = async (req, res) => {
         }
 
         // Toggle the enable field
-        report.enable = !report.enable;
+        report.inQueue = !report.inQueue;
         await report.save();
 
     } catch (error) {

@@ -11,16 +11,17 @@ const LoginPage = () => {
     const [workspace, setWorkspace] = useState('');         // Holds the workspace
 
     useEffect(() => {
-        // localStorage.removeItem('employee_number');         // Clean the local storage
-        // localStorage.removeItem('workspace');               // Clean the local storage
-        // localStorage.removeItem('report_id');               // Clean the local storage
-        // localStorage.removeItem('report_completed');        // Clean the local storage
-        // localStorage.removeItem('report_serialNum');        // Clean the local storage
-        // localStorage.removeItem('report_ordered');          // Clean the local storage
+        // localStorage.removeItem('employee_number');          // Clean the local storage
+        // localStorage.removeItem('workspace');                // Clean the local storage
+        // localStorage.removeItem('report_id');                // Clean the local storage
+        // localStorage.removeItem('report_producedCount');     // Clean the local storage
+        // localStorage.removeItem('report_packedCount');       // Clean the local storage
+        // localStorage.removeItem('report_serialNum');         // Clean the local storage
+        // localStorage.removeItem('report_orderedCount');      // Clean the local storage
         localStorage.clear();
       }, []);
 
-    const navigate = useNavigate();                         // Router navigation setup
+    const navigate = useNavigate();                             // Router navigation setup
     
     // Hnadle input change
     const handleInputChange = (setter) => (event) => {

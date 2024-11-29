@@ -35,7 +35,10 @@ const Dashboard = ({isQueue}) => {
       window.addEventListener('keydown', addEscListener);                   // Add keydown event listener to listen for Escape key press
       localStorage.removeItem('employee_number');                           // Clean the local storage
       localStorage.removeItem('report_id');                                 // Clean the local storage
-      localStorage.removeItem('report_completed');                          // Clean the local storage
+      localStorage.removeItem('report_producedCount');                      // Clean the local storage
+      localStorage.removeItem('report_packedCount');                        // Clean the local storage
+      localStorage.removeItem('report_serialNum');                          // Clean the local storage
+      localStorage.removeItem('report_orderedCount');                       // Clean the local storage
       if(workspace == null){
         console.log('The data was missing.');
         navigate('/error');
@@ -136,8 +139,9 @@ const Dashboard = ({isQueue}) => {
           onClose={addEscListener} 
           report_id={report._id} 
           report_serialNum={report.serialNumber} 
-          report_completed={ report.completed } 
-          report_ordered={ report.ordered } 
+          report_packedCount={ report.packedCount } 
+          report_producedCount={ report.producedCount } 
+          report_orderedCount={ report.orderedCount } 
           workspace={workspace}
           setIsOperationModal={setIsOperationModal}
         />}

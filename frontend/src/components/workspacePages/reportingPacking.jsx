@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { displayReportComments } from '../APIs/API_report';
 import { sendProductionReport } from '../APIs/API_report';
 import CommentsModal from '../modals/CommentsModal'; 
-import './reportingProduction.scss'; 
+import './reportingPacking.scss'; 
 
 import { handleEscKey } from '../functions';
 
@@ -11,7 +11,7 @@ import { handleEscKey } from '../functions';
 const NewReportPage = () => {
 
   // States
-  const [producedCount, setProducedCount] = useState(Number(localStorage.getItem('report_producedCount')));       // Holds the old completed quantity
+  const [packedCount, setPackedCount] = useState(Number(localStorage.getItem('report_packedCount')));           // Holds the old completed quantity
   const [employeeNum, setEmployeeNum] = useState(localStorage.getItem('employee_number'));                      // Holds the employee number
   const [reportSerialNum, setReportSerialNum] = useState(localStorage.getItem('report_serialNum'));             // Holds the report serial number
   const [orderedCount, setOrderedCount] = useState(Number(localStorage.getItem('report_orderedCount')));        // Holds the ordered quantity
@@ -36,14 +36,14 @@ const NewReportPage = () => {
   // useEffect
   useEffect(() => {
     window.addEventListener('keydown', addEscListener);                   // Add keydown event listener to listen for Escape key press
-    if (producedCount === null || employeeNum === null || reportSerialNum === null || orderedCount === null || reportId === null){
+    if (packedCount === null || employeeNum === null || reportSerialNum === null || orderedCount === null || reportId === null){
       navigate('/error');
     }
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('report_producedCount', producedCount + Number(newCompleted));
-  }, [producedCount]);
+    localStorage.setItem('report_packedCount', packedCount + Number(newCompleted));
+  }, [packedCount]);
 
   const handleEscPress = () => {
     setIsCommentsModalOpen(false);
@@ -87,7 +87,7 @@ const NewReportPage = () => {
       
       setError(''); // Clear previous errors
 
-      if ( Number(newCompleted) + producedCount > orderedCount ) {
+      if ( Number(newCompleted) + packedCount > orderedCount ) {
         setError('הכמות שהוכנסה גבוהה ממה שהוזמן');
         return;
       }
@@ -96,7 +96,7 @@ const NewReportPage = () => {
       const answer = await sendProductionReport(reportId, employeeNum, Number(newCompleted), newComment)
 
       if (answer){
-        setProducedCount(producedCount + Number(newCompleted));
+        setPackedCount(packedCount + Number(newCompleted));
         // setNewCompleted(completed + Number(newCompleted));
         setNewCompleted(0); 
         setComments([]);
@@ -149,7 +149,7 @@ const NewReportPage = () => {
 
           <div className="form-group">
             <label>תקינים</label>
-            <input type="text" placeholder="תקינים" value={producedCount} disabled />
+            <input type="text" placeholder="תקינים" value={packedCount} disabled />
           </div>
 
           <div className="form-group">

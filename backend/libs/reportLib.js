@@ -1,7 +1,7 @@
 const Report = require('../model/Report');
 const Component = require('../model/Component');
 const mongoose = require('mongoose');
-const ReportStorage = require('../model/ReportStorage');
+const ReportingStorage = require('../model/ReportingStorage');
 const { fetchComponentByID } = require('../libs/componentLib');
 
 /**
@@ -16,7 +16,7 @@ const fetchReportsByWorkspace = async (workspace, isQueue) => {
     // Fetch reports from the database
     const reports = await Report.find({
       current_workspace: workspace,
-      enable: !isQueue,
+      inQueue: !isQueue,
     });
     return reports;
   } catch (error) {
@@ -29,8 +29,7 @@ const fetchReportsByWorkspace = async (workspace, isQueue) => {
 
 // Remove component from report and update stock
 const removeComponentAndUpdateStock = async (reportId, componentId, stockToAdd) => {
-  console.log('componentId');
-  console.log(componentId);
+
   const session = await mongoose.startSession(); // Start a transaction
   session.startTransaction();
 
@@ -45,7 +44,6 @@ const removeComponentAndUpdateStock = async (reportId, componentId, stockToAdd) 
     if (!updatedReport) {
       throw new Error('Report not found.');
     }
-    console.log('The report updated (removed the component)');
 
     // Step 2: Update stock of the component
     const updatedComponent = await Component.findByIdAndUpdate(
@@ -76,25 +74,22 @@ const removeComponentAndUpdateStock = async (reportId, componentId, stockToAdd) 
 const handleAddComponentsToReport = async ({ employee_id, report_id, components_list, comment }) => {
   const session = await mongoose.startSession();
   session.startTransaction();
-
+  
   try {
     const date = new Date();
 
     // Step 1: Add report to storage
-    const newReportStorage = new ReportStorage({
+    const newReportingStorage = new ReportingStorage({
       employee_id,
       date,
       components_list,
       comment,
     });
-    await newReportStorage.save({ session });
-
+    await newReportingStorage.save({ session });
     // Step 2: Update the report with components
     const report = await Report.findById(report_id).session(session);
     if (!report) throw new Error('Report not found.');
-
     const componentMap = new Map(report.components.map((comp) => [comp.component.toString(), comp]));
-
     components_list.forEach((newComponent) => {
       const existingComponent = componentMap.get(newComponent.component);
       if (existingComponent) {
@@ -103,9 +98,7 @@ const handleAddComponentsToReport = async ({ employee_id, report_id, components_
         report.components.push(newComponent);
       }
     });
-
     await report.save({ session });
-
     // Step 3: Decrease stock
     for (const comp of components_list) {
       const component = await Component.findById(comp.component).session(session);
@@ -113,9 +106,8 @@ const handleAddComponentsToReport = async ({ employee_id, report_id, components_
       component.stock = Math.max(0, component.stock - comp.stock);
       await component.save({ session });
     }
-
     // Step 4: Add comment to the report
-    report.report_storage_list.push(newReportStorage._id); // Add directly instead of `findByIdAndUpdate`
+    report.reportingStorage_list.push(newReportingStorage._id); // Add directly instead of `findByIdAndUpdate`
     await report.save({ session });
 
     // Commit the transaction
@@ -141,7 +133,7 @@ const handleAddComponentsToReport = async ({ employee_id, report_id, components_
  * @throws {Error} - Throws an error if the update fails.
  */
 const updateReportWorkspace = async (reportId, newTransitionId, session) => {
-  console.log(`updateReportWorkspace -> [reportId: ${reportId}, newTransitionId: ${newTransitionId}]`);
+
   const nextWorkspaceMap = {
     Packing: 'Out of our system!',
     Production: 'Packing',
@@ -160,7 +152,7 @@ const updateReportWorkspace = async (reportId, newTransitionId, session) => {
   }
 
   report.current_workspace = nextWorkspace;
-  report.enable = !report.enable;
+  report.inQueue = !report.inQueue;
   report.transferDetails.push(newTransitionId);
 
   await report.save({ session });
@@ -174,18 +166,17 @@ const updateReportWorkspace = async (reportId, newTransitionId, session) => {
  * @returns {Object} - The updated report.
  * @throws {Error} - Throws an error if the toggle fails.
  */
-const toggleEnable = async (reportId, session) => {
-  const report = await Report.findById(reportId).session(session);
+// const toggleEnable = async (reportId, session) => {
+//   const report = await Report.findById(reportId).session(session);
 
-  if (!report) {
-    throw new Error('Report not found');
-  }
-  console.log("Change 'enable'.")
-  report.enable = !report.enable;
+//   if (!report) {
+//     throw new Error('Report not found');
+//   }
+
+//   report.inQueue = !report.inQueue;
   
-  console.log("saving.")
-  await report.save({ session });
-};
+//   await report.save({ session });
+// };
 
 /**
  * Fetches the `components` array from a report by its `_id`, replacing `component` IDs with full component data.
@@ -217,9 +208,6 @@ const fetchReportComponents = async (report_id) => {
         };
       })
     );
-    console.log('component_array');
-    console.log(component_array);
-
 
     return componentsWithDetails; // Return the updated components array
   } catch (err) {
@@ -256,4 +244,4 @@ const fetchReportComponents = async (report_id) => {
 
 
 
-module.exports = { removeComponentAndUpdateStock , handleAddComponentsToReport, fetchReportsByWorkspace, updateReportWorkspace, updateReportWorkspace, toggleEnable, fetchReportComponents };
+module.exports = { removeComponentAndUpdateStock , handleAddComponentsToReport, fetchReportsByWorkspace, updateReportWorkspace, updateReportWorkspace, fetchReportComponents };

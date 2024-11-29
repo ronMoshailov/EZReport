@@ -36,17 +36,32 @@ const reportSchema = new mongoose.Schema({
         ref: 'ReportProduction', // Refers to the ReportProduction model
         default: [] // Initialize as an empty array by default
     }],
-    completed: {
+    producedCount: {
         type: Number,
         default: 0
     },
-    ordered: {
+    packedCount: {
+        type: Number,
+        default: 0
+    },
+    orderedCount: {
         type: Number,
         required: true
     },
-    report_storage_list: [{
+    reportingStorage_list: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'ReportStorage'  // Refers to the MiniReport model
+        ref: 'ReportingStorage',
+        default: [] 
+    }],
+    reportingProduction_list: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'ReportingProduction',
+        default: [] 
+    }],
+    reportingPacking_list: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'ReportingPacking',
+        default: [] 
     }],
     transferDetails: [{
         type: mongoose.Schema.Types.ObjectId,
@@ -59,7 +74,7 @@ const reportSchema = new mongoose.Schema({
     closeDate: {
         type: Date
     },
-    enable: {
+    inQueue: {
         type: Boolean,
         default: true
     },

@@ -21,7 +21,7 @@ const fetchAllComponents = async () => {
  */
 const fetchComponentByID = async (id) => {
   try {
-    console.log(`Fetching component with ID: ${id}`);
+
     const componentData = await Component.findOne({ _id: id }).select('serialNumber name');
     if (!componentData) {
       console.warn(`No component found with ID: ${id}`);
