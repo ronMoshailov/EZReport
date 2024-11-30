@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+
 import { isWorkspaceExist } from './APIs/API_workspace';
 import './loginPage.scss';
 
@@ -10,26 +11,29 @@ const LoginPage = () => {
     const [isValid, setIsValid] = useState(null);           // Tracks if Workspace is valid
     const [workspace, setWorkspace] = useState('');         // Holds the workspace
 
-    useEffect(() => {
-        // localStorage.removeItem('employee_number');          // Clean the local storage
-        // localStorage.removeItem('workspace');                // Clean the local storage
-        // localStorage.removeItem('report_id');                // Clean the local storage
-        // localStorage.removeItem('report_producedCount');     // Clean the local storage
-        // localStorage.removeItem('report_packedCount');       // Clean the local storage
-        // localStorage.removeItem('report_serialNum');         // Clean the local storage
-        // localStorage.removeItem('report_orderedCount');      // Clean the local storage
-        localStorage.clear();
-      }, []);
+    useEffect(() => { 
+      localStorage.clear();
+    }, []);
+        
+    const navigate = useNavigate();                         // Router navigation setup
 
-    const navigate = useNavigate();                             // Router navigation setup
-    
-    // Hnadle input change
+    /**
+     * Generic handler for input changes.
+     * This function creates a specific event handler for a given state setter function.
+     *
+     * @param {Function} setter - The state setter function to update the corresponding state.
+     * @returns {Function} - A function that takes an event, extracts its value, and updates the state using the setter.
+     */
     const handleInputChange = (setter) => (event) => {
-        setter(event.target.value);
-      };
+      setter(event.target.value);
+    };
     
-    // Handle submit
-    const handleSubmit = async () => {                              // Handle form submission
+    /**
+     * Handle form submission for workspace validation.
+     * This function validates the workspace, stores it in localStorage if valid, 
+     * and redirects the user to the dashboard. If invalid, it displays an error message.
+     */
+    const handleSubmit = async () => {                              
         setLoading(true);                                           // Show loading spinner 
         setErrorMessage('');                                        // Reset error message
         const [check, data] = await isWorkspaceExist(workspace);    // Check if the workspace exist in DB
@@ -43,17 +47,12 @@ const LoginPage = () => {
             setIsValid(false);                          // Set as invalid
             setErrorMessage(data);                      // Display error
         }
-        
         setLoading(false);                              // Hide loading spinner
     }
 
     return (
         <div className="modal-container-loginPage">
             <div className="modal">
-                {/* <button                                             // Close button 
-                  className="close-btn">
-                    ✕
-                </button>  */}
                 <label                                              // Label
                   className='bold' 
                   htmlFor="employee-number">

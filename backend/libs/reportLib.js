@@ -13,10 +13,12 @@ const { fetchComponentByID } = require('../libs/componentLib');
  */
 const fetchReportsByWorkspace = async (workspace, isQueue) => {
   try {
+    console.log('isQueue');
+    console.log(isQueue);
     // Fetch reports from the database
     const reports = await Report.find({
       current_workspace: workspace,
-      inQueue: !isQueue,
+      inQueue: isQueue,
     });
     return reports;
   } catch (error) {

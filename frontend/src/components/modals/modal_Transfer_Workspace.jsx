@@ -43,9 +43,7 @@ const Modal_Transfer_Workspace = ({ onClose, selectedReport, isReceived, onSucce
         await handleSendWorkspace(employeeData.employee._id);
       }
 
-      console.log('onSuccess fire!!');
       onSuccess(); // Trigger parent refresh
-      console.log('onClose fire!!');
       onClose();   // Close modal
     } catch (err) {
       console.error('Error during submission:', err.message);

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+
 import CardReport from './cardReport';
 import Slidebar from './slidebar';
 import OperationModal from './modals/OperationModal';
@@ -29,6 +30,12 @@ const Dashboard = ({isQueue}) => {
     /* useEffect */
     useEffect(() => {
       handleFetchReports();                             // Fetch all reports
+      console.log('In "useEffect":');
+      console.log(reports);
+      if(isQueue === true){
+        navigate('/dashboard');
+        navigate('/queue');
+      }
     }, [workspace, isQueue, refreshReports]);           // do it if the workspace || isQueue || refreshReports changes 
 
     useEffect(() => {
@@ -58,8 +65,11 @@ const Dashboard = ({isQueue}) => {
     const handleFetchReports = async () => {
       try {
         const [check, data] = await fetchAllReports(workspace, isQueue);
-        if (check)
-          setReports(data);
+        if (check){
+          console.log('in "handleFetchReports":');
+          console.log(data);
+          await setReports(data);
+        }
         else
           setError(data);
       } catch (err) {

@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const { removeComponentAndUpdateStock, handleAddComponentsToReport, fetchReportsByWorkspace, updateReportWorkspace, fetchReportComponents } = require('../libs/reportLib');
 const { createTransferDocument } = require('../libs/transferDetailsLib');
 const { fetchReportStorageList, fetchCommentsFromReportStorage } = require('../libs/reportStorageLib');
+const { fetchCommentsFromReportProduction, fetchReportProductionList } = require('../libs/ReportProduction');
 
 // In libs
 
@@ -166,12 +167,24 @@ const getLastTransferDetail = async (req, res) => {
  */
 const getReportComments = async (req, res) => {
   const { report_id } = req.params;
-
+  console.log(report_id);
   try {
     // Step 1: Fetch the report's storage list IDs
-    const reportingStorage_list = await fetchReportStorageList(report_id);
-    // Step 2: Fetch the comments from the reportstorage collection
-    const comments = await fetchCommentsFromReportStorage(reportingStorage_list);
+    const report = await Report.findById(report_id, { current_workspace: 1 }); // Project only `current_workspace`
+    console.log(report);
+    let comments = null;
+    if (report.current_workspace === 'Production'){
+      const reportingStorage_list = await fetchReportStorageList(report_id);
+      comments = await fetchCommentsFromReportStorage(reportingStorage_list);
+    } else if (report.current_workspace === 'Packing'){
+      const reportingProduction_list = await fetchReportProductionList(report_id);
+      comments = await fetchCommentsFromReportProduction(reportingProduction_list);
+    }
+    else{
+      console.log('Error checking for comments');
+      return;
+    }
+    
     // Step 3: Send the comments in the response
     res.status(200).json(comments);
   } catch (error) {
