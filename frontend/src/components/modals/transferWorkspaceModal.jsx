@@ -1,10 +1,10 @@
 // Modal_Transfer_Workspace.jsx
 import React, { useState } from 'react';
-import './modal_Transfer_Workspace.scss';
+import './transferWorkspaceModal.scss';
 import { isEmployeeExist } from '../APIs/API_employee';
 import { getLastTransferDetail, makeReceivedWorkspace, makeSendWorkspace } from '../APIs/API_workspace';
 
-const Modal_Transfer_Workspace = ({ onClose, selectedReport, isReceived, onSuccess }) => {
+const Modal_Transfer_Workspace = ({ onClose, selectedReport, isReceived }) => {
   
   /* States */
   const [employeeNumber, setEmployeeNumber] = useState('');
@@ -43,7 +43,6 @@ const Modal_Transfer_Workspace = ({ onClose, selectedReport, isReceived, onSucce
         await handleSendWorkspace(employeeData.employee._id);
       }
 
-      onSuccess(); // Trigger parent refresh
       onClose();   // Close modal
     } catch (err) {
       console.error('Error during submission:', err.message);

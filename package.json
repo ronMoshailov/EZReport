@@ -15,6 +15,7 @@
     "express": "^4.21.1",
     "mongoose": "^8.7.2",
     "react-router-dom": "^6.27.0",
-    "recoil": "^0.7.7"
+    "recoil": "^0.7.7",
+    "use-debounce": "^10.0.4"
   }
 }

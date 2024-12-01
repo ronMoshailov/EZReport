@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+// import { useDebounce } from 'use-debounce';
 
 import CardReport from './cardReport';
 import Slidebar from './slidebar';
 import OperationModal from './modals/OperationModal';
-import Modal_Transfer_Workspace from './modals/modal_Transfer_Workspace';
+import ModalTransferWorkspace from './modals/transferWorkspaceModal';
+
 import './dashboard.scss';
 import './slidebar.scss';
 
@@ -13,7 +15,6 @@ import { fetchAllReports } from './APIs/API_report';
 
 const Dashboard = ({isQueue}) => {
 
-    /* States */
     const [workspace, setWorkspace] = useState(localStorage.getItem('workspace'));          // Holds the workspace
     const [reports, setReports] = useState([]);                                             // Holds all the reports
     const [report, setReport] = useState(null);                                             // Holds specific report
@@ -23,52 +24,49 @@ const Dashboard = ({isQueue}) => {
     const [isSendModalOpen, setIsSendModalOpen] = useState(false);                          // Show transfer modal or remove
     const [isReceived, setIsReceived] = useState(false);                                    // Tetermine if client receiving report or send report
     const [refreshReports, setRefreshReports] = useState(false);                            // Handle case that if this change so fetch reports again
-    const [reportFilter, setReportFilter] = useState('');                                   // Filter text for reports 
+    const [reportFilter, setReportFilter] = useState('');                                   // Filter text for reports
 
     const navigate = useNavigate();
+    // const [debouncedReportFilter] = useDebounce(reportFilter, 300);
 
-    /* useEffect */
-    useEffect(() => {
-      handleFetchReports();                             // Fetch all reports
-      console.log('In "useEffect":');
-      console.log(reports);
-      if(isQueue === true){
-        navigate('/dashboard');
-        navigate('/queue');
-      }
-    }, [workspace, isQueue, refreshReports]);           // do it if the workspace || isQueue || refreshReports changes 
+    const clearStorage = [
+      'employee_number', 
+      'report_id', 
+      'report_producedCount', 
+      'report_packedCount', 
+      'report_serialNum', 
+      'report_orderedCount'
+    ];
 
-    useEffect(() => {
-      window.addEventListener('keydown', addEscListener);                   // Add keydown event listener to listen for Escape key press
-      localStorage.removeItem('employee_number');                           // Clean the local storage
-      localStorage.removeItem('report_id');                                 // Clean the local storage
-      localStorage.removeItem('report_producedCount');                      // Clean the local storage
-      localStorage.removeItem('report_packedCount');                        // Clean the local storage
-      localStorage.removeItem('report_serialNum');                          // Clean the local storage
-      localStorage.removeItem('report_orderedCount');                       // Clean the local storage
-      if(workspace == null){
-        console.log('The data was missing.');
-        navigate('/error');
-      }
-    }, []);
-
-    /* Data used in program */
     const workspaceMap = {
       Packing: 'אריזה',
       Production: 'יצור',
       Storage: 'מחסן'
     };
 
-    const triggerRefresh = () => setRefreshReports((prev) => !prev);        // Trigger the refresh of the reports
+
+    useEffect(() => {
+      handleFetchReports();                                         // Fetch all reports
+    }, [isQueue, refreshReports]);
+
+    useEffect(() => {
+      window.addEventListener('keydown', addEscListener);           // Add keydown event listener to listen for Escape key press
+      clearStorage.forEach((str) => localStorage.removeItem(str));  // Clean the local storage
+
+      if(workspace == null)
+        navigate('/error');
+    }, []);
+
+    // Trigger the refresh of the reports
+    const triggerRefresh = () => setRefreshReports((prev) => !prev);        
 
     // // Fetch all reports
     const handleFetchReports = async () => {
       try {
         const [check, data] = await fetchAllReports(workspace, isQueue);
         if (check){
-          console.log('in "handleFetchReports":');
-          console.log(data);
-          await setReports(data);
+          setReports(data);
+          triggerRefresh();
         }
         else
           setError(data);
@@ -80,18 +78,18 @@ const Dashboard = ({isQueue}) => {
     };
 
     // Function to handle card click and show modal
-    const handleClickOnCard = (report) => {
+    const handleClickOnCard = useCallback((report) => {
       if (!isQueue) {                           // If we are not in queue page
         setReport(report);                      // Holds the selected report
         setIsOperationModal(true);              // Show the operation modal
         };
-      }
+      }, [isQueue]);
   
     // Function to handle sending card click and show modal
-    const handleMoveWorkspaceButton = (report) => {
+    const handleMoveWorkspaceButton = useCallback((report) => {
       setReport(report);                        // Holds the selected report
       setIsSendModalOpen(true);                 // Show the transfer modal
-    };
+    }, []);
 
     // Function to close the modal
     const handleCloseModal = () => {
@@ -108,9 +106,9 @@ const Dashboard = ({isQueue}) => {
     report.serialNumber.toLowerCase().includes(reportFilter.toLowerCase())
   );
 
-  // Display loading/error state if necessary
-  if (loading) return <p>Loading reports...</p>;
-  if (error) return <p>Error: {error}</p>;
+    // Display loading/error state if necessary
+    if (loading) return <p>Loading reports...</p>;
+    if (error) return <p>Error: {error}</p>;
 
   return (
     <div className="dashboard-layout">
@@ -158,11 +156,10 @@ const Dashboard = ({isQueue}) => {
 
       {/* Send modal for moving reports, only visible when isSendModalOpen */}
       {isSendModalOpen && 
-        <Modal_Transfer_Workspace 
+        <ModalTransferWorkspace 
           onClose={handleCloseModal} 
           selectedReport={report} 
           isReceived={isReceived} 
-          onSuccess={triggerRefresh}
         />}
     </div>
   );
