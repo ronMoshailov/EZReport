@@ -28,7 +28,7 @@ const removeEmployeeHandler = async (req, res) => {
     await removeEmployee(parseInt(employeeNumber));
     res.status(200).send();
   } catch (error) {
-    res.status(404).send();
+    res.status(404).send();;
   }
 };
 
