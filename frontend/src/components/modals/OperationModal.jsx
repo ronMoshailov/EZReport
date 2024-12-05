@@ -92,11 +92,20 @@ const OperationModal = ({ onClose, report_id, report_serialNum, report_packedCou
                     <div>
                         <input 
                             type="checkbox" 
-                            id="new-report" 
-                            checked={selectedOption === 'new-report'}  
-                            onChange={() => handleOptionChange('new-report')}  
+                            id="start-report" 
+                            checked={selectedOption === 'start-report'}  
+                            onChange={() => handleOptionChange('start-report')}  
                         />
-                        <label htmlFor="new-report"> דיווח חדש</label>
+                        <label htmlFor="start-report"> תחילת עבודה</label>
+                    </div>
+                    <div className='reverse'>
+                        <input 
+                            type="checkbox" 
+                            id="end-report" 
+                            checked={selectedOption === 'end-report'}  
+                            onChange={() => handleOptionChange('end-report')}  
+                        />
+                        <label htmlFor="end-report"> סיום ודיווח</label>
                     </div>
                 </div>
 

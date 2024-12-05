@@ -1,4 +1,4 @@
-const { createProdReport } = require('../libs/ReportProduction'); // Adjust the path as needed
+const { createProdReport, fetchCommentsFromReportProduction, fetchReportProductionList } = require('../libs/reportingProductionLib'); // Adjust the path as needed
 
 /**
  * Controller for creating a production report.

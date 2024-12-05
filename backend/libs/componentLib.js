@@ -1,27 +1,17 @@
 const Component = require('../model/Component');
 
-/**
- * Fetch all components from the database.
- * @returns {Promise<Array>} List of components or an error if the operation fails.
- */
 const fetchAllComponents = async () => {
   try {
-    const components = await Component.find(); // Fetch all components
-    return components; // Return the components
+    const components = await Component.find();
+    return components;
   } catch (error) {
     console.error('Error fetching all components:', error.message);
     throw new Error('Failed to fetch components');
   }
 };
 
-/**
- * Fetch a single component by ID.
- * @param {String} id - The ID of the component to fetch.
- * @returns {Promise<Object>} The component data or an error if not found.
- */
 const fetchComponentByID = async (id) => {
   try {
-
     const componentData = await Component.findOne({ _id: id }).select('serialNumber name');
     if (!componentData) {
       console.warn(`No component found with ID: ${id}`);
@@ -34,7 +24,46 @@ const fetchComponentByID = async (id) => {
   }
 };
 
+const addComponent = async (data) => {
+  const {serialNumber, name, stock} = data;
+  if(!serialNumber || !name || stock === undefined) throw new Error('Missing required fields: serialNumber, name, or stock'); 
+  const component = new Component({serialNumber, name, stock});
+  await component.save();
+  return true;
+};
+
+const removeComponent = async (serialNumber) =>{
+  if(!serialNumber) throw new Error('Serial number is required to remove a component');
+  const result = await Component.findOneAndDelete({serialNumber});
+  if (!result) throw new Error('Component not found');
+  return result;
+};
+
+const increaseStock = async (serialNumber, amount) => {
+  if (!serialNumber || amount === undefined || amount <= 0) throw new Error('Serial number and positive amount are required');
+  const component = await Component.findOneAndUpdate(
+    { serialNumber },
+    { $inc: { stock: amount } },
+  );
+    if (!component) throw new Error('Component not found');
+  return true;
+};
+
+const updateStock = async (serialNumber, stock) => {
+  if (!serialNumber || stock === undefined || stock < 0) throw new Error('Serial number and non-negative stock value are required');
+  const component = await Component.findOneAndUpdate(
+    { serialNumber },
+    { stock },
+  );
+  if (!component) throw new Error('Component not found');
+  return true;
+};
+
 module.exports = {
   fetchAllComponents,
   fetchComponentByID,
+  addComponent,
+  removeComponent,
+  increaseStock,
+  updateStock,
 };

@@ -32,13 +32,56 @@
 
         .form-options {
             margin-top: 20px;
-            margin-left: 2px;
-
+            display: flex;
+            justify-content: space-between;
+            
             div {
                 display: flex;
                 align-items: center;
-                margin-bottom: 10px;
-            }
+                padding-bottom: 10px;
+            
+                input[type='checkbox'] {
+                    appearance: none; /* Remove default styling */
+                    width: 24px;
+                    height: 24px;
+                    border: 2px solid #007bff; /* Blue border */
+                    border-radius: 50%; /* Circular shape */
+                    outline: none;
+                    cursor: pointer;
+                    margin-right: 10px; /* Space between checkbox and label */
+                    transition: all 0.5s ease;
+                    display: inline-block;
+                    position: relative; /* Needed for ::after positioning */
+                  
+                  &:checked {
+                    background-color: #007bff; /* Blue background for checked state */
+                    border-color: #0056b3; /* Darker blue border for checked state */
+                    box-shadow: 0 0 5px #007bff; /* Add glow effect */
+                    position: relative;
+            
+                    &::after {
+                        content: ''; /* Checkmark */
+                        position: absolute;
+                        top: 50%; /* Center vertically */
+                        left: 50%; /* Center horizontally */
+                        transform: translate(-50%, -50%); /* Adjust for perfect centering */
+                        width: 12px;
+                        height: 12px;
+                        background-color: white; /* Inner circle for checked state */
+                        border-radius: 50%;
+                    }
+                  }
+            
+                  &:hover {
+                    border-color: #0056b3; /* Darker border on hover */
+                    box-shadow: 0 0 5px #aad4f5; /* Subtle hover glow */                
+                  }
+
+                  
+                }
+            
+
+              }
         }
 
         .form-group{

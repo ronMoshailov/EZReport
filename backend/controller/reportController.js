@@ -2,8 +2,8 @@ const Report = require('../model/Report');  // Import the User model
 const mongoose = require('mongoose');
 const { removeComponentAndUpdateStock, handleAddComponentsToReport, fetchReportsByWorkspace, updateReportWorkspace, fetchReportComponents } = require('../libs/reportLib');
 const { createTransferDocument } = require('../libs/transferDetailsLib');
-const { fetchReportStorageList, fetchCommentsFromReportStorage } = require('../libs/reportStorageLib');
-const { fetchCommentsFromReportProduction, fetchReportProductionList } = require('../libs/ReportProduction');
+const { fetchReportStorageList, fetchCommentsFromReportStorage } = require('../libs/reportingStorageLib');
+const { fetchCommentsFromReportProduction, fetchReportProductionList } = require('../libs/reportingProductionLib');
 
 // In libs
 

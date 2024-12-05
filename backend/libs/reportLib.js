@@ -168,17 +168,6 @@ const updateReportWorkspace = async (reportId, newTransitionId, session) => {
  * @returns {Object} - The updated report.
  * @throws {Error} - Throws an error if the toggle fails.
  */
-// const toggleEnable = async (reportId, session) => {
-//   const report = await Report.findById(reportId).session(session);
-
-//   if (!report) {
-//     throw new Error('Report not found');
-//   }
-
-//   report.inQueue = !report.inQueue;
-  
-//   await report.save({ session });
-// };
 
 /**
  * Fetches the `components` array from a report by its `_id`, replacing `component` IDs with full component data.
@@ -217,33 +206,5 @@ const fetchReportComponents = async (report_id) => {
     throw err; // Rethrow the error for the caller to handle
   }
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 module.exports = { removeComponentAndUpdateStock , handleAddComponentsToReport, fetchReportsByWorkspace, updateReportWorkspace, updateReportWorkspace, fetchReportComponents };

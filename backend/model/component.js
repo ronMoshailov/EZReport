@@ -4,7 +4,8 @@ const mongoose = require('mongoose');
 const componentSchema = new mongoose.Schema({
     serialNumber: {
         type: Number,
-        required: true
+        required: true,
+        unique: true
     },
     name: {
         type: String,

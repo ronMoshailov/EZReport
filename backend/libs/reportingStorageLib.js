@@ -21,8 +21,6 @@ const fetchReportStorageList = async (report_id) => {
   }
 };
 
-
-
 /**
  * Fetches comments from the `reportstorage` collection based on a list of IDs.
  * @param {Array} reportStorageIds - Array of `reportstorage` IDs.

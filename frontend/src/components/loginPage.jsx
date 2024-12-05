@@ -38,16 +38,19 @@ const LoginPage = () => {
         setErrorMessage('');                                        // Reset error message
         const [check, data] = await isWorkspaceExist(workspace);    // Check if the workspace exist in DB
 
-        if(check){
-            setIsValid(true);                           // Set as valid
-            localStorage.setItem('workspace', data);    // Set workspace in localStorage
-            navigate('/dashboard');                     // Redirect to dashboard
-        }
-        else{
-            setIsValid(false);                          // Set as invalid
-            setErrorMessage(data);                      // Display error
-        }
+        check ? valid(data) : notValid(data);
         setLoading(false);                              // Hide loading spinner
+
+    }
+
+    function valid(data){
+      setIsValid(true);                           // Set as valid
+      localStorage.setItem('workspace', data);    // Set workspace in localStorage
+      navigate('/dashboard');                     // Redirect to dashboard
+    }
+    function notValid(data){
+      setIsValid(false);                          // Set as invalid
+      setErrorMessage(data);                      // Display error
     }
 
     return (

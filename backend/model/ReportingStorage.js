@@ -7,9 +7,12 @@ const reportStorageSchema = new mongoose.Schema({
         ref: 'Employee',
         required: true
     },
-    date: {
+    start_date: {
         type: Date,
         required: true
+    },
+    end_date: {
+        type: Date,
     },
     components_list: [{
         component: {

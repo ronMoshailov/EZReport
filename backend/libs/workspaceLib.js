@@ -7,10 +7,7 @@ const Workspace = require('../model/Workspace');
  * @throws {Error} - If there is a database error.
  */
 const findWorkspaceByNumber = async (workspaceNumber) => {
-    if (isNaN(workspaceNumber)) {
-      throw new Error('Invalid workspace number.');
-    }
-  
+    if (isNaN(workspaceNumber)) throw new Error('Invalid workspace number.');
     return await Workspace.findOne({ workspace_number: workspaceNumber });
   };
   

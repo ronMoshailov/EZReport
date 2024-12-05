@@ -1,8 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const {getAllComponent, getComponentByID} = require('../controller/componentController');
+const {getAllComponentsHandler, getComponentByIDHandler, addComponentHandler, removeComponentHandler, increaseStockHandler, updateStockHandler} = require('../controller/componentController');
 
-router.get('/getAllComponent', getAllComponent);
-router.get('/getComponentByID/:id', getComponentByID);
+router.get('/getAllComponents', getAllComponentsHandler);
+router.get('/getComponentByID/:id', getComponentByIDHandler);
+router.post('/addComponent', addComponentHandler);
+router.delete('/removeComponent/:serialNumber', removeComponentHandler);
+router.patch('/increaseStock/:serialNumber', increaseStockHandler);
+router.patch('/updateStock/:serialNumber', updateStockHandler);
 
 module.exports = router;

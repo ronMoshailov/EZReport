@@ -17,6 +17,10 @@ code {
   max-width: none !important;
 }
 
+.reverse{
+  flex-direction: row-reverse; /* Swap the order of elements */
+}
+
 // Buttons
 .buttons-container {
   margin-top: 30px;
