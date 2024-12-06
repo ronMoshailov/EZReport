@@ -5,7 +5,7 @@ const TransferDetails = require('../model/TransferDetails');
  * @param {Object} transferData - Data for the transfer document.
  * @param {Object} session - The MongoDB session for transactions.
  * @returns {Object} - The newly created transfer document.
- * @throws {Error} - Throws an error if creation fails.
+ * @throws {Error} - Throsws an error if creation fails.
  */
 const createTransferDocument = async (transferData, session) => {
   try {
