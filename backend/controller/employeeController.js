@@ -1,34 +1,65 @@
-const { findEmployeeById, addEmployee, removeEmployee } = require('../libs/employeeLib');
+const { findEmployee, addEmployee, removeEmployee } = require('../libs/employeeLib');
 
 const isEmployeeExist = async (req, res) => {
   try {
-    const { data: employeeNumber } = req.body;
-    const employee = await findEmployeeById(employeeNumber);
+    const { employeeNumber } = req.body;
+    if(isNaN(employeeNumber)){
+      console.error("Error in isEmployeeExist: invalid employeeNumber");
+      return res.status(400).json({message: "Employee number is not valid"});
+    }
 
-    if (!employee) return res.status(404).send();
-    res.status(200).send();
-  } catch (err) {
-    res.status(500).send();
+    const employee = await findEmployee(employeeNumber);
+
+    if (!employee){
+      console.error("Error in isEmployeeExist: employee wasn't found")
+      return res.status(404).json({message: "Employee not found"});
+    } 
+
+    return res.status(200).json({exist: true, id: employee._id});
+
+  } catch (error) {
+    console.error('Error in isEmployeeExist:', error.message);
+    return res.status(500).json({ message: error.message });
   }
 };
 
 const addEmployeeHandler = async (req, res) => {
   try {
-    const employeeData = req.body;
-    await addEmployee(employeeData);
-    res.status(201).send();
+    const { number_employee, fullName } = req.body;
+    if(isNaN(Number(number_employee)) || fullName === undefined){
+      if(isNaN(Number(number_employee))) console.error("Error in addEmployeeHandler: invalid employee number");
+      if(fullName === undefined) console.error("Error in addEmployeeHandler: fullName is undefined");
+      return res.status(400).json({message: "Invalid parameters"});
+    }
+
+    const employee = await addEmployee(number_employee, fullName);
+    return res.status(201).json({employee, message: "New employee created successfully"});
   } catch (error) {
-    res.status(400).send();
+    if (error.message === "Employee already exist"){
+      console.error("Error in addEmployeeHandler: ", error.message);
+      return res.status(409).json({message: error.message})
+    }
+    console.error('Error in addEmployeeHandler:', error.message);
+    return res.status(500).json({ message: error.message });
   }
 };
 
 const removeEmployeeHandler = async (req, res) => {
   try {
     const { employeeNumber } = req.params;
-    await removeEmployee(parseInt(employeeNumber));
-    res.status(200).send();
+    if(isNaN(Number(employeeNumber))){
+      console.error("Error in removeEmployeeHandler: Invalid employee number");
+      return res.status(400).json({message: "Invalid parameter"});
+    }
+    const removedEmployee = await removeEmployee(employeeNumber);
+    if(!removedEmployee){
+      console.error("Error in isEmployeeExist: employee wasn't found")
+      return res.status(404).json({message: "Employee not found"})
+    }
+    return res.status(200).json({message: "Employee removed successfully"});
   } catch (error) {
-    res.status(404).send();;
+    console.error('Error in removeEmployeeHandler:', error.message);
+    return res.status(500).json({message: error.message});;
   }
 };
 

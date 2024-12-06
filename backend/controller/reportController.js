@@ -5,20 +5,12 @@ const { createTransferDocument } = require('../libs/transferDetailsLib');
 const { fetchReportStorageList, fetchCommentsFromReportStorage } = require('../libs/reportingStorageLib');
 const { fetchCommentsFromReportProduction, fetchReportProductionList } = require('../libs/reportingProductionLib');
 
-// In libs
-
-/**
- * Get all reports by workspace and queue status.
- * @param {Object} req - The request object.
- * @param {Object} res - The response object.
- */
 const getAllReports = async (req, res) => {
   const { workspace, isQueue } = req.body;
 
   try {
-    // Use the library function to fetch reports
     const reports = await fetchReportsByWorkspace(workspace, isQueue);
-    res.status(200).json(reports); // Respond with the reports
+    res.status(200).json(reports);
   } catch (error) {
     console.error('Error in getAllReports:', error.message);
     res.status(500).json({ message: error.message });
@@ -27,14 +19,12 @@ const getAllReports = async (req, res) => {
 
 // Storage
 const removeComponentAndReturnToStock = async (req, res) => {
-  const { report_id, component_id, stock } = req.body;                                                                                                      // Extract input data
+  const { report_id, component_id, stock } = req.body;
 
   try {
-    await removeComponentAndUpdateStock(report_id, component_id, stock);                                        // Call the lib function to perform the operation
+    await removeComponentAndUpdateStock(report_id, component_id, stock);
 
-    res.status(200).json({                                                                // 200
-      message: 'Component removed from report and stock updated successfully.'            // 200
-    });
+    res.status(200).send();
   } catch (error) {                                                                       // Error
     console.error('Error removing component and updating stock:', error.message);         // Error
     res.status(500).json({ message: 'Internal server error', error: error.message });     // Error

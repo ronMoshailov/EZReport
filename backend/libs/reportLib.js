@@ -13,8 +13,6 @@ const { fetchComponentByID } = require('../libs/componentLib');
  */
 const fetchReportsByWorkspace = async (workspace, isQueue) => {
   try {
-    console.log('isQueue');
-    console.log(isQueue);
     // Fetch reports from the database
     const reports = await Report.find({
       current_workspace: workspace,
@@ -22,50 +20,32 @@ const fetchReportsByWorkspace = async (workspace, isQueue) => {
     });
     return reports;
   } catch (error) {
-    console.error('Error fetching reports:', error.message);
     throw new Error('Failed to fetch reports.');
   }
 };
 
-// Storage
-
 // Remove component from report and update stock
 const removeComponentAndUpdateStock = async (reportId, componentId, stockToAdd) => {
 
-  const session = await mongoose.startSession(); // Start a transaction
+  const session = await mongoose.startSession();
   session.startTransaction();
 
   try {
-    // Step 1: Remove component from the report
     const updatedReport = await Report.findByIdAndUpdate(
       reportId,
-      { $pull: { components: { component: componentId } } }, // Remove the component from report
-      { new: true, session } // Use the session to ensure atomicity
+      { $pull: { components: { component: componentId } } },
+      { new: true, session } 
     );
 
-    if (!updatedReport) {
-      throw new Error('Report not found.');
-    }
+    if (!updatedReport) throw new Error('Report not found.');
 
-    // Step 2: Update stock of the component
-    const updatedComponent = await Component.findByIdAndUpdate(
-      componentId,
-      { $inc: { stock: stockToAdd } }, // Increment stock
-      { new: true, session }
-    );
-
-    if (!updatedComponent) {
-      throw new Error('Component not found.');
-    }
-    console.log('The component stock was updated');
     
-    // Commit the transaction if both operations succeed
+
+
     await session.commitTransaction();
     session.endSession();
 
-    // return { updatedReport, updatedComponent };
   } catch (error) {
-    // Abort the transaction on error
     await session.abortTransaction();
     session.endSession();
     throw error;

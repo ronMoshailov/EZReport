@@ -3,6 +3,7 @@ const router = express.Router();
 const { getAllReports, addComponentsToReport, getLastTransferDetail, getReportComponents, removeComponentAndReturnToStock, processWorkspaceTransfer, getReportComments } = require('../controller/reportController');
 
 router.post('/getAllReports', getAllReports);
+router.post('/removeComponentAndReturnToStock', removeComponentAndReturnToStock);
 // router.post('/updateReportWorkspace', updateReportWorkspaceController);
 // router.post('/addTransitionBetweenStations', updateReportWorkspace);
 // router.post('/getReport/:id', getReport);
@@ -12,7 +13,6 @@ router.post('/getAllReports', getAllReports);
 router.get('/getLastTransferDetail/:report_id', getLastTransferDetail);
 // router.post('/toggleEnable', toggleEnable);
 router.get('/getReportComponents/:report_id', getReportComponents);
-router.post('/removeComponentAndReturnToStock', removeComponentAndReturnToStock);
 router.post('/addComponentsToReport', addComponentsToReport);
 router.post('/processWorkspaceTransfer', processWorkspaceTransfer);
 // router.post('/handleReportAndComponents', handleReportAndComponents);

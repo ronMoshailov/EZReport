@@ -28,8 +28,14 @@ app.use((req, res, next) => {
   next(); // Pass to the next middleware/route handler
 });
 
-// Connect to the database
-connectToDB();
+
+app.use((err, req, res, next) => {
+  if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+    console.error('Malformed JSON:', err.message);
+    return res.status(400).json({ message: 'Malformed JSON in request body' });
+  }
+  next(err); // Pass other errors to the default error handler
+});
 
 app.use('/api', reportsRouter);
 app.use('/api', EmployeeRoutes);
@@ -37,6 +43,9 @@ app.use('/api', positionRoutes);
 app.use('/api', componentRoutes);
 app.use('/api', ReportProductionRoute);
 app.use('/api', reportStorageRoutes);
+
+// Connect to the database
+connectToDB();
 
 // Start the server
 app.listen(PORT, () => {
