@@ -85,6 +85,7 @@ const increaseStockBySerialNumber = async (serialNumber, amount) => {
 };
 
 const increaseStockById = async (component_id, amount, session) => {
+  try{
   const updatedComponent = await Component.findByIdAndUpdate(
     component_id,
     { $inc: { stock: amount } },
@@ -97,6 +98,10 @@ const increaseStockById = async (component_id, amount, session) => {
     }
 
   return updatedComponent.stock;
+  } catch(error){
+    console.error("Error in increaseStockById:", error.message);
+    throw new Error("Increasing component failed");
+  }
 };
 
 const updateStock = async (serialNumber, stock) => {
