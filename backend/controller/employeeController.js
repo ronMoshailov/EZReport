@@ -1,4 +1,4 @@
-const { findEmployee, addEmployee, removeEmployee } = require('../libs/employeeLib');
+const { findEmployeeByNumber, addEmployee, removeEmployee } = require('../libs/employeeLib');
 
 const isEmployeeExist = async (req, res) => {
   try {
@@ -8,7 +8,7 @@ const isEmployeeExist = async (req, res) => {
       return res.status(400).json({message: "Employee number is not valid"});
     }
 
-    const employee = await findEmployee(employeeNumber);
+    const employee = await findEmployeeByNumber(employeeNumber);
 
     if (!employee){
       console.error("Error in isEmployeeExist: employee wasn't found")

@@ -1,9 +1,9 @@
 const Report = require('../model/Report');  // Import the User model
 const mongoose = require('mongoose');
-const { removeComponentAndUpdateStock, handleAddComponentsToReport, fetchReportsByWorkspace, updateReportWorkspace, fetchReportComponents } = require('../libs/reportLib');
-const { createTransferDocument } = require('../libs/transferDetailsLib');
+const { removeComponentAndUpdateStock, handleAddComponentsToReport, fetchReportsByWorkspace, fetchReportComponents, handleTransferWorksplace, startReportingProduction, startReportingPacking } = require('../libs/reportLib');
 const { fetchReportStorageList, fetchCommentsFromReportStorage } = require('../libs/reportingStorageLib');
 const { fetchCommentsFromReportProduction, fetchReportProductionList } = require('../libs/reportingProductionLib');
+const { findEmployeeById, findEmployeeByNumber } = require('../libs/employeeLib')
 
 const getAllReports = async (req, res) => {
   const { workspace, isQueue } = req.body;
@@ -106,107 +106,119 @@ const getReportComments = async (req, res) => {
   }
 };
 
+// Production
+const reportingProductionController = async (req, res) => {
+  const { reportId, completedCount, employeeNumber, newComment } = req.body;
+  try{
+    if(reportId === undefined || completedCount === undefined || employeeNumber === undefined || completedCount <= 0){
+      if(reportId === undefined) console.error("Error in reportingProductionController: reportId not found");
+      if(completedCount === undefined) console.error("Error in reportingProductionController: completedCount not found");
+      if(completedCount <= 0) console.error("Error in reportingProductionController: completedCount are equal or less than zero");
+      if(employeeNumber === undefined) console.error("Error in reportingProductionController: employeeNumber not found");
+      return res.status(400).json({ message: "Invalid parameters" });
+    }
+    
+    const report = await Report.findById(reportId);
+    if(!report){
+      console.log("Error in reportingProductionController: Report not found");
+      return res.status(404).json({message: "Report not found"});
+    }
 
+    const employee = await findEmployeeByNumber(employeeNumber);
+    if(!employee){
+      console.log("Error in reportingProductionController: Employee not found");
+      return res.status(404).json({message: "Employee not found"});
+    }
 
+    const newReportingProduction = await startReportingProduction(report, completedCount, employee._id, newComment);
+    return res.status(201).json({message: "The creation production reporting succeeded", reporting: newReportingProduction});
+    
+  } catch (error){
+    console.error("Error in reportingProductionController:", error.message);
+    return res.status(500).json({message: error.message});
+  }
+}
 
+// Packing
+const reportingPackingController = async (req, res) => {
+  const { reportId, completedCount, employeeNumber, newComment } = req.body;
+  try{
+    if(reportId === undefined || completedCount === undefined || employeeNumber === undefined || completedCount <= 0){
+      if(reportId === undefined) console.error("Error in reportingProductionController: reportId not found");
+      if(completedCount === undefined) console.error("Error in reportingProductionController: completedCount not found");
+      if(completedCount <= 0) console.error("Error in reportingProductionController: completedCount are equal or less than zero");
+      if(employeeNumber === undefined) console.error("Error in reportingProductionController: employeeNumber not found");
+      return res.status(400).json({ message: "Invalid parameters" });
+    }
+    
+    const report = await Report.findById(reportId);
+    if(!report){
+      console.log("Error in reportingProductionController: Report not found");
+      return res.status(404).json({message: "Report not found"});
+    }
 
+    const employee = await findEmployeeByNumber(employeeNumber);
+    if(!employee){
+      console.log("Error in reportingProductionController: Employee not found");
+      return res.status(404).json({message: "Employee not found"});
+    }
 
+    const newReportingPacking = await startReportingPacking(report, completedCount, employee._id, newComment);
+    return res.status(201).json({message: "The creation production reporting succeeded", reporting: newReportingPacking});
+    
+  } catch (error){
+    console.error("Error in reportingProductionController:", error.message);
+    return res.status(500).json({message: error.message});
+  }
+}
 
-
-
-
-
-
-
-
-
-
-
-const processWorkspaceTransfer = async (req, res) => {
+// Transfer report
+const transferWorkspace = async (req, res) => {
   const session = await mongoose.startSession();
   session.startTransaction();
 
   try {
-    const { send_worker_id, send_workspace, report_id } = req.body;
+    const { employeeId, reportId } = req.body;
 
-    if (send_worker_id === undefined || send_workspace === undefined || report_id === undefined) {
-      if(send_worker_id === undefined) throw new Error("Error in processWorkspaceTransfer: sendWorkerID is undefined");
-      if(send_workspace === undefined) throw new Error("Error in processWorkspaceTransfer: sendWorkspace is undefined");
-      if(report_id === undefined) throw new Error("Error in processWorkspaceTransfer: reportId is undefined");
+    if (employeeId === undefined || reportId === undefined) {
+      if(employeeId === undefined) throw new Error("Error in transferWorkspace: employeeId is undefined");
+      if(reportId === undefined) throw new Error("Error in transferWorkspace: reportId is undefined");
       return res.status(400).json({ message: 'Invalid parameters' });
     }
+    const report = await Report.findById(reportId).session(session);
+    if (!report) throw new Error("Report not found");
 
-    // Step 1: Create the transfer document
-    const transferData = {
-      send_worker_id,
-      send_workspace,
-      send_date: new Date().toISOString(),
-      isReceived: false,
-    };
-    const newTransfer = await createTransferDocument(transferData, session);
-    
-    // Step 2: Update the report with the new transition and workspace
-    await updateReportWorkspace(report_id, newTransfer._id, session);
+    const employee = await findEmployeeById(employeeId, session);
+    if (!employee) throw new Error("Employee not found");
 
-    // Commit the transaction
+    await handleTransferWorksplace(employeeId, report, session);
+
     await session.commitTransaction();
     session.endSession();
+    return res.status(200).json({ message: 'Workspace transfer processed successfully'});
 
-    res.status(200).json({
-      message: 'Workspace transfer processed successfully',
-      newTransitionId: newTransfer._id,
-    });
+
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
-    console.error('Error processing workspace transfer:', error.message);
-    res.status(500).json({ message: 'Internal server error', error: error.message });
+
+    console.error('Error in transferWorkspace:', error.message);
+
+    if (error.message === "Report not found" || error.message === "Employee not found")
+      return res.status(404).json({message: error.message});
+
+    return res.status(500).json({ message: error.message });
   }
 };
-
-
-
-
-
-
-
-
-const getLastTransferDetail = async (req, res) => {
-  const { report_id } = req.params;
-
-  try {
-
-    // Fetch report from the database
-    const report = await Report.findOne(
-      { _id: report_id },
-      { transferDetails: { $slice: -1 } }
-    );
-
-    if (!report || !report.transferDetails || report.transferDetails.length === 0) {
-      return res.status(404).json({ message: 'No transfer details found for this report.' });
-    }
-
-    const lastTransferDetail = report.transferDetails[0];
-
-    // Validate ObjectId
-    if (!mongoose.Types.ObjectId.isValid(lastTransferDetail)) {
-      console.log('Invalid ObjectId in transferDetails:', lastTransferDetail);
-      return res.status(400).json({
-        message: 'Invalid ObjectId in transferDetails.',
-        lastTransferDetail
-      });
-    }
-
-    res.status(200).json({
-      message: 'Last transfer detail retrieved successfully.',
-      lastTransferDetail
-    });
-  } catch (err) {
-    console.error('Error fetching the last transfer detail:', err.message);
-    res.status(500).json({ message: 'Internal server error', error: err.message });
-  }
-};
-
 
 // Export the controller functions
-module.exports = { getAllReports, getLastTransferDetail, getReportComponents, removeComponentAndReturnToStock, addComponentsToReport, processWorkspaceTransfer, getReportComments };
+module.exports = { 
+  getAllReports, 
+  getReportComponents, 
+  removeComponentAndReturnToStock, 
+  addComponentsToReport, 
+  transferWorkspace, 
+  getReportComments, 
+  reportingProductionController,
+  reportingPackingController
+ };

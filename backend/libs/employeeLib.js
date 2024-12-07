@@ -1,7 +1,11 @@
 const Employee = require('../model/Employee');
 
-const findEmployee = async (employeeNum) => {
-  return await Employee.findOne({ number_employee: employeeNum });
+const findEmployeeByNumber = async (employeeNum, session) => {
+  return await Employee.findOne({ number_employee: employeeNum }).session(session);
+};
+
+const findEmployeeById = async (employeeId, session) => {
+  return await Employee.findById(employeeId).session(session);
 };
 
 const addEmployee = async (number_employee, fullName) => {
@@ -30,4 +34,4 @@ const removeEmployee = async (employeeNumber) => {
   }
 };
 
-module.exports = { findEmployee, addEmployee, removeEmployee };
+module.exports = { findEmployeeByNumber, addEmployee, removeEmployee, findEmployeeById };

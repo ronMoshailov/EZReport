@@ -25,11 +25,6 @@ const transferDetailsSchema = new mongoose.Schema({
     received_workspace: {
         type: String,
         default: null,
-    },
-    isReceived: {
-        type: Boolean,
-        required: true,
-        default: true
     }
 });
 

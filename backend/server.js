@@ -3,10 +3,7 @@ const express = require('express');
 // Require routes
 const reportsRouter = require('./routes/reportRoutess'); // Assuming this is the path to the route file
 const EmployeeRoutes = require('./routes/employeeRoutes'); // Assuming this is the path to the route file
-const positionRoutes = require('./routes/workspaceRoutes');
 const componentRoutes = require('./routes/componentRoutes');
-const ReportProductionRoute = require('./routes/reportingProductionRoute');
-const reportStorageRoutes = require('./routes/reportingStorageRoute');
 
 // Require methods
 const connectToDB = require('./connectToDB');
@@ -39,10 +36,7 @@ app.use((err, req, res, next) => {
 
 app.use('/api', reportsRouter);
 app.use('/api', EmployeeRoutes);
-app.use('/api', positionRoutes);
 app.use('/api', componentRoutes);
-app.use('/api', ReportProductionRoute);
-app.use('/api', reportStorageRoutes);
 
 // Connect to the database
 connectToDB();

@@ -1,20 +1,32 @@
 const TransferDetails = require('../model/TransferDetails');
 
-/**
- * Creates a transfer document.
- * @param {Object} transferData - Data for the transfer document.
- * @param {Object} session - The MongoDB session for transactions.
- * @returns {Object} - The newly created transfer document.
- * @throws {Error} - Throsws an error if creation fails.
- */
+
+
 const createTransferDocument = async (transferData, session) => {
   try {
-    const [newTransfer] = await TransferDetails.create([transferData], { session }); // Use session for transactional writes
-    return newTransfer; // Return the created document directly
+    const [newTransfer] = await TransferDetails.create([transferData], { session });
+    return newTransfer;
   } catch (error) {
-    console.error('Error creating transfer document:', error.message);
+    console.error('Error in createTransferDocument: Creating transfer failed');
     throw new Error(error.message);
   }
 };
 
-module.exports = { createTransferDocument };
+const getTransferDocument = async (documentId) => {
+  const lastDocument = await TransferDetails.findById(documentId)
+  return lastDocument;
+}
+
+const recieveUpdate = async (lastTransferDocument, workspace, employeeId, session) => {
+
+  const date = new Date();
+  date.setHours(date.getHours() + 2);
+
+  lastTransferDocument.received_worker_id = employeeId;
+  lastTransferDocument.received_date = date;
+  lastTransferDocument.received_workspace = workspace;
+  await lastTransferDocument.save({ session })
+  return lastTransferDocument;
+}
+
+module.exports = { createTransferDocument, recieveUpdate, getTransferDocument };
