@@ -1,28 +1,46 @@
+
+// Fetch all reports
 const fetchAllReports = async (workspace, isQueue) => {
   try {
-    // Send a POST request to fetch reports based on the provided `workspace` and `isQueue` values
     const response = await fetch('http://localhost:5000/api/getAllReports', {
-      method: 'POST', // HTTP method for sending data to the server
-      headers: {
-        'Content-Type': 'application/json', // Specify that the request body is in JSON format
-      },
-      body: JSON.stringify({ workspace, isQueue }) // Include the request payload as a JSON string
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ workspace, isQueue }),
     });
 
-    // Check if the response status is not OK (e.g., 4xx or 5xx), throw an error
-    if (!response.ok) throw new Error('Failed to fetch reports'); 
-
-    // Parse the JSON response from the server
     const data = await response.json();
 
-    // Return success indicator and the fetched data
+    if( response.status === 400 ) throw new Error('Bad Request: Missing or invalid parameters');
+    else if( data.message === "Reports not found" ) return [true, []]
+    else if( response.status === 500 ) throw new Error('Internal Server Error: Something went wrong on the server');
+    else if (!response.ok) throw new Error(`Unexpected Error: Status code ${response.status}`);
+    
     return [true, data];
 
   } catch (err) {
-    // Return failure indicator and the error message
     return [false, err.message];
   }
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 const fetchReportComponents = async (report_id) => {
   // Send a GET request to fetch the components associated with the specified report ID

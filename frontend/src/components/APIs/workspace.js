@@ -52,10 +52,10 @@ const isWorkspaceExist = async (workspace) => {
       const response = await fetch(`http://localhost:5000/api/isWorkspaceExist/${workspace}`);
       
       if (response.ok) {                                  // Server returned 200 status
-          const workspace_data = await response.json();   
+          const workspace_data = await response.json();
           
           if (workspace_data !== undefined) {             // Workspace exists on server
-              return [true, workspace_data.name];
+              return [true, workspace_data.workspace.name];
           } else {
               return [false, 'מספר עמדה לא קיים'];
           }

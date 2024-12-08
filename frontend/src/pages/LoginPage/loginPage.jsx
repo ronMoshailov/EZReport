@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { isWorkspaceExist } from './APIs/API_workspace';
+import { isWorkspaceExist } from '../../components/APIs/workspace';
 import './loginPage.scss';
 
 const LoginPage = () => {
@@ -18,17 +18,6 @@ const LoginPage = () => {
     const navigate = useNavigate();                         // Router navigation setup
 
     /**
-     * Generic handler for input changes.
-     * This function creates a specific event handler for a given state setter function.
-     *
-     * @param {Function} setter - The state setter function to update the corresponding state.
-     * @returns {Function} - A function that takes an event, extracts its value, and updates the state using the setter.
-     */
-    const handleInputChange = (setter) => (event) => {
-      setter(event.target.value);
-    };
-    
-    /**
      * Handle form submission for workspace validation.
      * This function validates the workspace, stores it in localStorage if valid, 
      * and redirects the user to the dashboard. If invalid, it displays an error message.
@@ -37,10 +26,8 @@ const LoginPage = () => {
         setLoading(true);                                           // Show loading spinner 
         setErrorMessage('');                                        // Reset error message
         const [check, data] = await isWorkspaceExist(workspace);    // Check if the workspace exist in DB
-
         check ? valid(data) : notValid(data);
         setLoading(false);                              // Hide loading spinner
-
     }
 
     function valid(data){
@@ -66,7 +53,7 @@ const LoginPage = () => {
                   id="login_input" 
                   placeholder="הכנס מספר עמדה" 
                   value={workspace} 
-                  onChange={handleInputChange(setWorkspace)} 
+                  onChange={(event) => setWorkspace(event.target.value)} 
                   required 
                 />
                 <button                                             // Submit button

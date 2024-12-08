@@ -11,13 +11,13 @@ const fetchReportStorageList = async (report_id) => {
     return report.reportingStorage_list;
 };
 
-const fetchCommentsFromReportStorage = async (reportingStorage_list) => {
+const fetchStorageComments = async (reportingStorage_list) => {
     const comments = await ReportingStorage.find(
       { _id: { $in: reportingStorage_list } }, // Match `_id` with the provided list
       { comment: 1, _id: 0 } // Project only the `comment` field
     );
     if(!comments){
-      console.error("Error in fetchCommentsFromReportStorage: Comments not found");
+      console.error("Error in fetchStorageComments: Comments not found");
       throw new Error("Comments not found");
     }
     return comments.map((item) => item.comment); // Extract only the `comment` field
@@ -42,6 +42,6 @@ const createReportingStorage = async (employee_id, date, components_list, commen
 
 module.exports = {
   fetchReportStorageList,
-  fetchCommentsFromReportStorage,
+  fetchStorageComments,
   createReportingStorage
 };

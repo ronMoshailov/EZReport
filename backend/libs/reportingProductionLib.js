@@ -30,13 +30,13 @@ const createProdReport = async (report_id, employee_id, completedCount, comment,
     
         // return 
     } catch (error) {
-      console.error('Error fetching comments from reportstorage:', error.message);
+      console.error("Error in createProdReport:", error.message);
       throw error;
     }
   };
 
 
-const fetchCommentsFromReportProduction = async (reportingProduction_list) => {
+const fetchProductionComments = async (reportingProduction_list) => {
   try {
     const comments = await ReportProduction.find(
       { _id: { $in: reportingProduction_list } }, // Match `_id` with the provided list
@@ -44,7 +44,7 @@ const fetchCommentsFromReportProduction = async (reportingProduction_list) => {
     );
     return comments.map((item) => item.comment); // Extract only the `comment` field
   } catch (error) {
-    console.error('Error fetching comments from reportstorage:', error.message);
+    console.error("Error in fetchProductionComments:", error.message);
     throw error;
   }
 };
@@ -64,4 +64,4 @@ const fetchReportProductionList = async (report_id) => {
   }
 };
 
-  module.exports = { createProdReport, fetchCommentsFromReportProduction, fetchReportProductionList };
+  module.exports = { createProdReport, fetchProductionComments, fetchReportProductionList };

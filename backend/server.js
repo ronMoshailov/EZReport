@@ -4,6 +4,7 @@ const express = require('express');
 const reportsRouter = require('./routes/reportRoutess'); // Assuming this is the path to the route file
 const EmployeeRoutes = require('./routes/employeeRoutes'); // Assuming this is the path to the route file
 const componentRoutes = require('./routes/componentRoutes');
+const workspaceRoutes = require('./routes/workspaceRoutes');
 
 // Require methods
 const connectToDB = require('./connectToDB');
@@ -37,6 +38,7 @@ app.use((err, req, res, next) => {
 app.use('/api', reportsRouter);
 app.use('/api', EmployeeRoutes);
 app.use('/api', componentRoutes);
+app.use('/api', workspaceRoutes);
 
 // Connect to the database
 connectToDB();

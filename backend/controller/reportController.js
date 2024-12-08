@@ -1,8 +1,8 @@
 const Report = require('../model/Report');  // Import the User model
 const mongoose = require('mongoose');
 const { removeComponentAndUpdateStock, handleAddComponentsToReport, fetchReportsByWorkspace, fetchReportComponents, handleTransferWorksplace, startReportingProduction, startReportingPacking } = require('../libs/reportLib');
-const { fetchReportStorageList, fetchCommentsFromReportStorage } = require('../libs/reportingStorageLib');
-const { fetchCommentsFromReportProduction, fetchReportProductionList } = require('../libs/reportingProductionLib');
+const { fetchReportStorageList, fetchStorageComments } = require('../libs/reportingStorageLib');
+const { fetchProductionComments, fetchReportProductionList } = require('../libs/reportingProductionLib');
 const { findEmployeeById, findEmployeeByNumber } = require('../libs/employeeLib')
 
 const getAllReports = async (req, res) => {
@@ -84,10 +84,10 @@ const getReportComments = async (req, res) => {
 
     if (workspace === 'Production'){
       const reportingStorage_list = await fetchReportStorageList(report_id);
-      comments = await fetchCommentsFromReportStorage(reportingStorage_list);
+      comments = await fetchStorageComments(reportingStorage_list);
     } else if (workspace === 'Packing'){
       const reportingProduction_list = await fetchReportProductionList(report_id);
-      comments = await fetchCommentsFromReportProduction(reportingProduction_list);
+      comments = await fetchProductionComments(reportingProduction_list);
     } else{
       console.log('Error checking for comments');
       return;

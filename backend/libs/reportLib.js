@@ -1,11 +1,9 @@
 const Report = require('../model/Report');
 const Component = require('../model/Component');
 const mongoose = require('mongoose');
-const ReportingStorage = require('../model/ReportingStorage');
 const { fetchComponentByID, increaseStockById } = require('../libs/componentLib');
 const { createReportingStorage } = require('../libs/reportingStorageLib');
 const { createTransferDocument, recieveUpdate, getTransferDocument } = require('../libs/transferDetailsLib');
-const { findEmployeeById } = require("./employeeLib");
 const { createProdReport } = require('./reportingProductionLib');
 const { createPackingReporting } = require('./reportingPacking');
 
@@ -276,8 +274,6 @@ const updateReportWorkspace = async (report, newTransitionId, session) => {
   }
 
 };
-
-
 
 module.exports = { 
   removeComponentAndUpdateStock,

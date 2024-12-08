@@ -2,16 +2,16 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 // import { useDebounce } from 'use-debounce';
 
-import CardReport from './cardReport';
-import Slidebar from './slidebar';
-import OperationModal from './modals/OperationModal';
-import ModalTransferWorkspace from './modals/transferWorkspaceModal';
+import CardReport from '../../components/CardReport/cardReport';
+import Slidebar from '../../components/Slidebar/slidebar';
+// import OperationModal from '../../components/modals/OperationModal';
+// import ModalTransferWorkspace from '../../components/modals/transferWorkspaceModal';
 
 import './dashboard.scss';
-import './slidebar.scss';
+import '../../components/Slidebar/slidebar.scss';
 
-import { handleEscKey } from './functions';
-import { fetchAllReports } from './APIs/API_report';
+import { handleEscKey } from '../../components/utils/functions';
+import { fetchAllReports } from '../../components/APIs/report';
 
 const Dashboard = ({isQueue}) => {
 
@@ -49,16 +49,16 @@ const Dashboard = ({isQueue}) => {
       handleFetchReports();                                         // Fetch all reports
     }, [isQueue, refreshReports]);
 
-    useEffect(() => {
-      window.addEventListener('keydown', addEscListener);           // Add keydown event listener to listen for Escape key press
-      clearStorage.forEach((str) => localStorage.removeItem(str));  // Clean the local storage
+    // useEffect(() => {
+    //   window.addEventListener('keydown', addEscListener);           // Add keydown event listener to listen for Escape key press
+    //   clearStorage.forEach((str) => localStorage.removeItem(str));  // Clean the local storage
 
-      if(workspace == null)
-        navigate('/error');
-    }, []);
+    //   if(workspace == null)
+    //     navigate('/error');
+    // }, []);
 
     // Trigger the refresh of the reports
-    const triggerRefresh = () => setRefreshReports((prev) => !prev);        
+    // const triggerRefresh = () => setRefreshReports((prev) => !prev);        
 
     // // Fetch all reports
     const handleFetchReports = async () => {
@@ -66,7 +66,8 @@ const Dashboard = ({isQueue}) => {
         const [check, data] = await fetchAllReports(workspace, isQueue);
         if (check){
           setReports(data);
-          triggerRefresh();
+          // console.log(reports);
+          // triggerRefresh();
         }
         else
           setError(data);
@@ -92,14 +93,14 @@ const Dashboard = ({isQueue}) => {
     }, []);
 
     // Function to close the modal
-    const handleCloseModal = () => {
-      setIsOperationModal(false);               // Close the operation modal
-      setReport(null);                          // Clear the state the holds the report
-      setIsSendModalOpen(false);                // Close the transfer modal
-    };
+    // const handleCloseModal = () => {
+    //   setIsOperationModal(false);               // Close the operation modal
+    //   setReport(null);                          // Clear the state the holds the report
+    //   setIsSendModalOpen(false);                // Close the transfer modal
+    // };
 
     // Add Esc press key listener
-    const addEscListener = (event) => handleEscKey(event, handleCloseModal);
+    // const addEscListener = (event) => handleEscKey(event, handleCloseModal);
 
   // Filtered reports
   const filteredReports = reports.filter((report) =>
@@ -107,8 +108,8 @@ const Dashboard = ({isQueue}) => {
   );
 
     // Display loading/error state if necessary
-    if (loading) return <p>Loading reports...</p>;
-    if (error) return <p>Error: {error}</p>;
+    // if (loading) return <p>Loading reports...</p>;
+    // if (error) return <p>Error: {error}</p>;
 
   return (
     <div className="dashboard-layout">
@@ -124,14 +125,15 @@ const Dashboard = ({isQueue}) => {
           />
         </div>
         
-        <div className="cards-container">                               {/* Container for displaying reports as cards */}
+        {/* Container for displaying reports as cards */}
+        <div className="cards-container">                               
           {filteredReports.map(report => (
             <CardReport
-              key={report._id}                                          // Unique key for each card
-              serialNumber={report.serialNumber}                        // Pass report ID to the card component
-              date={new Date(report.openDate).toLocaleDateString()}     // Format the report's date
-              onClick={() => handleClickOnCard(report)}                 // Handle click event for opening report
-              onClickSend={() => handleMoveWorkspaceButton(report)}     // Handle send button click on card
+              key={report._id}                                          
+              serialNumber={report.serialNumber} 
+              date={new Date(report.openDate).toLocaleDateString()} 
+              onClick={() => handleClickOnCard(report)} 
+              onClickSend={() => handleMoveWorkspaceButton(report)}
             />
           ))}
         </div>
@@ -142,7 +144,7 @@ const Dashboard = ({isQueue}) => {
         />
 
       {/* Modal for report details, only visible when isOperationModal and not in queue */}
-      {isOperationModal && !isQueue && 
+      {/* {isOperationModal && !isQueue && 
         <OperationModal 
           onClose={addEscListener} 
           report_id={report._id} 
@@ -152,15 +154,15 @@ const Dashboard = ({isQueue}) => {
           report_orderedCount={ report.orderedCount } 
           workspace={workspace}
           setIsOperationModal={setIsOperationModal}
-        />}
+        />} */}
 
       {/* Send modal for moving reports, only visible when isSendModalOpen */}
-      {isSendModalOpen && 
+      {/* {isSendModalOpen && 
         <ModalTransferWorkspace 
           onClose={handleCloseModal} 
           selectedReport={report} 
           isReceived={isReceived} 
-        />}
+        />} */}
     </div>
   );
 };
