@@ -1,69 +1,85 @@
-.card {
-    background-color: #eaf7fc;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease-in-out;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    text-align: right;
-
-    p {
-        font-size: 14px;
-        color: #666;
-        margin: 5px 0;
+.report-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    background-color: #ffffff;
+  
+    th,
+    td {
+      padding: 15px;
+      text-align: center;
+      border: 1px solid #ccc;
+      font-size: 14px;
     }
-
-    .employee-info {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: 14px;
-        margin-top: 15px;
-        color: #666;
-
-        .icon {
-            margin-right: 5px;
-            font-size: 18px;
-        }
+  
+    th {
+      background-color: #007bff;
+      color: white;
+      font-weight: bold;
     }
-
+  
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+  
+    tr:hover {
+      background-color: #f0f8ff;
+      border: solid 1px black;
+    }
+  
+    .buttonIcon {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      width: 30px;
+      height: 30px;
+      border: none;
+      border-radius: 50%;
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+    
     #sendIcon {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 40px;
-        height: 40px;
-        background-color: #007bff;
-        border: none;
-        border-radius: 50%;
-        color: white;
-        font-size: 25px;
-        cursor: pointer;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        transition: background-color 0.3s ease, transform 0.2s ease;
-        margin-right: auto;
+      background-color: #00ff62;
     }
-    
     #sendIcon:hover {
-        background-color: #0056b3;
+      background-color: #00b32d;
     }
-    
+  
     #sendIcon:active {
-        background-color: #004494;
+      background-color: #009425;
+      transform: translateY(1px);
+    }
+
+    #startWorkingIcon {
+        background-color: #00ff15;
+      }
+      #startWorkingIcon:hover {
+        background-color: #0fb300;
+      }
+    
+      #startWorkingIcon:active {
+        background-color: #059400;
         transform: translateY(1px);
-    }
+      }
 
-    &:hover {
-        transform: translateY(-5px);
-    }
-
-    h3 {
-        font-size: 20px;
-        margin-bottom: 10px;
-        color: #333;
-    }
-}
-
+      #EndWorkingIcon {
+        background-color: #ff0000;
+      }
+      #EndWorkingIcon:hover {
+        background-color: #b30000;
+      }
+    
+      #EndWorkingIcon:active {
+        background-color: #940000;
+        transform: translateY(1px);
+      }
+  }
+  
+  .dashboard-layout .dashboard-content .cards-container{
+    display: flex !important;
+  }    
+  

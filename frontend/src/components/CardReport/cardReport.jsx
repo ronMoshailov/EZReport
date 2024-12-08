@@ -1,24 +1,79 @@
 import React from 'react';
 import './cardReport.scss';
 
-const CardReport = ({ serialNumber, date, onClick, onClickSend }) => {
-
-  const handleSendButtonClick = (onClickSend) => (event) => {
-    event.stopPropagation();          // Prevent triggering the parent element's onClick
-    onClickSend();                    // Call the provided onClickSend function
+const CardReport = ({ reports, onClickRow, onClickSend }) => {
+  
+  const handleSendClick = (report) => (event) => {
+    event.stopPropagation(); // Prevent row click
+    onClickSend(report); // Call the onClickSend function with the report reports
   };
 
   return (
-    <div className="card" onClick={onClick}>
-      <h3>פקע: {serialNumber}</h3>     
-      <p>תאריך פתיחה: {date}</p>
-      <button 
-        id='sendIcon' 
-        onClick={handleSendButtonClick(onClickSend)}>
-        &larr;                                              {/* Send icon (arrow) */}
-      </button>
-    </div>
+    <table className="report-table">
+      <thead>
+        <tr>
+          <th>שם</th>
+          <th>מספר סידורי</th>
+          <th>סטטוס</th>
+          <th>תחנה נוכחית</th>
+          <th>יוצרו</th>
+          <th>נארזו</th>
+          <th>הוזמנו</th>
+          <th>תאריך פתיחה</th>
+          <th>תחילת עבודה</th>
+          <th>סיום ודיווח</th>
+          <th>שליחה</th>
+        </tr>
+      </thead>
+      <tbody>
+        {reports.map((report) => (
+          <tr key={report._id} onClick={() => onClickRow(report)}>
+
+            <td>{report.title}</td>
+            <td>{report.serialNumber}</td>
+            <td>{report.status}</td>
+
+            <td>{report.current_workspace}</td>
+            <td>{report.producedCount}</td>
+            <td>{report.packedCount}</td>
+            <td>{report.orderedCount}</td>
+
+            <td>{new Date(report.openDate).toLocaleDateString()}</td>
+
+            <td>
+              <button
+                className='buttonIcon'  
+                id="startWorkingIcon"
+                // onClick={handleSendClick(report)}
+              >
+                &#8858;
+              </button>
+            </td>
+
+            <td>
+              <button
+                className='buttonIcon'  
+                id="EndWorkingIcon"
+                // onClick={handleSendClick(report)}
+              >
+                &#8861;
+              </button>
+            </td>
+
+            <td>
+              <button
+                className='buttonIcon'  
+                id="sendIcon"
+                onClick={handleSendClick(report)}
+              >
+                &larr;
+              </button>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
   );
 };
 
-export default CardReport; 
+export default CardReport;

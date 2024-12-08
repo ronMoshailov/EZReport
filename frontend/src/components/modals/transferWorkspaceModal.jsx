@@ -1,8 +1,8 @@
 // Modal_Transfer_Workspace.jsx
 import React, { useState } from 'react';
 import './transferWorkspaceModal.scss';
-import { isEmployeeExist } from '../APIs/API_employee';
-import { getLastTransferDetail, makeReceivedWorkspace, makeSendWorkspace } from '../APIs/API_workspace';
+import { isEmployeeExist } from '../APIs/employee';
+import { getLastTransferDetail, makeReceivedWorkspace, makeSendWorkspace } from '../APIs/workspace';
 
 const Modal_Transfer_Workspace = ({ onClose, selectedReport, isReceived }) => {
   

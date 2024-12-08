@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import CardReport from '../../components/CardReport/cardReport';
 import Slidebar from '../../components/Slidebar/slidebar';
 // import OperationModal from '../../components/modals/OperationModal';
-// import ModalTransferWorkspace from '../../components/modals/transferWorkspaceModal';
+import ModalTransferWorkspace from '../../components/modals/transferWorkspaceModal';
 
 import './dashboard.scss';
 import '../../components/Slidebar/slidebar.scss';
@@ -93,11 +93,11 @@ const Dashboard = ({isQueue}) => {
     }, []);
 
     // Function to close the modal
-    // const handleCloseModal = () => {
-    //   setIsOperationModal(false);               // Close the operation modal
-    //   setReport(null);                          // Clear the state the holds the report
-    //   setIsSendModalOpen(false);                // Close the transfer modal
-    // };
+    const handleCloseModal = () => {
+      setIsOperationModal(false);               // Close the operation modal
+      setReport(null);                          // Clear the state the holds the report
+      setIsSendModalOpen(false);                // Close the transfer modal
+    };
 
     // Add Esc press key listener
     // const addEscListener = (event) => handleEscKey(event, handleCloseModal);
@@ -108,8 +108,8 @@ const Dashboard = ({isQueue}) => {
   );
 
     // Display loading/error state if necessary
-    // if (loading) return <p>Loading reports...</p>;
-    // if (error) return <p>Error: {error}</p>;
+    if (loading) return <p>Loading reports...</p>;
+    if (error) return <p>Error: {error}</p>;
 
   return (
     <div className="dashboard-layout">
@@ -127,15 +127,11 @@ const Dashboard = ({isQueue}) => {
         
         {/* Container for displaying reports as cards */}
         <div className="cards-container">                               
-          {filteredReports.map(report => (
-            <CardReport
-              key={report._id}                                          
-              serialNumber={report.serialNumber} 
-              date={new Date(report.openDate).toLocaleDateString()} 
-              onClick={() => handleClickOnCard(report)} 
-              onClickSend={() => handleMoveWorkspaceButton(report)}
-            />
-          ))}
+        <CardReport
+          reports={filteredReports}
+          onClickRow={handleClickOnCard}
+          onClickSend={handleMoveWorkspaceButton}
+        />
         </div>
       </div>
       
@@ -157,12 +153,12 @@ const Dashboard = ({isQueue}) => {
         />} */}
 
       {/* Send modal for moving reports, only visible when isSendModalOpen */}
-      {/* {isSendModalOpen && 
+      {isSendModalOpen && 
         <ModalTransferWorkspace 
           onClose={handleCloseModal} 
           selectedReport={report} 
           isReceived={isReceived} 
-        />} */}
+        />}
     </div>
   );
 };
