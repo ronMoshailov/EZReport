@@ -23,6 +23,23 @@ const fetchStorageComments = async (reportingStorage_list) => {
     return comments.map((item) => item.comment); // Extract only the `comment` field
 };
 
+const initializeReportingStorage = async (employee_id, session) => {
+  try{
+    const date = new Date();
+    date.setHours(date.getHours() + 2);
+
+    const newRoportingStorage = new ReportingStorage({
+      employee_id,
+      start_date: date
+    });
+    
+    const newReporting = await newRoportingStorage.save({session});
+    return newReporting;
+  } catch (error){
+    console.error("Error in initializeReportingStorage:", error.message);
+  }
+};
+
 const createReportingStorage = async (employee_id, date, components_list, comment, session) => {
   try{
     const newReportingStorage = new ReportingStorage({
@@ -43,5 +60,6 @@ const createReportingStorage = async (employee_id, date, components_list, commen
 module.exports = {
   fetchReportStorageList,
   fetchStorageComments,
+  initializeReportingStorage,
   createReportingStorage
 };

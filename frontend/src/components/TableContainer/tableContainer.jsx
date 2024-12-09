@@ -1,15 +1,24 @@
-import React from 'react';
-import './cardReport.scss';
+import React, { useState } from 'react';
+import './tableContainer.scss';
 
-const CardReport = ({ reports, onClickRow, onClickSend }) => {
+import WorkSessionModal from '../../components/modals/WorkSessionModal'
+
+const TableContainer = ({ reports, onClickRow, isQueue }) => {
   
-  const handleSendClick = (report) => (event) => {
+  const [isWorkSession, setIsWorkSession] = useState(false);                            // Handle case that if this change so fetch reports again
+  const [operationType, setOperationType] = useState(false);
+  const [selectedReportId, setSelectedReportId] = useState('');
+
+  const handleSendClick = (reportId, operation) => (event) => {
     event.stopPropagation(); // Prevent row click
-    onClickSend(report); // Call the onClickSend function with the report reports
+    setIsWorkSession(true);
+    setSelectedReportId(reportId);
+    setOperationType(operation);
   };
 
   return (
-    <table className="report-table">
+    <>
+        <table className="report-table">
       <thead>
         <tr>
           <th>שם</th>
@@ -32,19 +41,17 @@ const CardReport = ({ reports, onClickRow, onClickSend }) => {
             <td>{report.title}</td>
             <td>{report.serialNumber}</td>
             <td>{report.status}</td>
-
             <td>{report.current_workspace}</td>
             <td>{report.producedCount}</td>
             <td>{report.packedCount}</td>
             <td>{report.orderedCount}</td>
-
             <td>{new Date(report.openDate).toLocaleDateString()}</td>
 
             <td>
               <button
                 className='buttonIcon'  
                 id="startWorkingIcon"
-                // onClick={handleSendClick(report)}
+                onClick={handleSendClick(report._id, 'start')}
               >
                 &#8858;
               </button>
@@ -54,7 +61,7 @@ const CardReport = ({ reports, onClickRow, onClickSend }) => {
               <button
                 className='buttonIcon'  
                 id="EndWorkingIcon"
-                // onClick={handleSendClick(report)}
+                onClick={handleSendClick(report, 'end')}
               >
                 &#8861;
               </button>
@@ -64,16 +71,25 @@ const CardReport = ({ reports, onClickRow, onClickSend }) => {
               <button
                 className='buttonIcon'  
                 id="sendIcon"
-                onClick={handleSendClick(report)}
+                onClick={handleSendClick(report, 'send')}
               >
-                &larr;
+                {isQueue ? '→' : '←'}
               </button>
             </td>
+
           </tr>
         ))}
       </tbody>
     </table>
+
+    {isWorkSession &&
+        <WorkSessionModal
+          reportId={selectedReportId}
+          operationType={operationType}
+          onClose={setIsWorkSession}
+        />}
+    </>
   );
 };
 
-export default CardReport;
+export default TableContainer;

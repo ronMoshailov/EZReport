@@ -4,5 +4,15 @@ const handleEscKey = (event, closeFunction) => {
     closeFunction();                                             // Close modal if Escape is pressed
 };
 
+const isEmpty = (inputValue, setError, setIsLoading) => {
+    if(!inputValue.trim()){
+        setError('מספר עובד לא יכול להיות ריק');
+        setIsLoading(false);
+        return false;
+        console.log('empty field');
+    }
 
-export { handleEscKey };
+    return true;
+}
+
+export { handleEscKey, isEmpty };

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 // import { useDebounce } from 'use-debounce';
 
-import CardReport from '../../components/CardReport/cardReport';
+import TableContainer from '../../components/TableContainer/tableContainer';
 import Slidebar from '../../components/Slidebar/slidebar';
 // import OperationModal from '../../components/modals/OperationModal';
 import ModalTransferWorkspace from '../../components/modals/transferWorkspaceModal';
@@ -25,6 +25,7 @@ const Dashboard = ({isQueue}) => {
     const [isReceived, setIsReceived] = useState(false);                                    // Tetermine if client receiving report or send report
     const [refreshReports, setRefreshReports] = useState(false);                            // Handle case that if this change so fetch reports again
     const [reportFilter, setReportFilter] = useState('');                                   // Filter text for reports
+    const [operationType, setOperationType] = useState("");                            // Handle case that if this change so fetch reports again
 
     const navigate = useNavigate();
     // const [debouncedReportFilter] = useDebounce(reportFilter, 300);
@@ -127,10 +128,10 @@ const Dashboard = ({isQueue}) => {
         
         {/* Container for displaying reports as cards */}
         <div className="cards-container">                               
-        <CardReport
+        <TableContainer
           reports={filteredReports}
           onClickRow={handleClickOnCard}
-          onClickSend={handleMoveWorkspaceButton}
+          isQueue={isQueue}
         />
         </div>
       </div>
@@ -159,6 +160,7 @@ const Dashboard = ({isQueue}) => {
           selectedReport={report} 
           isReceived={isReceived} 
         />}
+
     </div>
   );
 };

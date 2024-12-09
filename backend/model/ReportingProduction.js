@@ -2,23 +2,20 @@ const mongoose = require('mongoose');
 
 // Define the schema
 const ReportProductionSchema = new mongoose.Schema({
-    report_id: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Report',
-        required: true
-    },
     employee_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Employee',
         required: true
     },
-    date: {
+    start_date: {
         type: Date,
         required: true
     },
+    end_date: {
+        type: Date,
+    },
     completedCount: {
         type: Number,
-        required: true
     },
     comment: {
         type: String,

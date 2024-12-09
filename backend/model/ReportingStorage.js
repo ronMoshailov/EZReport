@@ -31,5 +31,5 @@ const reportStorageSchema = new mongoose.Schema({
 });
 
 // Create and export the model
-const reportStorage = mongoose.model('reportStorage', reportStorageSchema);
+const reportStorage = mongoose.model('reportingStorage', reportStorageSchema);
 module.exports = reportStorage;

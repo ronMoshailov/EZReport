@@ -3,7 +3,8 @@ const mongoose = require('mongoose');
 // Define the schema
 const transferDetailsSchema = new mongoose.Schema({
     send_worker_id: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Employee',
         required: true
     },
     send_date: {
@@ -15,7 +16,8 @@ const transferDetailsSchema = new mongoose.Schema({
         required: true
     },
     received_worker_id: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Employee',
         default: null,
     },
     received_date: {

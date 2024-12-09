@@ -25,6 +25,24 @@ const createPackingReporting = async (report_id, employee_id, completedCount, co
       }
     };
   
+    const initializeReportingPacking = async (employee_id, session) => {
+      try{
+        const date = new Date();
+        date.setHours(date.getHours() + 2);
+    
+        const newReporting = new ReportingPacking({
+          employee_id,
+          start_date: date
+        });
+        
+        await newReporting.save({session});
+        return newReporting;
+      } catch (error){
+        console.error("Error in initializeReportingStorage:", error.message);
+      }
+    };
+
     module.exports = {
-        createPackingReporting
+        createPackingReporting,
+        initializeReportingPacking
     }

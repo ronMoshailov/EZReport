@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getAllReports, addComponentsToReport, getReportComponents, removeComponentAndReturnToStock, transferWorkspace, getReportComments, reportingProductionController, reportingPackingController } = require('../controller/reportController');
+const { getAllReports, addComponentsToReport, getReportComponents, removeComponentAndReturnToStock, transferWorkspace, getReportComments, reportingProductionController, reportingPackingController, startSession } = require('../controller/reportController');
 
 router.post('/getAllReports', getAllReports);
 router.post('/removeComponentAndReturnToStock', removeComponentAndReturnToStock);
@@ -10,5 +10,6 @@ router.get('/displayReportComments/:report_id', getReportComments);
 router.post('/transferWorkspace', transferWorkspace);
 router.post('/postProductionReporting', reportingProductionController);
 router.post('/postPackingReporting', reportingPackingController);
+router.post('/startSession', startSession);
 
 module.exports = router;

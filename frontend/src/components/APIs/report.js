@@ -22,7 +22,24 @@ const fetchAllReports = async (workspace, isQueue) => {
   }
 };
 
+const startSession = async (reportId, employeeNum) => {
+  try {
+    const response = await fetch('http://localhost:5000/api/startSession', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ reportId, employeeNum }),
+    });
 
+    if( response.status === 400 ) throw new Error('Bad Request: Missing or invalid parameters');
+    else if( response.status === 404 ) throw new Error('Not found: The requested resource could not be located on the server');
+    else if( response.status === 500 ) throw new Error('Internal Server Error: Something went wrong on the server');
+    else if (!response.ok) throw new Error(`Unexpected Error: Status code ${response.status}`);
+    return true;
+  } catch (error) {
+    console.error(error.message);
+    return false;
+  }
+};
 
 
 
@@ -184,4 +201,4 @@ const sendProductionReport = async (report_id, employee_id, completedCount, comm
   }
 };
 
-export { fetchAllReports, fetchReportComponents, handleRemoveComponentFromReport, toggleReportEnable, fetchAndComponents, displayReportComments, sendProductionReport };
+export { fetchAllReports, fetchReportComponents, handleRemoveComponentFromReport, toggleReportEnable, fetchAndComponents, displayReportComments, sendProductionReport, startSession };

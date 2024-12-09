@@ -1,8 +1,9 @@
 const Report = require('../model/Report');  // Import the User model
 const mongoose = require('mongoose');
 const { removeComponentAndUpdateStock, handleAddComponentsToReport, fetchReportsByWorkspace, fetchReportComponents, handleTransferWorksplace, startReportingProduction, startReportingPacking } = require('../libs/reportLib');
-const { fetchReportStorageList, fetchStorageComments } = require('../libs/reportingStorageLib');
-const { fetchProductionComments, fetchReportProductionList } = require('../libs/reportingProductionLib');
+const { fetchReportStorageList, fetchStorageComments, initializeReportingStorage } = require('../libs/reportingStorageLib');
+const { fetchProductionComments, fetchReportProductionList, initializeReportingProduction } = require('../libs/reportingProductionLib');
+const { initializeReportingPacking } = require('../libs/reportingPacking');
 const { findEmployeeById, findEmployeeByNumber } = require('../libs/employeeLib')
 
 const getAllReports = async (req, res) => {
@@ -178,20 +179,20 @@ const transferWorkspace = async (req, res) => {
   session.startTransaction();
 
   try {
-    const { employeeId, reportId } = req.body;
+    const { employeeNum, reportId } = req.body;
 
-    if (employeeId === undefined || reportId === undefined) {
-      if(employeeId === undefined) throw new Error("Error in transferWorkspace: employeeId is undefined");
+    if (employeeNum === undefined || reportId === undefined) {
+      if(employeeNum === undefined) throw new Error("Error in transferWorkspace: employeeNum is undefined");
       if(reportId === undefined) throw new Error("Error in transferWorkspace: reportId is undefined");
       return res.status(400).json({ message: 'Invalid parameters' });
     }
     const report = await Report.findById(reportId).session(session);
     if (!report) throw new Error("Report not found");
 
-    const employee = await findEmployeeById(employeeId, session);
+    const employee = await findEmployeeByNumber(employeeNum, session);
     if (!employee) throw new Error("Employee not found");
 
-    await handleTransferWorksplace(employeeId, report, session);
+    await handleTransferWorksplace(employee._id, report, session);
 
     await session.commitTransaction();
     session.endSession();
@@ -211,6 +212,63 @@ const transferWorkspace = async (req, res) => {
   }
 };
 
+
+const startSession = async (req, res) => {
+  const {reportId, employeeNum} = req.body;
+  
+  try{
+    if(reportId === undefined || employeeNum === undefined){
+      if(reportId === undefined) console.error("Error in startSession: reportId not found");
+      if(employeeNum === undefined) console.error("Error in startSession: employeeNum not found");
+      return res.status(400).json({ message: "Invalid parameters" });
+    }
+  
+    const report = await Report.findById(reportId);
+    if(!report){
+      console.log("Error in reportingProductionController: Report not found");
+      return res.status(404).json({message: "Report not found"});
+    }
+  
+    const employee = await findEmployeeByNumber(employeeNum);
+    if(!employee){
+      console.log("Error in reportingProductionController: Employee not found");
+      return res.status(404).json({message: "Employee not found"});
+    }
+  
+    const session = await mongoose.startSession();
+    session.startTransaction();
+  
+    switch(report.current_workspace){
+  
+      case 'Storage':
+        const newStorageReporting = await initializeReportingStorage(employee._id, session);
+        report.reportingStorage_list.push(newStorageReporting._id);
+        await report.save({session})
+        await session.commitTransaction();
+        session.endSession();
+        return res.status(201).json({message: "Initialized successfully"});
+      case 'Production':
+        const newProductionReporting = await initializeReportingProduction(employee._id, session);
+        report.reportingProduction_list.push(newProductionReporting._id);
+        await report.save({session})
+        await session.commitTransaction();
+        session.endSession();
+        return res.status(201).json({message: "Initialized successfully"});
+      case 'Packing':
+        const newPackingReporting = await initializeReportingPacking(employee._id, session);
+        report.reportingPacking_list.push(newPackingReporting._id);
+        await report.save({session})
+        await session.commitTransaction();
+        session.endSession();
+        return res.status(201).json({message: "Initialized successfully"});
+    }  
+  } catch (error){
+    console.error("Error in startSession:", error.meesage);
+    return res.status(500).json({message: error.message});
+  }
+
+}
+
 // Export the controller functions
 module.exports = { 
   getAllReports, 
@@ -220,5 +278,6 @@ module.exports = {
   transferWorkspace, 
   getReportComments, 
   reportingProductionController,
-  reportingPackingController
+  reportingPackingController,
+  startSession
  };

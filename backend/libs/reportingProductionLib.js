@@ -64,4 +64,23 @@ const fetchReportProductionList = async (report_id) => {
   }
 };
 
-  module.exports = { createProdReport, fetchProductionComments, fetchReportProductionList };
+const initializeReportingProduction = async (employee_id, session) => {
+  try{
+    const date = new Date();
+    date.setHours(date.getHours() + 2);
+
+    const newReporting = new ReportProduction({
+      employee_id,
+      start_date: date
+    });
+    
+    await newReporting.save({session});
+    return newReporting;
+  } catch (error){
+    console.error("Error in initializeReportingProduction:", error.message);
+    throw error;
+  }
+};
+
+
+  module.exports = { createProdReport, fetchProductionComments, fetchReportProductionList, initializeReportingProduction };
