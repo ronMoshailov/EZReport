@@ -1,6 +1,7 @@
 const Report = require('../model/Report');  // Import the User model
 const mongoose = require('mongoose');
-const { removeComponentAndUpdateStock, handleAddComponentsToReport, fetchReportsByWorkspace, fetchReportComponents, handleTransferWorksplace, startReportingProduction, startReportingPacking } = require('../libs/reportLib');
+
+const { removeComponentAndUpdateStock, handleAddComponentsToReport, fetchReportsByWorkspace, fetchReportComponents, handleTransferWorksplace, startReportingProduction, startReportingPacking, getEmployeeReporting } = require('../libs/reportLib');
 const { fetchReportStorageList, fetchStorageComments, initializeReportingStorage } = require('../libs/reportingStorageLib');
 const { fetchProductionComments, fetchReportProductionList, initializeReportingProduction } = require('../libs/reportingProductionLib');
 const { initializeReportingPacking } = require('../libs/reportingPacking');
@@ -269,6 +270,53 @@ const startSession = async (req, res) => {
 
 }
 
+const isStartedSessionController = async (req, res) => {
+
+  try{
+    const { employeeNum, reportId } = req.query;
+    const employee = await findEmployeeByNumber(employeeNum);
+    if(!employee){
+      console.error('Error in isStartedSessionController: Employee not found');
+      return res.status(404).json({message: 'Employee not found'});
+    }
+    const employeeId = employee._id;
+  
+    const report = await Report.findById(reportId);
+    if(!report){
+      console.error('Error in isStartedSessionController: Report not found');
+      return res.status(404).json({message: 'Report not found'});
+    }
+    const workspace = report.current_workspace;
+    const storageList = report.reportingStorage_list;
+    const productionList = report.reportingProduction_list;
+    const packingList = report.reportingPacking_list;
+    
+    switch(workspace){
+      case 'Storage':
+        const storageReporting = await getEmployeeReporting(workspace, storageList, employeeId);
+        if(!storageReporting)
+          return res.status(404).json({message: 'Employee not started a session'});
+        return res.status(200).json(storageReporting);
+
+        case 'Production':
+          const productionReporting = await getEmployeeReporting(workspace, productionList, employeeId);
+          if(!productionReporting)
+            return res.status(404).json({message: 'Employee not started a session'});
+          return res.status(200).json(productionReporting);
+        
+        case 'Packing':
+          const packingReporting = await getEmployeeReporting(workspace, packingList, employeeId);
+          if(!packingReporting)
+            return res.status(404).json({message: 'Employee not started a session'});
+          return res.status(200).json(packingReporting);
+    }
+  
+  } catch(error){
+    console.error('Error in isStartedSessionController:', error.message);
+    return res.status(500).json({message: 'Server error'});
+  }
+}
+
 // Export the controller functions
 module.exports = { 
   getAllReports, 
@@ -279,5 +327,6 @@ module.exports = {
   getReportComments, 
   reportingProductionController,
   reportingPackingController,
-  startSession
+  startSession,
+  isStartedSessionController
  };

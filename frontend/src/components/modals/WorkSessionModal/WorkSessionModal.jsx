@@ -1,24 +1,29 @@
 // Modal_Transfer_Workspace.jsx
-import React, { useState, useNavi } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'
 
 import './WorkSessionModal.scss';
 
-import { startSession } from '../APIs/report'
-import { isEmployeeExist } from '../APIs/employee';
-import { sendReport } from '../APIs/workspace';
+import { startSession, isStartedSession } from '../../APIs/report'
+import { isEmployeeExist } from '../../APIs/employee';
+import { sendReport } from '../../APIs/workspace';
+const { isEmpty } = require('../../utils/functions');
 
-const { isEmpty } = require('../utils/functions');
+let workspace = '';
+let message = '';
+let isSucceeded = false;
 
-const workspace = localStorage.getItem('workspace');
-
-const WorkSessionModal = ({ reportId, operationType, onClose }) => {
+const WorkSessionModal = ({ reportId, operationType, onClose, reportSerialNum, orderedCount, producedCount }) => {
   
   const [employeeNumber, setEmployeeNumber] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    workspace = localStorage.getItem('workspace');
+  }, []);
 
   const setErrorLoading = (message, loading) => {
     setError(message);
@@ -42,7 +47,7 @@ const WorkSessionModal = ({ reportId, operationType, onClose }) => {
 
       switch(operationType){
         case 'send':
-          let isSucceeded = await sendReport(reportId, employeeNumber);
+          isSucceeded = await sendReport(reportId, employeeNumber);
           if(isSucceeded){
             onClose(false);
           } else{
@@ -61,18 +66,35 @@ const WorkSessionModal = ({ reportId, operationType, onClose }) => {
           break;
 
         case 'end':
-          if(workspace === 'Storage') 
+          [isSucceeded, message] = await isStartedSession(reportId, employeeNumber);
+          if(!isSucceeded){
+            console.log(workspace);
+            setErrorLoading(message, false);
+            return;
+          }
+          localStorage.setItem('employee_number', employeeNumber);
+          localStorage.setItem('reportId', reportId);
+          // console.log(workspace);
+
+          if(workspace === 'Storage'){
             navigate('/ReportingStorage');
-          else if(workspace === 'Production') 
+            break;
+          }
+          else if(workspace === 'Production'){
+            console.log(workspace);
             navigate('/ReportingProduction');
-          else if(workspace === 'Packing') 
+          }
+          else if(workspace === 'Packing'){
             navigate('/ReportingPacking');
+          }
           else{
             alert('יש בעיה עם העמדה, אנה התחבר מחדש');
             navigate('/');
           }
           break;
 
+        default:
+          alert('סוג הפעולה לא תקינה');
       }
 
     } catch (err) {
@@ -102,7 +124,7 @@ const WorkSessionModal = ({ reportId, operationType, onClose }) => {
             placeholder="הכנס מספר עובד"
           />
         </div>
-        {error && <p className="error-message">{error}</p>}
+        {error && <p className="errorMessage">{error}</p>}
         <button className="submit-btn" onClick={handleSubmit} disabled={isLoading}>
           {isLoading ? 'מבצע...' : 'המשך'}
         </button>

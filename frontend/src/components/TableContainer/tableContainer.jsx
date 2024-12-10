@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './tableContainer.scss';
 
-import WorkSessionModal from '../../components/modals/WorkSessionModal'
+import WorkSessionModal from '../../components/modals/WorkSessionModal/WorkSessionModal'
 
 const TableContainer = ({ reports, onClickRow, isQueue }) => {
   
@@ -12,13 +12,15 @@ const TableContainer = ({ reports, onClickRow, isQueue }) => {
   const handleSendClick = (reportId, operation) => (event) => {
     event.stopPropagation(); // Prevent row click
     setIsWorkSession(true);
+    console.log('reportId');
+    console.log(reportId);
     setSelectedReportId(reportId);
     setOperationType(operation);
   };
 
   return (
     <>
-        <table className="report-table">
+    <table className="report-table">
       <thead>
         <tr>
           <th>שם</th>
@@ -61,7 +63,7 @@ const TableContainer = ({ reports, onClickRow, isQueue }) => {
               <button
                 className='buttonIcon'  
                 id="EndWorkingIcon"
-                onClick={handleSendClick(report, 'end')}
+                onClick={handleSendClick(report._id, 'end')}
               >
                 &#8861;
               </button>
@@ -71,7 +73,7 @@ const TableContainer = ({ reports, onClickRow, isQueue }) => {
               <button
                 className='buttonIcon'  
                 id="sendIcon"
-                onClick={handleSendClick(report, 'send')}
+                onClick={handleSendClick(report._id, 'send')}
               >
                 {isQueue ? '→' : '←'}
               </button>
@@ -87,8 +89,11 @@ const TableContainer = ({ reports, onClickRow, isQueue }) => {
           reportId={selectedReportId}
           operationType={operationType}
           onClose={setIsWorkSession}
-        />}
-    </>
+          // reportSerialNum={}
+          // orderedCount={}
+          // producedCount={}
+    />}
+  </>
   );
 };
 

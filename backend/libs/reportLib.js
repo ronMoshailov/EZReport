@@ -1,6 +1,10 @@
 const Report = require('../model/Report');
 const Component = require('../model/Component');
 const mongoose = require('mongoose');
+const ReportingStorage = require('../model/ReportingStorage');
+const ReportingProduction = require('../model/ReportingProduction');
+const ReportingPacking = require('../model/ReportingPacking');
+
 const { fetchComponentByID, increaseStockById } = require('../libs/componentLib');
 const { createReportingStorage } = require('../libs/reportingStorageLib');
 const { createTransferDocument, recieveUpdate, getTransferDocument } = require('../libs/transferDetailsLib');
@@ -275,6 +279,40 @@ const updateReportWorkspace = async (report, newTransitionId, session) => {
 
 };
 
+const getEmployeeReporting = async(workspace, reportingList, employeeId) => {
+
+  try {
+    switch(workspace){
+      case 'Storage':
+        for(const documentId of reportingList.slice().reverse()){
+          const storageReporting = await ReportingStorage.findById(documentId);
+          if(storageReporting.employee_id.toString() === employeeId.toString() && storageReporting.end_date === undefined)
+            return({message: "Reporting was found", reportingId: documentId});
+          }   
+          return null;
+  
+        case 'Production':
+          for(const documentId of reportingList.slice().reverse()){
+            const productionReporting = await ReportingProduction.findById(documentId);
+            if(productionReporting.employee_id.toString() === employeeId.toString() && productionReporting.end_date === undefined)
+            return({message: "Reporting was found", reportingId: documentId});
+          }   
+          return null;
+        
+        case 'Packing':
+          for(const documentId of reportingList.slice().reverse()){
+            const packingReporting = await ReportingPacking.findById(documentId);
+            if(packingReporting.employee_id.toString() === employeeId.toString() && packingReporting.end_date === undefined)
+              return({message: "Reporting was found", reportingId: documentId});
+          }   
+          return null;
+    }
+  } catch (error) {
+    console.error('Error in getEmployeeReporting:', error.message);
+    throw error;
+  }
+}
+
 module.exports = { 
   removeComponentAndUpdateStock,
   handleAddComponentsToReport, 
@@ -283,5 +321,6 @@ module.exports = {
   fetchReportComponents, 
   handleTransferWorksplace, 
   startReportingProduction,
-  startReportingPacking
+  startReportingPacking,
+  getEmployeeReporting
  };

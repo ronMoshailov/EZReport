@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 // Define the schema
-const ReportProductionSchema = new mongoose.Schema({
+const ReportingProductionSchema = new mongoose.Schema({
     employee_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Employee',
@@ -23,5 +23,5 @@ const ReportProductionSchema = new mongoose.Schema({
 });
 
 // Create and export the model
-const ReportProduction = mongoose.model('reportProduction', ReportProductionSchema);
-module.exports = ReportProduction;
+const ReportingProduction = mongoose.model('reportingProduction', ReportingProductionSchema);
+module.exports = ReportingProduction;

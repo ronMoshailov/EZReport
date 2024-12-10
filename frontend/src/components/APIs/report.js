@@ -41,6 +41,34 @@ const startSession = async (reportId, employeeNum) => {
   }
 };
 
+const isStartedSession = async (reportId, employeeNum) => {
+  try {
+    const response = await fetch('http://localhost:5000/api/isStartedSession?employeeNum=' + employeeNum + '&reportId=' + reportId);
+    const data = await response.json();
+
+    if(response.ok){
+      return [true, data.reportingId];
+    }
+    
+    switch(response.status){
+      case 400:
+        console.error(data.message);
+        return [false, data.message === 'Employee not found' ? 'עובד לא קיים במערכת' : 'דוח לא קיים במערכת'];
+      case 404:
+        console.error(data.message);
+        return [false, data.message === 'Employee not started a session' ? 'לא דווח על תחילת עבודה' : 'שגיאה'];
+      case 500:
+        console.error(data.message);
+        return [false, data.message === 'Server error' ? 'שגיאה בשרת' : 'שגיאה'];
+      default:
+        return [false, 'שגיאה לא צפויה'];
+    }
+
+  } catch (error) {
+    console.error(error.message);
+    return [false, error.message];
+  }
+};
 
 
 
@@ -51,7 +79,7 @@ const startSession = async (reportId, employeeNum) => {
 
 
 
-
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
@@ -156,6 +184,8 @@ const fetchAndComponents = async (employee_id, report_id, componentsToAdd, input
 };
 
 const displayReportComments = async (report_id) =>{
+  console.log('report_id');
+  console.log(report_id);
   // Make a request to the API to fetch comments
   const response = await fetch(`http://localhost:5000/api/displayReportComments/${report_id}`);
 
@@ -165,9 +195,8 @@ const displayReportComments = async (report_id) =>{
 
   // Parse the response data
   const comments = await response.json();
-
   // Return comments (Example: Console log or Update UI)
-  return comments;
+  return comments.comments;
 }
 
 const sendProductionReport = async (report_id, employee_id, completedCount, comment) => {
@@ -201,4 +230,16 @@ const sendProductionReport = async (report_id, employee_id, completedCount, comm
   }
 };
 
-export { fetchAllReports, fetchReportComponents, handleRemoveComponentFromReport, toggleReportEnable, fetchAndComponents, displayReportComments, sendProductionReport, startSession };
+export { fetchAllReports, 
+  fetchReportComponents, 
+  handleRemoveComponentFromReport, 
+  toggleReportEnable, 
+  fetchAndComponents, 
+  displayReportComments, 
+  sendProductionReport, 
+  startSession,
+  isStartedSession
+ };
+
+
+

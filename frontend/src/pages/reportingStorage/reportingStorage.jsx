@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+
+import {fetchReportComponents, handleRemoveComponentFromReport, fetchAndComponents} from '../../components/APIs/report'
+import { fetchAllComponents } from '../../components/APIs/components'
+import { isEmployeeExist } from '../../components/APIs/employee'
+
 import './reportingStorage.scss'
-import {fetchReportComponents, handleRemoveComponentFromReport, fetchAndComponents} from '../APIs/API_report'
-import { fetchAllComponents } from '../APIs/API_components'
-import { isEmployeeExist } from '../APIs/API_employee'
-import ComponentsModal from '../modals/ComponentsModal'; // Import the modal component
+import ComponentsModal from '../../components/modals/ComponentsModal'; // Import the modal component
 
 const ComponentPage = () => {
-  const location = useLocation();
-  const report_id = location.state?.report_id;
 
   /* States */
   const [allComponents, setAllComponents] = useState([]);
@@ -20,11 +20,14 @@ const ComponentPage = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [inputValue, setInputValue] = useState(localStorage.getItem('employee_number') || '');
   const [isComponentsModalOpen, setIsComponentsModalOpen] = useState(false);
   const [componentsToShow, setComponentsToShow] = useState([]);
   const [filterAllComponents, setFilterAllComponents] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // Constant variables
+  const inputValue = localStorage.getItem('employee_number') || '';
+  const reportId = localStorage.getItem('reportId') || '';
 
   /* Messages */
   const missing_data_msg = 'נתונים חסרים';
@@ -35,55 +38,41 @@ const ComponentPage = () => {
   const employee_err_msg = 'עובד לא קיים או מספר עובד שגוי';
   const success_msg = `השליחה הצליחה`;
 
+  // Navigate
   const navigate = useNavigate();
 
   // useEffect
   useEffect(() => {
     handleFetchAllComponents();
     window.addEventListener('keydown', handleEscKey);                   // Add keydown event listener to listen for Escape key press
-    if (inputValue == '')
+    if (inputValue === '' || reportId === '')
       navigate('/error')
     return () => window.removeEventListener('keydown', handleEscKey);   // Clean up event listener on component unmount
   }, []);
 
-  // Fetch all components
-  const handleFetchAllComponents = async () => {
-
-    let [isTrue, data] = await fetchAllComponents();
-    if(isTrue){
-      setAllComponents(data);                                                 // Update the state with the fetched components data
-    } else{
-      console.log(data);
-    }
-  }
-
+  // filters
   const filteredComponents = allComponents.filter(comp =>
     comp.name?.toLowerCase().includes(filterAllComponents.toLowerCase()) || 
     comp.serialNumber.toString().includes(filterAllComponents)
   );
 
-  // Filter the collected components based on the filterQuery
   const filteredCollectedComponents = collectedComponents.filter((comp) => {
     return (
       comp.name?.toLowerCase().includes(filterQuery.toLowerCase()) || // Match component name
       comp.serialNumber?.toString().includes(filterQuery) // Match component serial number
     );
   });
-  
-   /** 
-   * Remove the component from the array of the components in the current report.
-   * 
-   * @param component_num Component number. 
-   */
-    const handleRemoveComponent = (component_num) => {
-      setCollectedComponents((prevComponents) => prevComponents.filter((comp) => comp.serialNumber !== component_num));
-    };
+
+  // functions
+  const handleFetchAllComponents = async () => {
+    let [isTrue, data] = await fetchAllComponents();
+    isTrue ? setAllComponents(data) : console.log(data);
+  }
+
+  const handleRemoveComponent = (component_num) => {
+    setCollectedComponents((prevComponents) => prevComponents.filter((comp) => comp.serialNumber !== component_num));
+  };
     
-  /**
-   * Add ESC listener 
-   * 
-   * @param event event  
-   */
   const handleEscKey = (event) => {
     if (event.key === 'Escape') {       // Check if the pressed key is "Escape"
       handleCloseCheckEmployeeModal();   // Close modal if Escape is pressed
@@ -91,23 +80,56 @@ const ComponentPage = () => {
     }
   };
 
-  /** 
-   * Find component by component number in the array named `arr`.
-   * 
-   * @param arr Array of components.
-   * @returns The component that was found || `undefined` if wasn't found.
-   */
   const findComponent = (arr) => {
     return arr.find(comp => comp.serialNumber === Number(inputId));
   };
 
-  // Close modal check emplyee
+  const showReportComponents = async () => {
+    try {
+
+      const data = await fetchReportComponents(reportId);
+
+      // Get the array of the components
+      const componentsList = data.components_list;
+
+      setComponentsToShow(componentsList);          // Set the components to show
+      setIsComponentsModalOpen(true);               // Open the 'showReportComponents' modal
+    } catch (error) {
+      console.error('Error fetching components:', error.message);
+    }
+  };
+
+  // Display / Hide modals
   const handleCloseCheckEmployeeModal = () => setIsModalOpen(false);
 
-  // Function to close the modal
   const handleCloseComponentsModal = () => setIsComponentsModalOpen(false);
 
-    // Handle add component button click
+
+
+
+
+
+
+
+
+  /////////////////////////////////////
+    // const location = useLocation();
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
   const handleAddComponent = async () => {
     try {
 
@@ -177,20 +199,7 @@ const ComponentPage = () => {
   };
 
   // Show the components in the report
-  const showReportComponents = async (report_id) => {
-    try {
 
-      const data = await fetchReportComponents(report_id);
-
-      // Get the array of the components
-      const componentsList = data.components_list;
-
-      setComponentsToShow(componentsList);          // Set the components to show
-      setIsComponentsModalOpen(true);               // Open the 'showReportComponents' modal
-    } catch (error) {
-      console.error('Error fetching components:', error.message);
-    }
-  };
 
   // Submit the report
   const handleSubmitStorageReport = async () => {
@@ -201,7 +210,7 @@ const ComponentPage = () => {
       
       // Check if the employee exists
       const employee_id = await checkIsEmployeeExist();
-      
+      console.log(employee_id);
       if (!employee_id) {
         setError(employee_err_msg);
         setIsModalOpen(false);
@@ -214,8 +223,16 @@ const ComponentPage = () => {
         stock: comp.stock,            // Quantity of the component
       }));
       
-      
-      const result = await fetchAndComponents(employee_id, report_id, componentsToAdd, inputComment)
+      console.log('employee_id');
+      console.log(employee_id);
+      console.log('reportId');
+      console.log(reportId);
+      console.log('componentsToAdd');
+      console.log(componentsToAdd);
+      console.log('inputComment');
+      console.log(inputComment);
+
+      const result = await fetchAndComponents(employee_id, reportId, componentsToAdd, inputComment)
       console.log(result.message);
 
       // Clear & Reset states
@@ -242,11 +259,9 @@ const ComponentPage = () => {
  */
   const checkIsEmployeeExist = async () => {
     try {
-      // Parse the JSON response to get employee data
-      const employeeData = await isEmployeeExist(inputValue)
 
-      // Return the _id of the found employee
-      return employeeData.employee._id;
+      const employeeData = await isEmployeeExist(inputValue);
+      return employeeData.id;
   
     } catch (err) {
       // Log the error message if an exception occurs
@@ -269,12 +284,12 @@ const ComponentPage = () => {
     try {
       // Call the function to remove the component from the report
       console.log(component);
-      await handleRemoveComponentFromReport(report_id, component._id, component.stock);
+      await handleRemoveComponentFromReport(reportId, component._id, component.stock);
       
       console.log('Component removed successfully.');
 
       // Fetch the updated components and refresh the modal
-      const updatedData = await fetchReportComponents(report_id); // Fetch updated report components
+      const updatedData = await fetchReportComponents(reportId); // Fetch updated report components
       // console.log("Fetched report components");
       // console.log(updatedData);
       
@@ -380,7 +395,7 @@ const ComponentPage = () => {
           <div className='buttons-container'>
             <button className='addComponent-btn btn' onClick={handleAddComponent}>הוסף רכיב</button>
             <button className='btn send-btn' onClick={handleSendReport}>שלח דיווח</button>
-            <button className='showComponents-btn btn' onClick={() => showReportComponents(report_id)}>הצג רכיבים בהזמנה</button>
+            <button className='showComponents-btn btn' onClick={() => showReportComponents()}>הצג רכיבים בהזמנה</button>
             <button className='btn cancel-btn' onClick={() => navigate('/dashboard')}>חזור</button>
           </div>
           {/* Display error and success messages if present */}

@@ -15,93 +15,103 @@ import { fetchAllReports } from '../../components/APIs/report';
 
 const Dashboard = ({isQueue}) => {
 
-    const [workspace, setWorkspace] = useState(localStorage.getItem('workspace'));          // Holds the workspace
-    const [reports, setReports] = useState([]);                                             // Holds all the reports
-    const [report, setReport] = useState(null);                                             // Holds specific report
-    const [loading, setLoading] = useState(true);                                           // Is loading state
-    const [error, setError] = useState(null);                                               // Holds error message
-    const [isOperationModal, setIsOperationModal] = useState(false);                        // Show operation modal or remove
-    const [isSendModalOpen, setIsSendModalOpen] = useState(false);                          // Show transfer modal or remove
-    const [isReceived, setIsReceived] = useState(false);                                    // Tetermine if client receiving report or send report
-    const [refreshReports, setRefreshReports] = useState(false);                            // Handle case that if this change so fetch reports again
-    const [reportFilter, setReportFilter] = useState('');                                   // Filter text for reports
-    const [operationType, setOperationType] = useState("");                            // Handle case that if this change so fetch reports again
+  // States
+  const [reports, setReports] = useState([]);                                             // Holds all the reports
+  const [report, setReport] = useState(null);                                             // Holds specific report
+  const [loading, setLoading] = useState(true);                                           // Is loading state
+  const [error, setError] = useState(null);                                               // Holds error message
+  // const [isOperationModal, setIsOperationModal] = useState(false);                        // Show operation modal or remove
+  const [isSendModalOpen, setIsSendModalOpen] = useState(false);                          // Show transfer modal or remove
+  const [isReceived, setIsReceived] = useState(false);                                    // Tetermine if client receiving report or send report
+  const [refreshReports, setRefreshReports] = useState(false);                            // Handle case that if this change so fetch reports again
+  const [reportFilter, setReportFilter] = useState('');                                   // Filter text for reports
+  // const [operationType, setOperationType] = useState('');                            // Handle case that if this change so fetch reports again
 
-    const navigate = useNavigate();
-    // const [debouncedReportFilter] = useDebounce(reportFilter, 300);
+  // Constant variables
+  const workspace = localStorage.getItem('workspace') || '';
 
-    const clearStorage = [
-      'employee_number', 
-      'report_id', 
-      'report_producedCount', 
-      'report_packedCount', 
-      'report_serialNum', 
-      'report_orderedCount'
-    ];
+  const clearStorage = [
+    'employee_number', 
+    'report_id', 
+    'report_producedCount', 
+    'report_packedCount', 
+    'report_serialNum', 
+    'report_orderedCount'
+  ];
 
-    const workspaceMap = {
-      Packing: 'אריזה',
-      Production: 'יצור',
-      Storage: 'מחסן'
-    };
+  const workspaceMap = {
+    Packing: 'אריזה',
+    Production: 'יצור',
+    Storage: 'מחסן'
+  };
 
 
-    useEffect(() => {
-      handleFetchReports();                                         // Fetch all reports
-    }, [isQueue, refreshReports]);
 
-    // useEffect(() => {
-    //   window.addEventListener('keydown', addEscListener);           // Add keydown event listener to listen for Escape key press
-    //   clearStorage.forEach((str) => localStorage.removeItem(str));  // Clean the local storage
 
-    //   if(workspace == null)
-    //     navigate('/error');
-    // }, []);
+  const navigate = useNavigate();
+  // const [debouncedReportFilter] = useDebounce(reportFilter, 300);
 
-    // Trigger the refresh of the reports
-    // const triggerRefresh = () => setRefreshReports((prev) => !prev);        
 
-    // // Fetch all reports
-    const handleFetchReports = async () => {
-      try {
-        const [check, data] = await fetchAllReports(workspace, isQueue);
-        if (check){
-          setReports(data);
-          // console.log(reports);
-          // triggerRefresh();
-        }
-        else
-          setError(data);
-      } catch (err) {
-        setError('An unexpected error occurred.');
-      } finally {
-        setLoading(false);
+
+
+
+
+  useEffect(() => {
+    handleFetchReports();                                         // Fetch all reports
+  }, [isQueue, refreshReports]);
+
+  // useEffect(() => {
+  //   window.addEventListener('keydown', addEscListener);           // Add keydown event listener to listen for Escape key press
+  //   clearStorage.forEach((str) => localStorage.removeItem(str));  // Clean the local storage
+
+  //   if(workspace == null)
+  //     navigate('/error');
+  // }, []);
+
+  // Trigger the refresh of the reports
+  // const triggerRefresh = () => setRefreshReports((prev) => !prev);        
+
+  // // Fetch all reports
+  const handleFetchReports = async () => {
+    try {
+      const [check, data] = await fetchAllReports(workspace, isQueue);
+      if (check){
+        setReports(data);
+        // console.log(reports);
+        // triggerRefresh();
       }
-    };
+      else
+        setError(data);
+    } catch (err) {
+      setError('An unexpected error occurred.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    // Function to handle card click and show modal
-    const handleClickOnCard = useCallback((report) => {
-      if (!isQueue) {                           // If we are not in queue page
-        setReport(report);                      // Holds the selected report
-        setIsOperationModal(true);              // Show the operation modal
-        };
-      }, [isQueue]);
-  
-    // Function to handle sending card click and show modal
-    const handleMoveWorkspaceButton = useCallback((report) => {
-      setReport(report);                        // Holds the selected report
-      setIsSendModalOpen(true);                 // Show the transfer modal
-    }, []);
+  // Function to handle card click and show modal
+  const handleClickOnCard = useCallback((report) => {
+    if (!isQueue) {                           // If we are not in queue page
+      setReport(report);                      // Holds the selected report
+      // setIsOperationModal(true);              // Show the operation modal
+      };
+    }, [isQueue]);
 
-    // Function to close the modal
-    const handleCloseModal = () => {
-      setIsOperationModal(false);               // Close the operation modal
-      setReport(null);                          // Clear the state the holds the report
-      setIsSendModalOpen(false);                // Close the transfer modal
-    };
+  // Function to handle sending card click and show modal
+  const handleMoveWorkspaceButton = useCallback((report) => {
+    setReport(report);                        // Holds the selected report
+    setIsSendModalOpen(true);                 // Show the transfer modal
+  }, []);
 
-    // Add Esc press key listener
-    // const addEscListener = (event) => handleEscKey(event, handleCloseModal);
+  // Function to close the modal
+  const handleCloseModal = () => {
+    // setIsOperationModal(false);               // Close the operation modal
+    setReport(null);                          // Clear the state the holds the report
+    setIsSendModalOpen(false);                // Close the transfer modal
+  };
+
+  // Add Esc press key listener
+  // const addEscListener = (event) => handleEscKey(event, handleCloseModal);
 
   // Filtered reports
   const filteredReports = reports.filter((report) =>

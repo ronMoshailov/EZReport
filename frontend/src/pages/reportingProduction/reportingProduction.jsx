@@ -1,57 +1,48 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { displayReportComments } from '../APIs/API_report';
-import { sendProductionReport } from '../APIs/API_report';
-import CommentsModal from '../modals/CommentsModal'; 
+import { displayReportComments, sendProductionReport } from '../../components/APIs/report';
+import CommentsModal from '../../components/modals/CommentsModal'; 
 import './reportingProduction.scss'; 
 
-import { handleEscKey } from '../functions';
+import { handleEscKey } from '../../components/utils/functions';
 
 
 const NewReportPage = () => {
 
   // States
-  const [producedCount, setProducedCount] = useState(Number(localStorage.getItem('report_producedCount')));       // Holds the old completed quantity
-  const [employeeNum, setEmployeeNum] = useState(localStorage.getItem('employee_number'));                      // Holds the employee number
-  const [reportSerialNum, setReportSerialNum] = useState(localStorage.getItem('report_serialNum'));             // Holds the report serial number
-  const [orderedCount, setOrderedCount] = useState(Number(localStorage.getItem('report_orderedCount')));        // Holds the ordered quantity
-  const [reportId, setReportId] = useState(localStorage.getItem('report_id'));                                  // Holds the id of the report
   const [newCompleted, setNewCompleted] = useState(0);                                                          // Holds the new completed quantity
   const [newComment, setNewComment] = useState('');                                                             // Holds the new comment for this reporting
-  const [comments, setComments] = useState([]);                                                                 // Holds all the comments for the previous workspace
+  const [allComments, setAllComments] = useState([]);                                                                 // Holds all the comments for the previous workspace
   const [isCommentsModalOpen, setIsCommentsModalOpen] = useState(false);                                        // Show/Hide the comments from the previous workspace
   const [error, setError] = useState('');                                                                       // Holds the error message
   const [success, setSuccess] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);                                                      // Holds the state if the client in the middle of submitting
 
-  const navigate = useNavigate();                         // Router navigation setup
+  // Constant variables
+  const employeeNum = localStorage.getItem('employee_number');
+  const reportSerialNum = localStorage.getItem('reportSerialNum');
+  const orderedCount = localStorage.getItem('report_orderedCount');
+  const reportId = localStorage.getItem('reportId');
+  const producedCount = localStorage.getItem('report_producedCount');
 
-  // Get date
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are 0-based
-  const day = String(now.getDate()).padStart(2, '0');
-  const formattedDate = `${day}-${month}-${year}`;
+  // Navigate
+  const navigate = useNavigate();                         // Router navigation setup
 
   // useEffect
   useEffect(() => {
     window.addEventListener('keydown', addEscListener);                   // Add keydown event listener to listen for Escape key press
-    if (producedCount === null || employeeNum === null || reportSerialNum === null || orderedCount === null || reportId === null){
-      navigate('/error');
-    }
+    // if (producedCount === null ||  ||  ||  || reportId === null){
+    //   navigate('/error');
+    // }
   }, []);
-
   useEffect(() => {
     localStorage.setItem('report_producedCount', producedCount + Number(newCompleted));
   }, [producedCount]);
 
-  const handleEscPress = () => {
-    setIsCommentsModalOpen(false);
-  }
-
+  // functions
+  
   // Add Esc press key listener
-  const addEscListener = (event) => handleEscKey(event, handleEscPress);
-
+  const addEscListener = (event) => handleEscKey(event, () => setIsCommentsModalOpen(false));
 
   const validateInputs = () => {
     if (!newCompleted || isNaN(newCompleted) || newCompleted <= 0) {
@@ -65,12 +56,6 @@ const NewReportPage = () => {
       return false;
     }
     return true;
-  };
-
-
-  // Handle delete
-  const handleDelete = () => {
-    navigate('/dashboard');
   };
 
   const handleCommentModalClose = useCallback(() => setIsCommentsModalOpen(false), []);
@@ -96,10 +81,10 @@ const NewReportPage = () => {
       const answer = await sendProductionReport(reportId, employeeNum, Number(newCompleted), newComment)
 
       if (answer){
-        setProducedCount(producedCount + Number(newCompleted));
+        // setProducedCount(producedCount + Number(newCompleted));
         // setNewCompleted(completed + Number(newCompleted));
         setNewCompleted(0); 
-        setComments([]);
+        setAllComments([]);
         setError('');
         setSuccess('הפעולה הצליחה');
         return;
@@ -116,14 +101,41 @@ const NewReportPage = () => {
   const handleShowComments = async () => {
     try {
       setIsCommentsModalOpen(true);
-      setComments([]); // Clear previous comments
+      setAllComments([]); // Clear previous comments
       const fetchedComments = await displayReportComments(reportId);
-      setComments(fetchedComments);
+      setAllComments(fetchedComments);
     } catch (error) {
       console.error('Error fetching comments:', error.message);
       alert('שגיאה בהצגת ההערות');
     }
   };
+
+
+
+
+
+
+
+
+
+
+
+  // // Get date
+  // const now = new Date();
+  // const year = now.getFullYear();
+  // const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+  // const day = String(now.getDate()).padStart(2, '0');
+  // const formattedDate = `${day}-${month}-${year}`;
+
+
+
+
+
+
+
+  
+
+
 
   return (
     <div className="new-report-page">
@@ -142,10 +154,10 @@ const NewReportPage = () => {
             <input type="text" placeholder="הכנס מקט" value={reportSerialNum} disabled />
           </div>
 
-          <div className="form-group">
+          {/* <div className="form-group">
             <label>תאריך</label>
             <input type="text" placeholder="תאריך" value={formattedDate} disabled />
-          </div>
+          </div> */}
 
           <div className="form-group">
             <label>תקינים</label>
@@ -190,8 +202,8 @@ const NewReportPage = () => {
 
       {/* Action Buttons */}
       <div className="buttons-container">
-        <button className="btn cancel-btn" onClick={handleDelete}>
-          מחק
+        <button className="btn cancel-btn" onClick={() => navigate('/dashboard')}>
+          חזור
         </button>
         <button className="btn showComment-btn" onClick={handleShowComments}>
           הצג הערות
@@ -205,7 +217,7 @@ const NewReportPage = () => {
       <CommentsModal
         isOpen={isCommentsModalOpen}
         onClose={handleCommentModalClose}
-        comments={comments}
+        comments={allComments}
       />
     </div>
   );
