@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import './WorkSessionModal.scss';
 
 import { startSession, isStartedSession } from '../../APIs/report'
-import { isEmployeeExist } from '../../APIs/employee';
+import { getEmployeeId } from '../../APIs/employee';
 import { sendReport } from '../../APIs/workspace';
 const { isEmpty } = require('../../utils/functions');
 
@@ -13,7 +13,7 @@ let workspace = '';
 let message = '';
 let isSucceeded = false;
 
-const WorkSessionModal = ({ reportId, operationType, onClose, reportSerialNum, orderedCount, producedCount }) => {
+const WorkSessionModal = ({ reportId, operationType, onClose }) => {
   
   const [employeeNumber, setEmployeeNumber] = useState('');
   const [error, setError] = useState('');
@@ -38,22 +38,24 @@ const WorkSessionModal = ({ reportId, operationType, onClose, reportSerialNum, o
       if (!isEmpty(employeeNumber, setError, setIsLoading)) 
         return;
 
-      const employeeData = await isEmployeeExist(Number(employeeNumber));
+      const employeeData = await getEmployeeId(Number(employeeNumber));
 
       if (!employeeData.exist){
         setErrorLoading('עובד לא נמצא במערכת', false);
         return;
       }
-
+      console.log('operationType');
+      console.log(operationType);
       switch(operationType){
         case 'send':
-          isSucceeded = await sendReport(reportId, employeeNumber);
-          if(isSucceeded){
-            onClose(false);
-          } else{
-            setErrorLoading('לא הצליח', false);
-          }
-          break;
+          case 'receive':
+            isSucceeded = await sendReport(reportId, employeeNumber);
+            if(isSucceeded){
+              onClose(false);
+            } else{
+              setErrorLoading('לא הצליח', false);
+            }
+            break;
 
         case 'start':
           const answer = startSession(reportId, employeeNumber);
@@ -68,20 +70,20 @@ const WorkSessionModal = ({ reportId, operationType, onClose, reportSerialNum, o
         case 'end':
           [isSucceeded, message] = await isStartedSession(reportId, employeeNumber);
           if(!isSucceeded){
-            console.log(workspace);
+            // console.log('workspace');
+            // console.log(workspace);
             setErrorLoading(message, false);
             return;
           }
           localStorage.setItem('employee_number', employeeNumber);
           localStorage.setItem('reportId', reportId);
-          // console.log(workspace);
+          console.log(workspace);
 
           if(workspace === 'Storage'){
             navigate('/ReportingStorage');
             break;
           }
           else if(workspace === 'Production'){
-            console.log(workspace);
             navigate('/ReportingProduction');
           }
           else if(workspace === 'Packing'){
@@ -95,6 +97,7 @@ const WorkSessionModal = ({ reportId, operationType, onClose, reportSerialNum, o
 
         default:
           alert('סוג הפעולה לא תקינה');
+          setIsLoading(false);
       }
 
     } catch (err) {
@@ -108,7 +111,7 @@ const WorkSessionModal = ({ reportId, operationType, onClose, reportSerialNum, o
     <div className="WorkSessionModal-container">
       <div className="modal">
         <button className="close-btn" onClick={() => {onClose(false)}}>✕</button>
-
+        {/* {console.log(operationType)} */}
         <h2>{operationType === 'send' ? 'שליחה לתחנה הבאה' : ''}</h2>
         <h2>{operationType === 'receive' ? 'קבלה לתחנה הנוכחית' : ''}</h2>
         <h2>{operationType === 'start' ? 'תחילת עבודה' : ''}</h2>
@@ -125,6 +128,8 @@ const WorkSessionModal = ({ reportId, operationType, onClose, reportSerialNum, o
           />
         </div>
         {error && <p className="errorMessage">{error}</p>}
+        {/* {console.log('operationType')}
+        {console.log(operationType)} */}
         <button className="submit-btn" onClick={handleSubmit} disabled={isLoading}>
           {isLoading ? 'מבצע...' : 'המשך'}
         </button>

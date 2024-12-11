@@ -1,52 +1,16 @@
 const ReportProduction = require('../model/ReportingProduction'); // Replace with the correct path to the Report model
 const Report = require('../model/Report'); // Replace with the correct path to the Report model
 
-
-
-
-
-
-
-
-
-
-const createProdReport = async (report_id, employee_id, completedCount, comment, session) => {
-
-  try {
-    const date = new Date();
-    date.setHours(date.getHours() + 2);
-    
-    const newReportProduction = new ReportProduction({
-    report_id,
-    employee_id,
-    date,
-    completedCount,
-    comment,
-    });
-
-    // Save the document to the database
-    const savedReportProduction = await newReportProduction.save({ session }); // Save with the session
-    return savedReportProduction;
-    
-        // return 
-    } catch (error) {
-      console.error("Error in createProdReport:", error.message);
-      throw error;
-    }
-  };
-
-
 const fetchProductionComments = async (reportingProduction_list) => {
-  try {
-    const comments = await ReportProduction.find(
-      { _id: { $in: reportingProduction_list } }, // Match `_id` with the provided list
-      { comment: 1, _id: 0 } // Project only the `comment` field
-    );
-    return comments.map((item) => item.comment); // Extract only the `comment` field
-  } catch (error) {
-    console.error("Error in fetchProductionComments:", error.message);
-    throw error;
+  const comments = await ReportProduction.find(
+    { _id: { $in: reportingProduction_list } }, // Match `_id` with the provided list
+    { comment: 1, _id: 0 } // Project only the `comment` field
+  );
+  if(!comments){
+    console.error("Error in fetchProductionComments: Comments not found");
+    throw new Error("Comments not found");
   }
+  return comments.map((item) => item.comment); // Extract only the `comment` field
 };
 
 
@@ -59,7 +23,7 @@ const fetchReportProductionList = async (report_id) => {
     }
     return report.reportingProduction_list;
   } catch (error) {
-    console.error('Error fetching report storage list:', error.message);
+    console.error('Error fetching report Production list:', error.message);
     throw error;
   }
 };
@@ -83,4 +47,31 @@ const initializeReportingProduction = async (employee_id, session) => {
 };
 
 
-  module.exports = { createProdReport, fetchProductionComments, fetchReportProductionList, initializeReportingProduction };
+  module.exports = { fetchProductionComments, fetchReportProductionList, initializeReportingProduction };
+
+
+
+  // const createProdReport = async (report_id, employee_id, completedCount, comment, session) => {
+
+//   try {
+//     const date = new Date();
+//     date.setHours(date.getHours() + 2);
+    
+//     const newReportProduction = new ReportProduction({
+//     report_id,
+//     employee_id,
+//     date,
+//     completedCount,
+//     comment,
+//     });
+
+//     // Save the document to the database
+//     const savedReportProduction = await newReportProduction.save({ session }); // Save with the session
+//     return savedReportProduction;
+    
+//         // return 
+//     } catch (error) {
+//       console.error("Error in createProdReport:", error.message);
+//       throw error;
+//     }
+//   };

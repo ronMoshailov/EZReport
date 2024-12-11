@@ -1,10 +1,11 @@
 const { fetchAllComponents, fetchComponentByID, addComponent, removeComponent, increaseStockBySerialNumber, increaseStockById, updateStock } = require('../libs/componentLib');
 
+// Getting information from DB
 /**
  * Controller to handle fetching all components.
  * Sends the data as a JSON response.
  */
-const getAllComponentsHandler = async (req, res) => {
+const getAllComponentsController = async (req, res) => {
   try {
     const components = await fetchAllComponents(); // Use the lib to fetch all components
     return res.status(200).json(components);
@@ -14,35 +15,11 @@ const getAllComponentsHandler = async (req, res) => {
   }
 };
 
-/**
- * Controller to handle fetching a component by ID.2
- * Sends the data as a JSON response.
- */
-const getComponentByIDHandler = async (req, res) => {
-  try {
-    const { id } = req.params;
-    if(!id){
-      console.error("Error in getComponentByIDHandler: The id is null");
-      return res.status(400).json({message: "Invalid parameters"})
-    }
-
-    const componentData = await fetchComponentByID(id);
-    if(!componentData){
-      console.error("Error in getComponentByIDHandler: Component not found");
-      return res.status(404).json({message: "Component not found"})
-    }
-    return res.status(200).json(componentData);
-
-  } catch (error) {
-    console.error('Error in getComponentByIDHandler:', error.message);
-    return res.status(500).json({ message: error.message });
-  }
-};
-
+// Change information in DB
 /**
  * Add a new component
  */
-const addComponentHandler = async (req, res) => {
+const addComponentController = async (req, res) => {
   try {
     const {serialNumber, name, stock} = req.body;
     if(isNaN(serialNumber) || !name || isNaN(Number(stock))){
@@ -67,7 +44,7 @@ const addComponentHandler = async (req, res) => {
 /**
  * Remove a component by serial number
  */
-const removeComponentHandler = async (req, res) => {
+const removeComponentController = async (req, res) => {
   try {
     const serialNumber = Number(req.params.serialNumber);
     if(isNaN(serialNumber)){
@@ -89,7 +66,7 @@ const removeComponentHandler = async (req, res) => {
 /**
  * Increase the stock of a component
  */
-const increaseStockBySerialNumberHandler = async (req, res) => {
+const increaseStockBySerialNumberController = async (req, res) => {
   try {
     const serialNumber = Number(req.params.serialNumber);
     const { amount } = req.body;
@@ -118,7 +95,7 @@ const increaseStockBySerialNumberHandler = async (req, res) => {
 /**
  * Increase the stock of a component
  */
-const increaseStockByIdHandler = async (req, res) => {
+const increaseStockByIdController = async (req, res) => {
   try {
     const component_id = req.params.component_id;
     const { amount } = req.body;
@@ -147,7 +124,7 @@ const increaseStockByIdHandler = async (req, res) => {
 /**
  * Update the stock of a component
  */
-const updateStockHandler = async (req, res) => {
+const updateStockController = async (req, res) => {
   try {
     const serialNumber = Number(req.params.serialNumber);
     const { stock } = req.body;
@@ -175,12 +152,46 @@ const updateStockHandler = async (req, res) => {
   }
 };
 
+
+
+
+
+
+
+
+/**
+ * Controller to handle fetching a component by ID.2
+ * Sends the data as a JSON response.
+ */
+// const getComponentByIDHandler = async (req, res) => {
+//   try {
+//     const { id } = req.params;
+//     if(!id){
+//       console.error("Error in getComponentByIDHandler: The id is null");
+//       return res.status(400).json({message: "Invalid parameters"})
+//     }
+
+//     const componentData = await fetchComponentByID(id);
+//     if(!componentData){
+//       console.error("Error in getComponentByIDHandler: Component not found");
+//       return res.status(404).json({message: "Component not found"})
+//     }
+//     return res.status(200).json(componentData);
+
+//   } catch (error) {
+//     console.error('Error in getComponentByIDHandler:', error.message);
+//     return res.status(500).json({ message: error.message });
+//   }
+// };
+
+
+
 module.exports = {
-  getAllComponentsHandler,
-  getComponentByIDHandler,
-  addComponentHandler,
-  removeComponentHandler,
-  increaseStockBySerialNumberHandler,
-  increaseStockByIdHandler,
-  updateStockHandler,
+  getAllComponentsController,
+  // getComponentByIDHandler,
+  addComponentController,
+  removeComponentController,
+  increaseStockBySerialNumberController,
+  increaseStockByIdController,
+  updateStockController,
 };

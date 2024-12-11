@@ -1,6 +1,7 @@
 const { findEmployeeByNumber, addEmployee, removeEmployee } = require('../libs/employeeLib');
 
-const isEmployeeExist = async (req, res) => {
+// Getting information from DB
+const getEmployeeIdController = async (req, res) => {
   try {
     const { employeeNumber } = req.body;
     if(isNaN(employeeNumber)){
@@ -23,7 +24,8 @@ const isEmployeeExist = async (req, res) => {
   }
 };
 
-const addEmployeeHandler = async (req, res) => {
+// Change information in DB
+const addEmployeeController = async (req, res) => {
   try {
     const { number_employee, fullName } = req.body;
     if(isNaN(Number(number_employee)) || fullName === undefined){
@@ -44,7 +46,7 @@ const addEmployeeHandler = async (req, res) => {
   }
 };
 
-const removeEmployeeHandler = async (req, res) => {
+const removeEmployeeController = async (req, res) => {
   try {
     const { employeeNumber } = req.params;
     if(isNaN(Number(employeeNumber))){
@@ -64,4 +66,4 @@ const removeEmployeeHandler = async (req, res) => {
 };
 
 // Export the controller functions
-module.exports = { isEmployeeExist, addEmployeeHandler, removeEmployeeHandler };
+module.exports = { getEmployeeIdController, addEmployeeController, removeEmployeeController };

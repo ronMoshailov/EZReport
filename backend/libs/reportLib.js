@@ -6,11 +6,12 @@ const ReportingProduction = require('../model/ReportingProduction');
 const ReportingPacking = require('../model/ReportingPacking');
 
 const { fetchComponentByID, increaseStockById } = require('../libs/componentLib');
-const { createReportingStorage } = require('../libs/reportingStorageLib');
+// const { createReportingStorage } = require('../libs/reportingStorageLib');
 const { createTransferDocument, recieveUpdate, getTransferDocument } = require('../libs/transferDetailsLib');
-const { createProdReport } = require('./reportingProductionLib');
+// const { createProdReport } = require('../libs/reportingProductionLib');
 const { createPackingReporting } = require('./reportingPacking');
 
+// Getting information from DB
 const fetchReportsByWorkspace = async (workspace, isQueue) => {
   try {
     // Fetch reports from the database
@@ -25,7 +26,40 @@ const fetchReportsByWorkspace = async (workspace, isQueue) => {
   }
 };
 
-// Remove component from report and update stock
+// Getting information from DB (Storage)
+const fetchReportComponents = async (report_id) => {
+  try {
+    
+    const report = await Report.findById(report_id, { components: 1 });
+
+    if (!report) {
+      console.error("Error in fetchReportComponents: Report not found");
+      throw new Error("Report not found");
+    }
+
+    component_array = report.components;
+
+    // Map over the `components` array and replace the `component` ID with the full component data
+    const componentsWithDetails = await Promise.all(
+      component_array.map(async (item) => {
+        const componentData = await fetchComponentByID(item.component); // Fetch component details
+        // Return only the relevant fields for the component
+        return {
+          stock: item.stock, // Keep the stock property
+          name: componentData.name, // Include only the name of the component
+          serialNumber: componentData.serialNumber, // Include only the serial number
+          _id: componentData._id
+        };
+      })
+    );
+
+    return componentsWithDetails; // Return the updated components array
+  } catch (err) {
+    console.error(`Error fetching report components: ${err.message}`);
+    throw err; // Rethrow the error for the caller to handle
+  }
+};
+
 const removeComponentAndUpdateStock = async (reportId, componentId, stockToAdd) => {
 
   const session = await mongoose.startSession();
@@ -54,10 +88,7 @@ const handleAddComponentsToReport = async ({ employee_id, report_id, components_
   try {
     const date = new Date();
     date.setHours(date.getHours() + 2);
-    
-    // Add report to storage
-    const newStorageReporting = await createReportingStorage(employee_id, date, components_list, comment, session)
-    
+
     // Update the report with components
     const report = await Report.findById(report_id).session(session);
     if (!report){
@@ -65,7 +96,20 @@ const handleAddComponentsToReport = async ({ employee_id, report_id, components_
       throw new Error('Report not found.');
     }
 
-    report.reportingStorage_list.push(newStorageReporting);
+    const response = await getEmployeeReporting(report.current_workspace, report.reportingStorage_list, employee_id);
+    console.log(response)
+    if(!response){
+      console.error("Error in handleAddComponentsToReport: User not started a session");
+      throw new Error('User not started a session.');
+    }
+    const document = response.reporting;
+
+    document.end_date = date;
+    document.components_list = components_list;
+    if (comment != '')
+      document.comment = comment;
+
+    await document.save({session});
 
     const componentMap = new Map(report.components.map((comp) => [comp.component.toString(), comp]));
 
@@ -101,39 +145,7 @@ const handleAddComponentsToReport = async ({ employee_id, report_id, components_
   }
 };
 
-const fetchReportComponents = async (report_id) => {
-  try {
-    
-    const report = await Report.findById(report_id, { components: 1 });
-
-    if (!report) {
-      console.error("Error in fetchReportComponents: Report not found");
-      throw new Error("Report not found");
-    }
-
-    component_array = report.components;
-
-    // Map over the `components` array and replace the `component` ID with the full component data
-    const componentsWithDetails = await Promise.all(
-      component_array.map(async (item) => {
-        const componentData = await fetchComponentByID(item.component); // Fetch component details
-        // Return only the relevant fields for the component
-        return {
-          stock: item.stock, // Keep the stock property
-          name: componentData.name, // Include only the name of the component
-          serialNumber: componentData.serialNumber, // Include only the serial number
-          _id: componentData._id
-        };
-      })
-    );
-
-    return componentsWithDetails; // Return the updated components array
-  } catch (err) {
-    console.error(`Error fetching report components: ${err.message}`);
-    throw err; // Rethrow the error for the caller to handle
-  }
-};
-
+// Handle transfer report
 const handleTransferWorksplace = async (employeeId, report, session) => {
 
   try{
@@ -163,69 +175,140 @@ const handleTransferWorksplace = async (employeeId, report, session) => {
   }
 }
 
-const startReportingProduction = async (report, completedCount, employeeId, newComment) => {
+// 
+const handleCloseProductionReporting = async (employee_id, report, completed, comment) => {
   const session = await mongoose.startSession();
-
+  session.startTransaction();
+  
   try {
-    session.startTransaction();
-    const newReportingProduction = await createProdReport(report._id, employeeId, completedCount, newComment, session);
-
-    // Ensure `report_production_list` is initialized
-    if (!Array.isArray(report.report_production_list)) {
-      report.report_production_list = []; // Initialize as an empty array if undefined
+    const date = new Date();
+    date.setHours(date.getHours() + 2);
+    const response = await getEmployeeReporting(report.current_workspace, report.reportingProduction_list, employee_id);
+    if(!response){
+      console.error("Error in handleCloseProductionReporting: User not started a session");
+      throw new Error('User not started a session.');
     }
+    const productionReporting = response.reporting;
+    productionReporting.end_date = date;
+    productionReporting.completedCount = completed;
+    productionReporting.comment = comment;
+    productionReporting.save({session});
 
-    if (report.producedCount + completedCount > report.orderedCount) throw new Error(`The Total amount is greater than the ordered amount.`);
-      
-    report.reportingProduction_list.push(newReportingProduction._id); // Add directly instead of `findByIdAndUpdate`
-    report.producedCount += completedCount;
+    report.producedCount += completed;
+    report.save({session});
 
-    await report.save({ session });
-
+    // Commit the transaction
     await session.commitTransaction();
     session.endSession();
-    return newReportingProduction;
 
+    return { success: true, message: 'Reporting updated successfully.' };
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
-    console.error("Error in startReportingProduction:", error.message);
-    throw error;
+    console.error('Error in: handleCloseProductionReporting:', error.message);
+    throw new Error(error.message);
   }
+};
 
-}
-
-const startReportingPacking = async (report, completedCount, employeeId, newComment) => {
+const handleClosePackingReporting = async (employee_id, report, completed, comment) => {
   const session = await mongoose.startSession();
-
+  session.startTransaction();
+  
   try {
-    session.startTransaction();
-    const newReportingPacking = await createPackingReporting(report._id, employeeId, completedCount, newComment, session);
-
-    // Ensure `report_production_list` is initialized
-    if (!Array.isArray(report.reportingPacking_list)) {
-      report.reportingPacking_list = []; // Initialize as an empty array if undefined
+    const date = new Date();
+    date.setHours(date.getHours() + 2);
+    const response = await getEmployeeReporting(report.current_workspace, report.reportingPacking_list, employee_id);
+    if(!response){
+      console.error("Error in handleClosePackingReporting: User not started a session");
+      throw new Error('User not started a session');
     }
+    const packingReporting = response.reporting;
+    packingReporting.end_date = date;
+    packingReporting.completedCount = completed;
+    packingReporting.comment = comment;
+    packingReporting.save({session});
 
-    if (report.packedCount + completedCount > report.producedCount) throw new Error(`The Total amount is greater than the produced amount.`);
-      
-    report.reportingPacking_list.push(newReportingPacking._id); // Add directly instead of `findByIdAndUpdate`
-    report.packedCount += completedCount;
+    report.packedCount += completed;
+    report.save({session});
 
-    await report.save({ session });
-
+    // Commit the transaction
     await session.commitTransaction();
     session.endSession();
-    return newReportingPacking;
 
+    return { success: true, message: 'Reporting updated successfully.' };
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
-    console.error("Error in startReportingProduction:", error.message);
-    throw error;
+    console.error('Error in: handleClosePackingReporting:', error.message);
+    throw new Error(error.message);
   }
+};
 
-}
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// const startReportingProduction = async (report, completedCount, employeeId, newComment) => {
+//   const session = await mongoose.startSession();
+
+//   try {
+//     session.startTransaction();
+//     const newReportingProduction = await createProdReport(report._id, employeeId, completedCount, newComment, session);
+
+//     // Ensure `report_production_list` is initialized
+//     if (!Array.isArray(report.report_production_list)) {
+//       report.report_production_list = []; // Initialize as an empty array if undefined
+//     }
+
+//     if (report.producedCount + completedCount > report.orderedCount) throw new Error(`The Total amount is greater than the ordered amount.`);
+      
+//     report.reportingProduction_list.push(newReportingProduction._id); // Add directly instead of `findByIdAndUpdate`
+//     report.producedCount += completedCount;
+
+//     await report.save({ session });
+
+//     await session.commitTransaction();
+//     session.endSession();
+//     return newReportingProduction;
+
+//   } catch (error) {
+//     await session.abortTransaction();
+//     session.endSession();
+//     console.error("Error in startReportingProduction:", error.message);
+//     throw error;
+//   }
+
+// }
+
+// const startReportingPacking = async (report, completedCount, employeeId, newComment) => {
+//   const session = await mongoose.startSession();
+
+//   try {
+//     session.startTransaction();
+//     const newReportingPacking = await createPackingReporting(report._id, employeeId, completedCount, newComment, session);
+
+//     // Ensure `report_production_list` is initialized
+//     if (!Array.isArray(report.reportingPacking_list)) {
+//       report.reportingPacking_list = []; // Initialize as an empty array if undefined
+//     }
+
+//     if (report.packedCount + completedCount > report.producedCount) throw new Error(`The Total amount is greater than the produced amount.`);
+      
+//     report.reportingPacking_list.push(newReportingPacking._id); // Add directly instead of `findByIdAndUpdate`
+//     report.packedCount += completedCount;
+
+//     await report.save({ session });
+
+//     await session.commitTransaction();
+//     session.endSession();
+//     return newReportingPacking;
+
+//   } catch (error) {
+//     await session.abortTransaction();
+//     session.endSession();
+//     console.error("Error in startReportingProduction:", error.message);
+//     throw error;
+//   }
+
+// }
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // For internal use only
 const removeComponentFromReport = async (reportId, componentId, session) => {
@@ -280,22 +363,22 @@ const updateReportWorkspace = async (report, newTransitionId, session) => {
 };
 
 const getEmployeeReporting = async(workspace, reportingList, employeeId) => {
-
   try {
     switch(workspace){
       case 'Storage':
         for(const documentId of reportingList.slice().reverse()){
           const storageReporting = await ReportingStorage.findById(documentId);
           if(storageReporting.employee_id.toString() === employeeId.toString() && storageReporting.end_date === undefined)
-            return({message: "Reporting was found", reportingId: documentId});
-          }   
-          return null;
+            return({message: "Reporting was found", reporting: storageReporting});
+        }   
+        return null;
   
         case 'Production':
+          
           for(const documentId of reportingList.slice().reverse()){
             const productionReporting = await ReportingProduction.findById(documentId);
             if(productionReporting.employee_id.toString() === employeeId.toString() && productionReporting.end_date === undefined)
-            return({message: "Reporting was found", reportingId: documentId});
+            return({message: "Reporting was found", reporting: productionReporting});
           }   
           return null;
         
@@ -303,8 +386,8 @@ const getEmployeeReporting = async(workspace, reportingList, employeeId) => {
           for(const documentId of reportingList.slice().reverse()){
             const packingReporting = await ReportingPacking.findById(documentId);
             if(packingReporting.employee_id.toString() === employeeId.toString() && packingReporting.end_date === undefined)
-              return({message: "Reporting was found", reportingId: documentId});
-          }   
+            return({message: "Reporting was found", reporting: packingReporting});
+        }   
           return null;
     }
   } catch (error) {
@@ -320,7 +403,9 @@ module.exports = {
   updateReportWorkspace, 
   fetchReportComponents, 
   handleTransferWorksplace, 
-  startReportingProduction,
-  startReportingPacking,
-  getEmployeeReporting
+  // startReportingProduction,
+  // startReportingPacking,
+  getEmployeeReporting,
+  handleCloseProductionReporting,
+  handleClosePackingReporting
  };

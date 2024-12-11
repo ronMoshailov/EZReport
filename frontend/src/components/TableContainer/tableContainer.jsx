@@ -3,19 +3,31 @@ import './tableContainer.scss';
 
 import WorkSessionModal from '../../components/modals/WorkSessionModal/WorkSessionModal'
 
-const TableContainer = ({ reports, onClickRow, isQueue }) => {
+const TableContainer = ({ reports, isQueue }) => {
   
   const [isWorkSession, setIsWorkSession] = useState(false);                            // Handle case that if this change so fetch reports again
   const [operationType, setOperationType] = useState(false);
   const [selectedReportId, setSelectedReportId] = useState('');
 
-  const handleSendClick = (reportId, operation) => (event) => {
+  const workspace = localStorage.getItem('workspace');
+
+  const handleOperation = (reportId, operation, serialNum, orderedCount, producedCount, packedCount) => (event) => {
     event.stopPropagation(); // Prevent row click
     setIsWorkSession(true);
-    console.log('reportId');
-    console.log(reportId);
     setSelectedReportId(reportId);
-    setOperationType(operation);
+    setOperationType(operation );
+    if(operation === 'send' || operation === 'start' || workspace === 'Storage')
+      return;
+    if(operation === 'end'){
+      localStorage.setItem('serialNum', serialNum);
+      if(workspace === 'Production'){
+        localStorage.setItem('completed', producedCount);
+        localStorage.setItem('total', orderedCount);  
+      } else if(workspace === 'Packing'){
+        localStorage.setItem('completed', packedCount);
+        localStorage.setItem('total', producedCount);
+      }
+    }
   };
 
   return (
@@ -38,8 +50,7 @@ const TableContainer = ({ reports, onClickRow, isQueue }) => {
       </thead>
       <tbody>
         {reports.map((report) => (
-          <tr key={report._id} onClick={() => onClickRow(report)}>
-
+          <tr key={report._id}>
             <td>{report.title}</td>
             <td>{report.serialNumber}</td>
             <td>{report.status}</td>
@@ -48,22 +59,23 @@ const TableContainer = ({ reports, onClickRow, isQueue }) => {
             <td>{report.packedCount}</td>
             <td>{report.orderedCount}</td>
             <td>{new Date(report.openDate).toLocaleDateString()}</td>
-
             <td>
               <button
                 className='buttonIcon'  
                 id="startWorkingIcon"
-                onClick={handleSendClick(report._id, 'start')}
+                onClick={handleOperation(report._id, 'start')}
+                disabled={isQueue}
               >
                 &#8858;
               </button>
             </td>
-
+            
             <td>
               <button
                 className='buttonIcon'  
                 id="EndWorkingIcon"
-                onClick={handleSendClick(report._id, 'end')}
+                onClick={handleOperation(report._id, 'end', report.serialNumber, report.orderedCount, report.producedCount, report.packedCount)}
+                disabled={isQueue}
               >
                 &#8861;
               </button>
@@ -73,7 +85,7 @@ const TableContainer = ({ reports, onClickRow, isQueue }) => {
               <button
                 className='buttonIcon'  
                 id="sendIcon"
-                onClick={handleSendClick(report._id, 'send')}
+                onClick={handleOperation(report._id, isQueue ? 'receive' : 'send')}
               >
                 {isQueue ? '→' : '←'}
               </button>
@@ -83,13 +95,13 @@ const TableContainer = ({ reports, onClickRow, isQueue }) => {
         ))}
       </tbody>
     </table>
-
-    {isWorkSession &&
+{/*  (!isQueue || operationType === 'receive' || operationType === 'send') &&  */}
+    {isWorkSession && 
         <WorkSessionModal
           reportId={selectedReportId}
           operationType={operationType}
           onClose={setIsWorkSession}
-          // reportSerialNum={}
+          inQueue={isQueue}
           // orderedCount={}
           // producedCount={}
     />}

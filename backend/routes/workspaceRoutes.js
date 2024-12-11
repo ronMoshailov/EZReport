@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const { isWorkspaceExist } = require('../controller/workspaceController');
+const { isWorkspaceExistController } = require('../controller/workspaceController');
 
-router.get('/isWorkspaceExist/:workspaceNum', isWorkspaceExist);
+router.get('/isWorkspaceExist/:workspaceNum', isWorkspaceExistController);
 
 module.exports = router;

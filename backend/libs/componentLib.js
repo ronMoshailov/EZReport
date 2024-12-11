@@ -1,5 +1,6 @@
 const Component = require('../model/Component');
 
+// Getting information from DB
 const fetchAllComponents = async () => {
   try {
     const allComponents = await Component.find();
@@ -28,6 +29,7 @@ const fetchComponentByID = async (id) => {
   }
 };
 
+// Change information in DB
 const addComponent = async (serialNumber, name, stock) => {
   try{
 
@@ -56,7 +58,7 @@ const removeComponent = async (serialNumber) =>{
     }
     return true;
   } catch(error){
-    console.log("Error in removeComponent: ", error.message);
+    console.error("Error in removeComponent: ", error.message);
     throw new Error("The removing component failed");
   }
 

@@ -1,5 +1,6 @@
 const Employee = require('../model/Employee');
 
+// Getting information from DB
 const findEmployeeByNumber = async (employeeNum, session) => {
   return await Employee.findOne({ number_employee: employeeNum }).session(session);
 };
@@ -8,9 +9,10 @@ const findEmployeeById = async (employeeId, session) => {
   return await Employee.findById(employeeId).session(session);
 };
 
+// Change information in DB
 const addEmployee = async (number_employee, fullName) => {
   try {
-    const isExist = await findEmployee(number_employee);
+    const isExist = await findEmployeeByNumber(number_employee);
     if(isExist) throw new Error("Employee already exist");
       
     const employee = new Employee({number_employee, fullName});

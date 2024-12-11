@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import {fetchReportComponents, handleRemoveComponentFromReport, fetchAndComponents} from '../../components/APIs/report'
+import {fetchReportComponents, handleRemoveComponentFromReport, fetchAddComponents} from '../../components/APIs/report'
 import { fetchAllComponents } from '../../components/APIs/components'
-import { isEmployeeExist } from '../../components/APIs/employee'
+import { getEmployeeId } from '../../components/APIs/employee'
 
 import './reportingStorage.scss'
 import ComponentsModal from '../../components/modals/ComponentsModal'; // Import the modal component
@@ -209,8 +209,7 @@ const ComponentPage = () => {
     try {
       
       // Check if the employee exists
-      const employee_id = await checkIsEmployeeExist();
-      console.log(employee_id);
+      const employee_id = await checkGetEmployeeId();
       if (!employee_id) {
         setError(employee_err_msg);
         setIsModalOpen(false);
@@ -223,17 +222,14 @@ const ComponentPage = () => {
         stock: comp.stock,            // Quantity of the component
       }));
       
-      console.log('employee_id');
-      console.log(employee_id);
-      console.log('reportId');
-      console.log(reportId);
-      console.log('componentsToAdd');
-      console.log(componentsToAdd);
-      console.log('inputComment');
-      console.log(inputComment);
-
-      const result = await fetchAndComponents(employee_id, reportId, componentsToAdd, inputComment)
-      console.log(result.message);
+      const result = await fetchAddComponents(employee_id, reportId, componentsToAdd, inputComment)
+      if(!result[0]){
+        alert('הדיווח נכשל');
+        await handleFetchAllComponents();
+        setLoading(false);
+        return;
+      }
+      console.log(result[1].message);
 
       // Clear & Reset states
       setInputId('');
@@ -245,7 +241,9 @@ const ComponentPage = () => {
       setInputComment('');
   
       // Refresh the components list
-      await handleFetchAllComponents();
+      // await handleFetchAllComponents();
+      navigate('/dashboard');
+
       setLoading(false);
     } catch (err) {
       setError(err.message);
@@ -257,10 +255,10 @@ const ComponentPage = () => {
  * Check if the employee exist.
  * @returns If the employee exist return his `_id` || `null` if the employee doesn't exist.
  */
-  const checkIsEmployeeExist = async () => {
+  const checkGetEmployeeId = async () => {
     try {
 
-      const employeeData = await isEmployeeExist(inputValue);
+      const employeeData = await getEmployeeId(inputValue);
       return employeeData.id;
   
     } catch (err) {
@@ -290,28 +288,18 @@ const ComponentPage = () => {
 
       // Fetch the updated components and refresh the modal
       const updatedData = await fetchReportComponents(reportId); // Fetch updated report components
-      // console.log("Fetched report components");
-      // console.log(updatedData);
-      
+
       const updatedComponentsList = updatedData.components_list;
-      // console.log("component list: ");
-      // console.log(updatedComponentsList);
 
       // Update modal state with the updated components list
       setComponentsToShow(updatedComponentsList);
-      // console.log('Updated components to show like the component list');
-      // console.log(updatedComponentsList);
 
       // Fetch the updated components and refresh the modal
       await handleFetchAllComponents();
-      // console.log('Fetched all components');
-      // console.log(updatedDatac[1]);
 
       // Update modal state with the updated components list
       
       // setAllComponents(updatedDatac[1]);                                                                               // Make problems
-      // console.log('Updated all components');
-      // console.log(allComponents);
 
     } catch (error) {
       console.error('Error removing component from report:', error.message);

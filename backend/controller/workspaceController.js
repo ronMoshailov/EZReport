@@ -1,12 +1,12 @@
 const { findWorkspaceByNumber } = require('../libs/workspaceLib');
 
-const isWorkspaceExist = async (req, res) => {
+// Getting information from DB
+const isWorkspaceExistController = async (req, res) => {
   try {
     const { workspaceNum } = req.params;
     const workspace = await findWorkspaceByNumber(workspaceNum);
 
     if (!workspace){
-      console.log(workspace);
       console.error("Error in isWorkspaceExist: workspace not found")
       return res.status(404).json({message: "Workspace not found"});
     } 
@@ -20,4 +20,4 @@ const isWorkspaceExist = async (req, res) => {
 };
 
 // Export the controller functions
-module.exports = { isWorkspaceExist };
+module.exports = { isWorkspaceExistController };

@@ -1,3 +1,4 @@
+/* General */
 
 // Fetch all reports
 const fetchAllReports = async (workspace, isQueue) => {
@@ -22,6 +23,7 @@ const fetchAllReports = async (workspace, isQueue) => {
   }
 };
 
+// Start session
 const startSession = async (reportId, employeeNum) => {
   try {
     const response = await fetch('http://localhost:5000/api/startSession', {
@@ -41,6 +43,7 @@ const startSession = async (reportId, employeeNum) => {
   }
 };
 
+// Check if there is started session
 const isStartedSession = async (reportId, employeeNum) => {
   try {
     const response = await fetch('http://localhost:5000/api/isStartedSession?employeeNum=' + employeeNum + '&reportId=' + reportId);
@@ -70,23 +73,9 @@ const isStartedSession = async (reportId, employeeNum) => {
   }
 };
 
+/* Storage */
 
-
-
-
-
-
-
-
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
-
-
-
+// Fetch report's components
 const fetchReportComponents = async (report_id) => {
   // Send a GET request to fetch the components associated with the specified report ID
   const response = await fetch(`http://localhost:5000/api/getReportComponents/${report_id}`, {
@@ -106,6 +95,7 @@ const fetchReportComponents = async (report_id) => {
   return data;
 };
 
+// Remove component from report and update the stock
 const handleRemoveComponentFromReport = async (report_id, component_id, stock) => {
   // Send a POST request to the backend to remove a component from a report and return its stock
   const removeResponse = await fetch('http://localhost:5000/api/removeComponentAndReturnToStock', {
@@ -126,34 +116,8 @@ const handleRemoveComponentFromReport = async (report_id, component_id, stock) =
   }
 };
 
-const toggleReportEnable = async (report_id) => {
-  try {
-    // Send a POST request to toggle the "enable" field of a specific report
-    const response = await fetch('http://localhost:5000/api/toggleEnable', {
-      method: 'POST', // Use POST method to send data to the server
-      headers: { 
-        'Content-Type': 'application/json' // Specify JSON format for the request body
-      },
-      body: JSON.stringify({ report_id: report_id }), // Send the report ID as JSON in the request body
-    });
-
-    // Check if the response indicates a failure (non-2xx status code)
-    if (!response.ok) {
-      throw new Error(`Failed to toggle enable field. Status: ${response.status}`);
-    }
-
-    // Parse the response data to JSON
-    const data = await response.json();
-
-    // Optionally handle the response data (e.g., update UI or application state)
-    return data.message; // Return the message from the server
-  } catch (error) {
-    // Log any errors that occur during the request
-    console.error('Error toggling enable field:', error.message);
-  }
-};
-
-const fetchAndComponents = async (employee_id, report_id, componentsToAdd, inputComment) => {
+// Add component list to report
+const fetchAddComponents = async (employee_id, report_id, componentsToAdd, inputComment) => {
   try {
     // Send a POST request to add components to the specified report
     const response = await fetch('http://localhost:5000/api/addComponentsToReport', {
@@ -175,13 +139,61 @@ const fetchAndComponents = async (employee_id, report_id, componentsToAdd, input
     }
 
     // Parse and return the JSON response from the server
-    return await response.json();
+    const data = [true, await response.json()];
+    return data;
+    
   } catch (error) {
     // Log any errors encountered during the request
     console.error('Error adding components to the report:', error.message);
     throw error; // Re-throw the error for further handling if needed
   }
 };
+
+/* Manager */
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+// const toggleReportEnable = async (report_id) => {
+//   try {
+//     // Send a POST request to toggle the "enable" field of a specific report
+//     const response = await fetch('http://localhost:5000/api/toggleEnable', {
+//       method: 'POST', // Use POST method to send data to the server
+//       headers: { 
+//         'Content-Type': 'application/json' // Specify JSON format for the request body
+//       },
+//       body: JSON.stringify({ report_id: report_id }), // Send the report ID as JSON in the request body
+//     });
+
+//     // Check if the response indicates a failure (non-2xx status code)
+//     if (!response.ok) {
+//       throw new Error(`Failed to toggle enable field. Status: ${response.status}`);
+//     }
+
+//     // Parse the response data to JSON
+//     const data = await response.json();
+
+//     // Optionally handle the response data (e.g., update UI or application state)
+//     return data.message; // Return the message from the server
+//   } catch (error) {
+//     // Log any errors that occur during the request
+//     console.error('Error toggling enable field:', error.message);
+//   }
+// };
+
+
 
 const displayReportComments = async (report_id) =>{
   console.log('report_id');
@@ -230,15 +242,79 @@ const sendProductionReport = async (report_id, employee_id, completedCount, comm
   }
 };
 
+const CloseProductionReporting = async (employeeNum, reportId, completed, comment) => {
+  try {
+    // Send a POST request to add components to the specified report
+    const response = await fetch('http://localhost:5000/api/CloseProductionReporting', {
+      method: 'POST', // Use POST to send data to the server
+      headers: {
+        'Content-Type': 'application/json', // Specify that the content type is JSON
+      },
+      body: JSON.stringify({
+        employeeNum,              // Employee ID performing the action
+        reportId,                // Report ID to which components are being added
+        completed, // List of components with their details (e.g., ID and stock)
+        comment,    // Additional comment provided by the user
+      }),
+    });
+
+    // Check if the response indicates a failure
+    if (!response.ok) {
+      throw new Error(`Failed to process the report. Status: ${response.status}`);
+    }
+    
+    // Parse and return the JSON response from the server
+    // return await response.json();
+    return true;
+  } catch (error) {
+    // Log any errors encountered during the request
+    console.error('Error adding components to the report:', error.message);
+    throw error; // Re-throw the error for further handling if needed
+  }
+}
+
+const ClosePackingReporting = async (employeeNum, reportId, completed, comment) => {
+  try {
+    // Send a POST request to add components to the specified report
+    const response = await fetch('http://localhost:5000/api/ClosePackingReporting', {
+      method: 'POST', // Use POST to send data to the server
+      headers: {
+        'Content-Type': 'application/json', // Specify that the content type is JSON
+      },
+      body: JSON.stringify({
+        employeeNum,              // Employee ID performing the action
+        reportId,                // Report ID to which components are being added
+        completed, // List of components with their details (e.g., ID and stock)
+        comment,    // Additional comment provided by the user
+      }),
+    });
+
+    // Check if the response indicates a failure
+    if (!response.ok) {
+      throw new Error(`Failed to process the report. Status: ${response.status}`);
+    }
+    
+    // Parse and return the JSON response from the server
+    // return await response.json();
+    return true;
+  } catch (error) {
+    // Log any errors encountered during the request
+    console.error('Error adding components to the report:', error.message);
+    throw error; // Re-throw the error for further handling if needed
+  }
+}
+
 export { fetchAllReports, 
   fetchReportComponents, 
   handleRemoveComponentFromReport, 
-  toggleReportEnable, 
-  fetchAndComponents, 
+  // toggleReportEnable, 
+  fetchAddComponents, 
   displayReportComments, 
   sendProductionReport, 
   startSession,
-  isStartedSession
+  isStartedSession,
+  CloseProductionReporting,
+  ClosePackingReporting
  };
 
 

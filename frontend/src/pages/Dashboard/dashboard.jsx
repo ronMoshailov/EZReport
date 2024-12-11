@@ -90,12 +90,12 @@ const Dashboard = ({isQueue}) => {
   };
 
   // Function to handle card click and show modal
-  const handleClickOnCard = useCallback((report) => {
-    if (!isQueue) {                           // If we are not in queue page
-      setReport(report);                      // Holds the selected report
-      // setIsOperationModal(true);              // Show the operation modal
-      };
-    }, [isQueue]);
+  // const handleClickOnCard = useCallback((report) => {
+  //   if (!isQueue) {                           // If we are not in queue page
+  //     setReport(report);                      // Holds the selected report
+  //     // setIsOperationModal(true);              // Show the operation modal
+  //     };
+  //   }, [isQueue]);
 
   // Function to handle sending card click and show modal
   const handleMoveWorkspaceButton = useCallback((report) => {
@@ -140,7 +140,7 @@ const Dashboard = ({isQueue}) => {
         <div className="cards-container">                               
         <TableContainer
           reports={filteredReports}
-          onClickRow={handleClickOnCard}
+          // onClickRow={handleClickOnCard}
           isQueue={isQueue}
         />
         </div>
@@ -164,12 +164,12 @@ const Dashboard = ({isQueue}) => {
         />} */}
 
       {/* Send modal for moving reports, only visible when isSendModalOpen */}
-      {isSendModalOpen && 
+      {/* {isSendModalOpen && 
         <ModalTransferWorkspace 
           onClose={handleCloseModal} 
           selectedReport={report} 
           isReceived={isReceived} 
-        />}
+        />} */}
 
     </div>
   );

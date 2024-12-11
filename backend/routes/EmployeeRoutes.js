@@ -1,11 +1,11 @@
 
 const express = require('express');
 const router = express.Router();
-const { isEmployeeExist, addEmployeeHandler, removeEmployeeHandler } = require('../controller/employeeController');
+const { getEmployeeIdController, addEmployeeController, removeEmployeeController } = require('../controller/employeeController');
 
 // GET all reports
-router.post('/isEmployeeExist', isEmployeeExist);
-router.post('/addEmployee', addEmployeeHandler);
-router.delete('/removeEmployee/:employeeNumber', removeEmployeeHandler);
+router.post('/getEmployeeId', getEmployeeIdController);
+router.post('/addEmployee', addEmployeeController);
+router.delete('/removeEmployee/:employeeNumber', removeEmployeeController);
 
 module.exports = router;

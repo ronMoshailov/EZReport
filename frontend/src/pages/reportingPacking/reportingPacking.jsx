@@ -1,109 +1,77 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { displayReportComments } from '../APIs/API_report';
-import { sendProductionReport } from '../APIs/API_report';
-import CommentsModal from '../modals/CommentsModal'; 
+import { displayReportComments, ClosePackingReporting } from '../../components/APIs/report';
+import CommentsModal from '../../components/modals/CommentsModal'; 
 import './reportingPacking.scss'; 
 
-import { handleEscKey } from '../functions';
-
+import { handleEscKey } from '../../components/utils/functions';
 
 const NewReportPage = () => {
 
   // States
-  const [packedCount, setPackedCount] = useState(Number(localStorage.getItem('report_packedCount')));           // Holds the old completed quantity
-  const [employeeNum, setEmployeeNum] = useState(localStorage.getItem('employee_number'));                      // Holds the employee number
-  const [reportSerialNum, setReportSerialNum] = useState(localStorage.getItem('report_serialNum'));             // Holds the report serial number
-  const [orderedCount, setOrderedCount] = useState(Number(localStorage.getItem('report_orderedCount')));        // Holds the ordered quantity
-  const [reportId, setReportId] = useState(localStorage.getItem('report_id'));                                  // Holds the id of the report
   const [newCompleted, setNewCompleted] = useState(0);                                                          // Holds the new completed quantity
   const [newComment, setNewComment] = useState('');                                                             // Holds the new comment for this reporting
-  const [comments, setComments] = useState([]);                                                                 // Holds all the comments for the previous workspace
+  const [allComments, setAllComments] = useState([]);                                                                 // Holds all the comments for the previous workspace
   const [isCommentsModalOpen, setIsCommentsModalOpen] = useState(false);                                        // Show/Hide the comments from the previous workspace
   const [error, setError] = useState('');                                                                       // Holds the error message
-  const [success, setSuccess] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);                                                      // Holds the state if the client in the middle of submitting
 
-  const navigate = useNavigate();                         // Router navigation setup
+  // Constant variables
+  const employeeNum = localStorage.getItem('employee_number');
+  const reportSerialNum = localStorage.getItem('serialNum');
+  const reportId = localStorage.getItem('reportId');
+  const producedCount = Number(localStorage.getItem('total'));
+  const packedCount = Number(localStorage.getItem('completed'));
 
-  // Get date
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are 0-based
-  const day = String(now.getDate()).padStart(2, '0');
-  const formattedDate = `${day}-${month}-${year}`;
+  // Navigate
+  const navigate = useNavigate();                         // Router navigation setup
 
   // useEffect
   useEffect(() => {
     window.addEventListener('keydown', addEscListener);                   // Add keydown event listener to listen for Escape key press
-    if (packedCount === null || employeeNum === null || reportSerialNum === null || orderedCount === null || reportId === null){
+    if (employeeNum === null || reportSerialNum === null || reportId === null || producedCount === null || packedCount === null){
       navigate('/error');
     }
   }, []);
 
-  useEffect(() => {
-    localStorage.setItem('report_packedCount', packedCount + Number(newCompleted));
-  }, [packedCount]);
-
-  const handleEscPress = () => {
-    setIsCommentsModalOpen(false);
-  }
-
-  // Add Esc press key listener
-  const addEscListener = (event) => handleEscKey(event, handleEscPress);
-
-
-  const validateInputs = () => {
-    if (!newCompleted || isNaN(newCompleted) || newCompleted <= 0) {
-      setSuccess('');
-      setError('הזן כמות תקינה');
-      return false;
+  // Handle show comments
+  const handleShowComments = async () => {
+    try {
+      setIsCommentsModalOpen(true);
+      setAllComments([]); // Clear previous comments
+      const fetchedComments = await displayReportComments(reportId);
+      setAllComments(fetchedComments);
+    } catch (error) {
+      console.error('Error fetching comments:', error.message);
+      alert('שגיאה בהצגת ההערות');
     }
-    if (!newComment.trim()) {
-      setSuccess('');
-      setError('הזן הערה');
-      return false;
-    }
-    return true;
   };
 
-
-  // Handle delete
-  const handleDelete = () => {
-    navigate('/dashboard');
-  };
+  const addEscListener = (event) => handleEscKey(event, () => setIsCommentsModalOpen(false));
 
   const handleCommentModalClose = useCallback(() => setIsCommentsModalOpen(false), []);
 
   const handleSubmit = async () => {
     if (isSubmitting) return;
     setIsSubmitting(true);
-    
-    setSuccess('');
-    try {
-      // Check count
-      if (!validateInputs()) 
-        return;
-      
-      setError(''); // Clear previous errors
 
-      if ( Number(newCompleted) + packedCount > orderedCount ) {
+    try {
+      if (!newCompleted || isNaN(newCompleted) || newCompleted <= 0){
+        setError('הזן כמות תקינה');
+        return;
+      }
+
+      setError(''); // Clear previous errors
+      if ( Number(newCompleted) + packedCount > producedCount) {
         setError('הכמות שהוכנסה גבוהה ממה שהוזמן');
         return;
       }
 
-      
-      const answer = await sendProductionReport(reportId, employeeNum, Number(newCompleted), newComment)
+      const answer = await ClosePackingReporting(employeeNum, reportId, Number(newCompleted), newComment);
 
-      if (answer){
-        setPackedCount(packedCount + Number(newCompleted));
-        // setNewCompleted(completed + Number(newCompleted));
-        setNewCompleted(0); 
-        setComments([]);
-        setError('');
-        setSuccess('הפעולה הצליחה');
-        return;
-      }
+      if (answer)
+        navigate('/dashboard')
+      
       setError('Failed');
     } catch (err) {
       console.error('Error submitting production report:', err.message);
@@ -112,18 +80,7 @@ const NewReportPage = () => {
     }
   };
 
-  // Handle show comments
-  const handleShowComments = async () => {
-    try {
-      setIsCommentsModalOpen(true);
-      setComments([]); // Clear previous comments
-      const fetchedComments = await displayReportComments(reportId);
-      setComments(fetchedComments);
-    } catch (error) {
-      console.error('Error fetching comments:', error.message);
-      alert('שגיאה בהצגת ההערות');
-    }
-  };
+
 
   return (
     <div className="new-report-page">
@@ -143,18 +100,13 @@ const NewReportPage = () => {
           </div>
 
           <div className="form-group">
-            <label>תאריך</label>
-            <input type="text" placeholder="תאריך" value={formattedDate} disabled />
-          </div>
-
-          <div className="form-group">
-            <label>תקינים</label>
+            <label>נארזו</label>
             <input type="text" placeholder="תקינים" value={packedCount} disabled />
           </div>
 
           <div className="form-group">
-            <label>הוזמנו</label>
-            <input type="text" placeholder="הוזמנו" value={orderedCount} disabled />
+            <label>יוצרו</label>
+            <input type="text" placeholder="הוזמנו" value={producedCount} disabled />
           </div>
 
         </div>
@@ -181,17 +133,14 @@ const NewReportPage = () => {
             {error && 
               <label className='errorMessage'>{error}</label>
             }
-            {success && 
-              <label className='successMessage'>{success}</label>
-            }
           </div>
         </div>
       </div>
 
       {/* Action Buttons */}
       <div className="buttons-container">
-        <button className="btn cancel-btn" onClick={handleDelete}>
-          מחק
+        <button className="btn cancel-btn" onClick={() => navigate('/dashboard')}>
+          חזור
         </button>
         <button className="btn showComment-btn" onClick={handleShowComments}>
           הצג הערות
@@ -205,7 +154,7 @@ const NewReportPage = () => {
       <CommentsModal
         isOpen={isCommentsModalOpen}
         onClose={handleCommentModalClose}
-        comments={comments}
+        comments={allComments}
       />
     </div>
   );
