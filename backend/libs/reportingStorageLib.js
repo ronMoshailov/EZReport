@@ -40,26 +40,40 @@ const initializeReportingStorage = async (employee_id, session) => {
   }
 };
 
-const createReportingStorage = async (employee_id, date, components_list, comment, session) => {
-  try{
-    const newReportingStorage = new ReportingStorage({
-      employee_id,
-      start_date: date,
-      components_list,
-      comment,
-    });
+// const closeReportingStorage = async (reportingIdList, employeeId, componentList, comment, session) => {
+//   try {
+//     for(documentId of  reportingIdList.slice().reverse()){
+
+
+//     }
+//     const date = new Date();
+//     date.setHours(date.getHours() + 2);
+      
+//   } catch (error) {
     
-    const newReporting = await newReportingStorage.save({ session });
-    return newReporting._id;
-  } catch(error){
-    console.error("Error in createReportingStorage:", error.message);
-    throw new Error("Failed to create new reporting storage");
-  }
-};
+//   }
+
+// }
+// const createReportingStorage = async (employee_id, date, components_list, comment, session) => {
+//   try{
+//     const newReportingStorage = new ReportingStorage({
+//       employee_id,
+//       start_date: date,
+//       components_list,
+//       comment,
+//     });
+    
+//     const newReporting = await newReportingStorage.save({ session });
+//     return newReporting._id;
+//   } catch(error){
+//     console.error("Error in createReportingStorage:", error.message);
+//     throw new Error("Failed to create new reporting storage");
+//   }
+// };
 
 module.exports = {
   fetchReportStorageList,
   fetchStorageComments,
   initializeReportingStorage,
-  createReportingStorage
+  // createReportingStorage
 };

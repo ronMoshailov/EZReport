@@ -8,7 +8,7 @@ const ReportingPacking = require('../model/ReportingPacking');
 const { fetchComponentByID, increaseStockById } = require('../libs/componentLib');
 const { createReportingStorage } = require('../libs/reportingStorageLib');
 const { createTransferDocument, recieveUpdate, getTransferDocument } = require('../libs/transferDetailsLib');
-const { createProdReport } = require('./reportingProductionLib');
+const { createProdReport } = require('../libs/reportingProductionLib');
 const { createPackingReporting } = require('./reportingPacking');
 
 const fetchReportsByWorkspace = async (workspace, isQueue) => {
@@ -54,10 +54,7 @@ const handleAddComponentsToReport = async ({ employee_id, report_id, components_
   try {
     const date = new Date();
     date.setHours(date.getHours() + 2);
-    
-    // Add report to storage
-    const newStorageReporting = await createReportingStorage(employee_id, date, components_list, comment, session)
-    
+
     // Update the report with components
     const report = await Report.findById(report_id).session(session);
     if (!report){
@@ -65,7 +62,19 @@ const handleAddComponentsToReport = async ({ employee_id, report_id, components_
       throw new Error('Report not found.');
     }
 
-    report.reportingStorage_list.push(newStorageReporting);
+    const response = await getEmployeeReporting(report.current_workspace, report.reportingStorage_list, employee_id);
+    if(!response){
+      console.error("Error in handleAddComponentsToReport: Reporting not found");
+      throw new Error('Reporting not found.');
+    }
+    const document = response.reporting;
+
+    document.end_date = date;
+    document.components_list = components_list;
+    if (comment != '')
+      document.comment = comment;
+
+    await document.save({session});
 
     const componentMap = new Map(report.components.map((comp) => [comp.component.toString(), comp]));
 
@@ -287,7 +296,7 @@ const getEmployeeReporting = async(workspace, reportingList, employeeId) => {
         for(const documentId of reportingList.slice().reverse()){
           const storageReporting = await ReportingStorage.findById(documentId);
           if(storageReporting.employee_id.toString() === employeeId.toString() && storageReporting.end_date === undefined)
-            return({message: "Reporting was found", reportingId: documentId});
+            return({message: "Reporting was found", reporting: storageReporting});
           }   
           return null;
   
@@ -295,7 +304,7 @@ const getEmployeeReporting = async(workspace, reportingList, employeeId) => {
           for(const documentId of reportingList.slice().reverse()){
             const productionReporting = await ReportingProduction.findById(documentId);
             if(productionReporting.employee_id.toString() === employeeId.toString() && productionReporting.end_date === undefined)
-            return({message: "Reporting was found", reportingId: documentId});
+            return({message: "Reporting was found", reporting: productionReporting});
           }   
           return null;
         
@@ -303,7 +312,7 @@ const getEmployeeReporting = async(workspace, reportingList, employeeId) => {
           for(const documentId of reportingList.slice().reverse()){
             const packingReporting = await ReportingPacking.findById(documentId);
             if(packingReporting.employee_id.toString() === employeeId.toString() && packingReporting.end_date === undefined)
-              return({message: "Reporting was found", reportingId: documentId});
+              return({message: "Reporting was found", reporting: packingReporting});
           }   
           return null;
     }

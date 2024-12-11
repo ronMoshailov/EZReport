@@ -153,7 +153,7 @@ const toggleReportEnable = async (report_id) => {
   }
 };
 
-const fetchAndComponents = async (employee_id, report_id, componentsToAdd, inputComment) => {
+const fetchAddComponents = async (employee_id, report_id, componentsToAdd, inputComment) => {
   try {
     // Send a POST request to add components to the specified report
     const response = await fetch('http://localhost:5000/api/addComponentsToReport', {
@@ -175,7 +175,9 @@ const fetchAndComponents = async (employee_id, report_id, componentsToAdd, input
     }
 
     // Parse and return the JSON response from the server
-    return await response.json();
+    const data = [true, await response.json()];
+    return data;
+    
   } catch (error) {
     // Log any errors encountered during the request
     console.error('Error adding components to the report:', error.message);
@@ -234,7 +236,7 @@ export { fetchAllReports,
   fetchReportComponents, 
   handleRemoveComponentFromReport, 
   toggleReportEnable, 
-  fetchAndComponents, 
+  fetchAddComponents, 
   displayReportComments, 
   sendProductionReport, 
   startSession,

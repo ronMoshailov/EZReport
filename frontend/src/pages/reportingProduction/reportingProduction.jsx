@@ -7,24 +7,25 @@ import './reportingProduction.scss';
 import { handleEscKey } from '../../components/utils/functions';
 
 
-const NewReportPage = () => {
+const NewReportingPage = () => {
 
   // States
-  const [newCompleted, setNewCompleted] = useState(0);                                                          // Holds the new completed quantity
+  const [newCompleted, setNewCompleted] = useState('');                                                          // Holds the new completed quantity
   const [newComment, setNewComment] = useState('');                                                             // Holds the new comment for this reporting
   const [allComments, setAllComments] = useState([]);                                                                 // Holds all the comments for the previous workspace
   const [isCommentsModalOpen, setIsCommentsModalOpen] = useState(false);                                        // Show/Hide the comments from the previous workspace
+
   const [error, setError] = useState('');                                                                       // Holds the error message
   const [success, setSuccess] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);                                                      // Holds the state if the client in the middle of submitting
 
   // Constant variables
   const employeeNum = localStorage.getItem('employee_number');
-  const reportSerialNum = localStorage.getItem('reportSerialNum');
-  const orderedCount = localStorage.getItem('report_orderedCount');
+  const reportSerialNum = localStorage.getItem('serialNum');
   const reportId = localStorage.getItem('reportId');
-  const producedCount = localStorage.getItem('report_producedCount');
-
+  const orderedCount = Number(localStorage.getItem('total'));
+  const producedCount = Number(localStorage.getItem('completed'));
+  
   // Navigate
   const navigate = useNavigate();                         // Router navigation setup
 
@@ -35,50 +36,41 @@ const NewReportPage = () => {
     //   navigate('/error');
     // }
   }, []);
-  useEffect(() => {
-    localStorage.setItem('report_producedCount', producedCount + Number(newCompleted));
-  }, [producedCount]);
 
-  // functions
-  
-  // Add Esc press key listener
-  const addEscListener = (event) => handleEscKey(event, () => setIsCommentsModalOpen(false));
-
-  const validateInputs = () => {
-    if (!newCompleted || isNaN(newCompleted) || newCompleted <= 0) {
-      setSuccess('');
-      setError('הזן כמות תקינה');
-      return false;
+  // Functions
+  const handleShowComments = async () => {
+    try {
+      setIsCommentsModalOpen(true);
+      setAllComments([]); // Clear previous comments
+      const fetchedComments = await displayReportComments(reportId);
+      setAllComments(fetchedComments);
+    } catch (error) {
+      console.error('Error fetching comments:', error.message);
+      alert('שגיאה בהצגת ההערות');
     }
-    if (!newComment.trim()) {
-      setSuccess('');
-      setError('הזן הערה');
-      return false;
-    }
-    return true;
   };
+
+  const addEscListener = (event) => handleEscKey(event, () => setIsCommentsModalOpen(false));
 
   const handleCommentModalClose = useCallback(() => setIsCommentsModalOpen(false), []);
 
   const handleSubmit = async () => {
     if (isSubmitting) return;
     setIsSubmitting(true);
-    
     setSuccess('');
+
     try {
-      // Check count
       if (!validateInputs()) 
         return;
       
       setError(''); // Clear previous errors
-
-      if ( Number(newCompleted) + producedCount > orderedCount ) {
+      if ( Number(newCompleted) + producedCount > orderedCount) {
         setError('הכמות שהוכנסה גבוהה ממה שהוזמן');
         return;
       }
 
       
-      const answer = await sendProductionReport(reportId, employeeNum, Number(newCompleted), newComment)
+      const answer = await postProductionReporting(reportId, employeeNum, Number(newCompleted), newComment)
 
       if (answer){
         // setProducedCount(producedCount + Number(newCompleted));
@@ -97,18 +89,42 @@ const NewReportPage = () => {
     }
   };
 
-  // Handle show comments
-  const handleShowComments = async () => {
-    try {
-      setIsCommentsModalOpen(true);
-      setAllComments([]); // Clear previous comments
-      const fetchedComments = await displayReportComments(reportId);
-      setAllComments(fetchedComments);
-    } catch (error) {
-      console.error('Error fetching comments:', error.message);
-      alert('שגיאה בהצגת ההערות');
+  const validateInputs = () => {
+    console.log(newCompleted)
+    if (!newCompleted || isNaN(newCompleted) || newCompleted <= 0) {
+      setSuccess('');
+      setError('הזן כמות תקינה');
+      return false;
     }
+    // if (!newComment.trim()) {
+    //   setSuccess('');
+    //   setError('הזן הערה');
+    //   return false;
+    // }
+    return true;
   };
+
+
+
+
+
+
+
+
+  // useEffect(() => {
+  //   localStorage.setItem('report_producedCount', producedCount + Number(newCompleted));
+  // }, [producedCount]);
+
+  // functions
+  
+
+
+
+
+
+
+
+
 
 
 
@@ -223,4 +239,4 @@ const NewReportPage = () => {
   );
 };
 
-export default NewReportPage;
+export default NewReportingPage;

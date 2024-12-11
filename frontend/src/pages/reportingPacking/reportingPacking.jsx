@@ -1,21 +1,15 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { displayReportComments } from '../APIs/API_report';
-import { sendProductionReport } from '../APIs/API_report';
-import CommentsModal from '../modals/CommentsModal'; 
+import { sendProductionReport, displayReportComments } from '../../components/APIs/report';
+import CommentsModal from '../../components/modals/CommentsModal'; 
 import './reportingPacking.scss'; 
 
-import { handleEscKey } from '../functions';
+import { handleEscKey } from '../../components/utils/functions';
 
 
 const NewReportPage = () => {
 
   // States
-  const [packedCount, setPackedCount] = useState(Number(localStorage.getItem('report_packedCount')));           // Holds the old completed quantity
-  const [employeeNum, setEmployeeNum] = useState(localStorage.getItem('employee_number'));                      // Holds the employee number
-  const [reportSerialNum, setReportSerialNum] = useState(localStorage.getItem('report_serialNum'));             // Holds the report serial number
-  const [orderedCount, setOrderedCount] = useState(Number(localStorage.getItem('report_orderedCount')));        // Holds the ordered quantity
-  const [reportId, setReportId] = useState(localStorage.getItem('report_id'));                                  // Holds the id of the report
   const [newCompleted, setNewCompleted] = useState(0);                                                          // Holds the new completed quantity
   const [newComment, setNewComment] = useState('');                                                             // Holds the new comment for this reporting
   const [comments, setComments] = useState([]);                                                                 // Holds all the comments for the previous workspace
@@ -24,21 +18,28 @@ const NewReportPage = () => {
   const [success, setSuccess] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);                                                      // Holds the state if the client in the middle of submitting
 
+    // Constant variables
+    const employeeNum = localStorage.getItem('employee_number');
+    const reportSerialNum = localStorage.getItem('serialNum');
+    const reportId = localStorage.getItem('reportId');
+    const producedCount = localStorage.getItem('total');
+    const packedCount = localStorage.getItem('completed');
+
   const navigate = useNavigate();                         // Router navigation setup
 
   // Get date
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are 0-based
-  const day = String(now.getDate()).padStart(2, '0');
-  const formattedDate = `${day}-${month}-${year}`;
+  // const now = new Date();
+  // const year = now.getFullYear();
+  // const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+  // const day = String(now.getDate()).padStart(2, '0');
+  // const formattedDate = `${day}-${month}-${year}`;
 
   // useEffect
   useEffect(() => {
     window.addEventListener('keydown', addEscListener);                   // Add keydown event listener to listen for Escape key press
-    if (packedCount === null || employeeNum === null || reportSerialNum === null || orderedCount === null || reportId === null){
-      navigate('/error');
-    }
+    // if (packedCount === null || employeeNum === null || reportSerialNum === null || orderedCount === null || reportId === null){
+    //   navigate('/error');
+    // }
   }, []);
 
   useEffect(() => {
@@ -68,48 +69,43 @@ const NewReportPage = () => {
   };
 
 
-  // Handle delete
-  const handleDelete = () => {
-    navigate('/dashboard');
-  };
-
   const handleCommentModalClose = useCallback(() => setIsCommentsModalOpen(false), []);
 
   const handleSubmit = async () => {
-    if (isSubmitting) return;
-    setIsSubmitting(true);
+    // if (isSubmitting) return;
+    // setIsSubmitting(true);
     
-    setSuccess('');
-    try {
-      // Check count
-      if (!validateInputs()) 
-        return;
+    // setSuccess('');
+    // try {
+    //   // Check count
+    //   if (!validateInputs()) 
+    //     return;
       
-      setError(''); // Clear previous errors
+    //   setError(''); // Clear previous errors
 
-      if ( Number(newCompleted) + packedCount > orderedCount ) {
-        setError('הכמות שהוכנסה גבוהה ממה שהוזמן');
-        return;
-      }
+    //   if ( Number(newCompleted) + packedCount > orderedCount ) {
+    //     setError('הכמות שהוכנסה גבוהה ממה שהוזמן');
+    //     return;
+    //   }
 
       
-      const answer = await sendProductionReport(reportId, employeeNum, Number(newCompleted), newComment)
+    //   const answer = await sendProductionReport(reportId, employeeNum, Number(newCompleted), newComment)
 
-      if (answer){
-        setPackedCount(packedCount + Number(newCompleted));
-        // setNewCompleted(completed + Number(newCompleted));
-        setNewCompleted(0); 
-        setComments([]);
-        setError('');
-        setSuccess('הפעולה הצליחה');
-        return;
-      }
-      setError('Failed');
-    } catch (err) {
-      console.error('Error submitting production report:', err.message);
-    } finally {
-      setIsSubmitting(false);
-    }
+    //   if (answer){
+    //     setPackedCount(packedCount + Number(newCompleted));
+    //     // setNewCompleted(completed + Number(newCompleted));
+    //     setNewCompleted(0); 
+    //     setComments([]);
+    //     setError('');
+    //     setSuccess('הפעולה הצליחה');
+    //     return;
+    //   }
+    //   setError('Failed');
+    // } catch (err) {
+    //   console.error('Error submitting production report:', err.message);
+    // } finally {
+    //   setIsSubmitting(false);
+    // }
   };
 
   // Handle show comments
@@ -142,19 +138,19 @@ const NewReportPage = () => {
             <input type="text" placeholder="הכנס מקט" value={reportSerialNum} disabled />
           </div>
 
-          <div className="form-group">
+          {/* <div className="form-group">
             <label>תאריך</label>
             <input type="text" placeholder="תאריך" value={formattedDate} disabled />
-          </div>
+          </div> */}
 
           <div className="form-group">
-            <label>תקינים</label>
+            <label>נארזו</label>
             <input type="text" placeholder="תקינים" value={packedCount} disabled />
           </div>
 
           <div className="form-group">
-            <label>הוזמנו</label>
-            <input type="text" placeholder="הוזמנו" value={orderedCount} disabled />
+            <label>יוצרו</label>
+            <input type="text" placeholder="הוזמנו" value={producedCount} disabled />
           </div>
 
         </div>
@@ -190,8 +186,8 @@ const NewReportPage = () => {
 
       {/* Action Buttons */}
       <div className="buttons-container">
-        <button className="btn cancel-btn" onClick={handleDelete}>
-          מחק
+        <button className="btn cancel-btn" onClick={() => navigate('/dashboard')}>
+          חזור
         </button>
         <button className="btn showComment-btn" onClick={handleShowComments}>
           הצג הערות
