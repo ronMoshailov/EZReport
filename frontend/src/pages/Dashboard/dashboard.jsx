@@ -137,7 +137,7 @@ const Dashboard = ({isQueue}) => {
         </div>
         
         {/* Container for displaying reports as cards */}
-        <div className="cards-container">                               
+        <div className="table-container-wrapper">                               
         <TableContainer
           reports={filteredReports}
           // onClickRow={handleClickOnCard}
