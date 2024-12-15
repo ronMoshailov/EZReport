@@ -31,15 +31,19 @@ const startSession = async (reportId, employeeNum) => {
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({ reportId, employeeNum }),
     });
-
+    
+    const data = await response.json();
+    console.log(response);
+    console.log(data);
     if( response.status === 400 ) throw new Error('Bad Request: Missing or invalid parameters');
+    else if( response.status === 409 ) throw new Error(data.message);
     else if( response.status === 404 ) throw new Error('Not found: The requested resource could not be located on the server');
     else if( response.status === 500 ) throw new Error('Internal Server Error: Something went wrong on the server');
     else if (!response.ok) throw new Error(`Unexpected Error: Status code ${response.status}`);
     return true;
   } catch (error) {
     console.error(error.message);
-    return false;
+    return error.message;
   }
 };
 

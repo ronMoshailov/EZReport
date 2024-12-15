@@ -1,10 +1,14 @@
-import React, { useState} from 'react';
+import React, { useState, useContext} from 'react';
 import PropTypes from 'prop-types';
 import './ComponentsModal.scss';
+
+import { LanguageContext } from '../../../utils/globalStates';
 
 const ComponentsModal = ({ isOpen, onClose, components = [], onRemove }) => {
 
   const [filterText, setFilterText] = useState('');
+
+  const { text } = useContext(LanguageContext);
 
   if (!isOpen) return null;
 
@@ -18,10 +22,10 @@ const ComponentsModal = ({ isOpen, onClose, components = [], onRemove }) => {
       <div className="modal-components">
         
         <button className="close-btn" onClick={onClose}>✕</button>
-        <h2>רשימת רכיבים</h2>
+        <h2>{text.componentList}</h2>
         <input
           type="text"
-          placeholder='חפש לפי מספר רכיב'
+          placeholder={`${text.filterByComponentNum}...`}
           onChange={(e) => setFilterText(e.target.value)}
           value={filterText}
           className="search-bar"
@@ -37,9 +41,9 @@ const ComponentsModal = ({ isOpen, onClose, components = [], onRemove }) => {
               >
                 ✕
               </button>
-              <b>שם:</b> {component.name} <br />
-              <b>מספר רכיב:</b> {component.serialNumber} <br />
-              <b>כמות:</b> {component.stock} <br />
+              <b>{text.name}:</b> {component.name} <br />
+              <b>{text.componentNum}:</b> {component.serialNumber} <br />
+              <b>{text.quantity}:</b> {component.stock} <br />
             </li>
           ))}
         </ul>

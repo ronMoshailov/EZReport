@@ -1,5 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import React from 'react';
+import React, { useContext, useState } from 'react';
+import { textResources } from './utils/data'
+import { LanguageContext } from './utils/globalStates'
 // import { ToastContainer, toast } from 'react-toastify';
 
 import LoginPage from './pages/LoginPage/loginPage';
@@ -9,22 +11,34 @@ import NotFoundPage from './pages/errorPage/errorPage';
 import ReportingProduction from './pages/reportingProduction/reportingProduction'
 import ReportingStorage from './pages/reportingStorage/reportingStorage'
 import ReportingPacking from './pages/reportingPacking/reportingPacking'
+
+import Settings from './pages/settings/settings'
+
 // import ErrorPage from './components/errorPage';
 // import 'react-toastify/dist/ReactToastify.css';
 
 
 function App() {
 
-  // const notify = () => {
-  //   toast.success('This is a success message!'); // Other options include toast.error, toast.info, etc.
-  // };
+  const [language, setLanguage] = useState(localStorage.getItem('language') || 'he');
+
+  const contextValue = {
+    language,
+    direction: textResources[language].direction,
+    text: textResources[language] || textResources['he'],
+    setLanguage: (lang) => {
+      localStorage.setItem('language', lang);
+      setLanguage(lang);
+  },
+};
 
   return (
-    <>
+    <LanguageContext.Provider value={contextValue}>
     <Router>
       <Routes>
         <Route path="/" element={<LoginPage/>} />
         <Route path="/dashboard" element={<Dashboard isQueue={false} />} />
+        <Route path="/settings" element={<Settings/>} />
         <Route path="/queue" element={<Dashboard isQueue={true} />} />
         <Route path="*" element={<NotFoundPage />} />
         <Route path="/ReportingStorage" element={<ReportingStorage />} />
@@ -36,7 +50,7 @@ function App() {
       </Routes>
     </Router>
     {/* <ToastContainer /> */}
-    </>
+    </LanguageContext.Provider>
     
   );
 }

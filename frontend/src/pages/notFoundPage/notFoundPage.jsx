@@ -1,10 +1,14 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './notFoundPage.scss'; 
+
+import { LanguageContext } from '../../utils/globalStates';
 
 const NotFoundPage = () => {
   const navigate = useNavigate();
 
+  const { text } = useContext(LanguageContext);
+  
   const handleGoHome = () => {
     navigate('/'); 
   };
@@ -15,9 +19,9 @@ const NotFoundPage = () => {
 
   return (
     <div className="not-found-page">
-      <h1>404 - דף לא קיים</h1>
-      <p>אופס! הדף לא קיים.</p>
-      <button onClick={handleGoHome}>חזרה לעמוד הראשי</button>
+      <h1>text.pageNotFound404</h1>
+      <p>text.pageNotFoundOps</p>
+      <button onClick={handleGoHome}>text.returnMainPage</button>
     </div>
   );
 };

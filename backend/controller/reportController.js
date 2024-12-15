@@ -178,7 +178,7 @@ const transferWorkspace = async (req, res) => {
 
 const startSession = async (req, res) => {
   const {reportId, employeeNum} = req.body;
-  
+
   try{
     if(reportId === undefined || employeeNum === undefined){
       if(reportId === undefined) console.error("Error in startSession: reportId not found");
@@ -191,25 +191,37 @@ const startSession = async (req, res) => {
       console.error("Error in reportingProductionController: Report not found");
       return res.status(404).json({message: "Report not found"});
     }
-  
     const employee = await findEmployeeByNumber(employeeNum);
     if(!employee){
       console.error("Error in reportingProductionController: Employee not found");
       return res.status(404).json({message: "Employee not found"});
     }
-  
+    
+    let isStarted;
+    let workspace = report.current_workspace;
     const session = await mongoose.startSession();
     session.startTransaction();
-    switch(report.current_workspace){
-  
+
+    switch(workspace){
       case 'Storage':
+        isStarted = await getEmployeeReporting(workspace, report.reportingStorage_list, employee._id);
+        if(isStarted){
+          console.error("Error in reportingProductionController: Employee already started a session");
+          return res.status(409).json({message: "העובד כבר התחיל דיווח"});    
+        }
         const newStorageReporting = await initializeReportingStorage(employee._id, session);
+        console.warn(newStorageReporting);
         report.reportingStorage_list.push(newStorageReporting._id);
         await report.save({session})
         await session.commitTransaction();
         session.endSession();
         return res.status(201).json({message: "Initialized successfully"});
       case 'Production':
+        isStarted = await getEmployeeReporting(workspace, report.reportingProduction_list, employee._id);
+        if(isStarted){
+          console.error("Error in reportingProductionController: Employee already started a session");
+          return res.status(409).json({message: "העובד כבר התחיל דיווח"});    
+        }
         const newProductionReporting = await initializeReportingProduction(employee._id, session);
         report.reportingProduction_list.push(newProductionReporting._id);
         await report.save({session})
@@ -217,6 +229,11 @@ const startSession = async (req, res) => {
         session.endSession();
         return res.status(201).json({message: "Initialized successfully"});
       case 'Packing':
+        isStarted = await getEmployeeReporting(workspace, report.reportingPacking_list, employee._id);
+        if(isStarted){
+          console.error("Error in reportingProductionController: Employee already started a session");
+          return res.status(409).json({message: "העובד כבר התחיל דיווח"});    
+        }
         const newPackingReporting = await initializeReportingPacking(employee._id, session);
         report.reportingPacking_list.push(newPackingReporting._id);
         await report.save({session})

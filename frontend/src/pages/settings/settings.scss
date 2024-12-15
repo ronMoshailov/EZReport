@@ -1,0 +1,62 @@
+// settings.scss
+
+.settings-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  
+    .settings-title {
+      font-size: 1.8rem;
+      font-weight: bold;
+      margin-bottom: 20px;
+      color: #333;
+    }
+  
+    .settings-form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: center;
+  
+      label {
+        font-size: 1.2rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+  
+        input[type='radio'] {
+          accent-color: #007bff; // Custom radio button color
+          width: 18px;
+          height: 18px;
+          cursor: pointer;
+        }
+      }
+    }
+  
+    .return-button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: background-color 0.3s ease, transform 0.2s ease;
+  
+      &:hover {
+        background-color: #0056b3;
+      }
+  
+      &:active {
+        transform: translateY(1px);
+      }
+    }
+  }
+  

@@ -378,7 +378,7 @@ const getEmployeeReporting = async(workspace, reportingList, employeeId) => {
           for(const documentId of reportingList.slice().reverse()){
             const productionReporting = await ReportingProduction.findById(documentId);
             if(productionReporting.employee_id.toString() === employeeId.toString() && productionReporting.end_date === undefined)
-            return({message: "Reporting was found", reporting: productionReporting});
+              return({message: "Reporting was found", reporting: productionReporting});
           }   
           return null;
         

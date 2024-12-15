@@ -7,14 +7,19 @@
   .dashboard-content {
     flex: 1;  /* Allow dashboard content to take the remaining space */
     padding: 20px;
-    background-color: #f0f4f7;
+    // background-color: #f0f4f7;
+    height: 95vh;
     direction: rtl;
 
     .table-container-wrapper {
-      max-height: 90vh; /* Set the maximum height for the scrollable area */
+      // max-height: 89vh; /* Set the maximum height for the scrollable area */
+      // max-height: 900px; /* Set the maximum height for the scrollable area */
+      // max-height: fit-content;
       overflow-y: auto; /* Enable vertical scrolling */
       border: 1px solid #ccc; /* Optional: Define the scrollable area visually */
-      background-color: #ff0000; /* Match the table background */
+      background-color: white; /* Match the table background */
+      height: 86vh;
+      // box-shadow: -5px 0 5px rgba(0, 0, 0, 0.1);
     }
 
     #headerDashboard {
@@ -24,6 +29,7 @@
       padding: 15px 20px;
       background-color: #f8f9fa;
       border-bottom: 2px solid #dee2e6;
+      height: fit-content;
       
       h1 {
         margin: 0;

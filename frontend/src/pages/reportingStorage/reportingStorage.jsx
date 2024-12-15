@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import {fetchReportComponents, handleRemoveComponentFromReport, fetchAddComponents} from '../../components/APIs/report'
@@ -6,7 +6,9 @@ import { fetchAllComponents } from '../../components/APIs/components'
 import { getEmployeeId } from '../../components/APIs/employee'
 
 import './reportingStorage.scss'
-import ComponentsModal from '../../components/modals/ComponentsModal'; // Import the modal component
+import ComponentsModal from '../../components/modals/ComponentsModal/ComponentsModal'; // Import the modal component
+
+import { LanguageContext } from '../../utils/globalStates';
 
 const ComponentPage = () => {
 
@@ -26,8 +28,8 @@ const ComponentPage = () => {
   const [loading, setLoading] = useState(false);
 
   // Constant variables
-  const inputValue = localStorage.getItem('employee_number') || '';
-  const reportId = localStorage.getItem('reportId') || '';
+  const inputValue = localStorage.getItem('employee_number');
+  const reportId = localStorage.getItem('reportId');
 
   /* Messages */
   const missing_data_msg = 'נתונים חסרים';
@@ -38,6 +40,8 @@ const ComponentPage = () => {
   const employee_err_msg = 'עובד לא קיים או מספר עובד שגוי';
   const success_msg = `השליחה הצליחה`;
 
+  const { text } = useContext(LanguageContext);
+
   // Navigate
   const navigate = useNavigate();
 
@@ -45,7 +49,7 @@ const ComponentPage = () => {
   useEffect(() => {
     handleFetchAllComponents();
     window.addEventListener('keydown', handleEscKey);                   // Add keydown event listener to listen for Escape key press
-    if (inputValue === '' || reportId === '')
+    if (!inputValue || !reportId )
       navigate('/error')
     return () => window.removeEventListener('keydown', handleEscKey);   // Clean up event listener on component unmount
   }, []);
@@ -315,14 +319,14 @@ const ComponentPage = () => {
     
       {/* Left Panel - Displays the list of selected components */}
       <div className="left-panel">
-        <h2 className='move_right border_bottom'>רשימת הרכיבים</h2>
+        <h2 className='move_right border_bottom'>{text.componentList}</h2>
         <ul>
 
         {/* Filter Input */}
         <input
           id="filter-input"
           type="text"
-          placeholder="חפש רכיב לפי שם או מספר..."
+          placeholder={text.filterComponentByNameOrNumber}
           value={filterQuery}
           onChange={(e) => setFilterQuery(e.target.value)} // Update filter query state
           className="search-bar noMaxWidth"
@@ -332,9 +336,9 @@ const ComponentPage = () => {
           {filteredCollectedComponents.map((comp, index) => (
             <li key={`myComp-${comp.serialNumber}-${index}`} className="component-item">
               <button className="remove-button" onClick={() => handleRemoveComponent(comp.serialNumber)}>✕</button>
-              <b>שם:</b> {comp.name} <br />
-              <b>מספר רכיב:</b> {comp.serialNumber}<br />
-              <b>כמות:</b> {comp.stock}
+              <b>{text.name}:</b> {comp.name} <br />
+              <b>{text.componentList}:</b> {comp.serialNumber}<br />
+              <b>{text.quantity}:</b> {comp.stock}
             </li>
           ))}
         </ul>
@@ -343,37 +347,37 @@ const ComponentPage = () => {
       {/* Right Panel - Adding components and viewing all available components */}
       <div className="right-panel">
         <div className='add_component_container'>
-          <h2 className='move_right border_bottom'>הוספת רכיב</h2>
+          <h2 className='move_right border_bottom'>{text.componentList}</h2>
 
           {/* Input for component number */}
           <div className="input-group">
-            <label>מספר רכיב:</label>
+            <label>{text.componentNum}:</label>
             <input
               type="number"
               value={inputId}
               onChange={(e) => setInputId(e.target.value)}
-              placeholder="הכנס מספר רכיב..."
+              placeholder={text.addComponentNum}
             />
           </div>
 
           {/* Input for component count */}
           <div className="input-group">
-            <label>כמות:</label>
+            <label>{text.quantity}:</label>
             <input
               type="number"
               value={inputCount}
               onChange={(e) => setInputCount(Number(e.target.value))}
-              placeholder="הכנס כמות"
+              placeholder={text.addQuantity}
             />
           </div>
 
           {/* Textarea for comments */}
           <div className="input-group">
-            <label>הערות:</label>
+            <label>{text.comments}:</label>
             <textarea
               value={inputComment}
               onChange={(e) => setInputComment(e.target.value)}
-              placeholder="הערות..."
+              placeholder={`${text.comments}...`}
               rows="2"   // Limits the textarea to 2 rows
               className="comment-textarea"  // Apply a custom class for additional styling
             />
@@ -381,10 +385,10 @@ const ComponentPage = () => {
 
           {/* Buttons for adding component and submitting report */}
           <div className='buttons-container'>
-            <button className='addComponent-btn btn' onClick={handleAddComponent}>הוסף רכיב</button>
-            <button className='btn send-btn' onClick={handleSendReport}>שלח דיווח</button>
-            <button className='showComponents-btn btn' onClick={() => showReportComponents()}>הצג רכיבים בהזמנה</button>
-            <button className='btn cancel-btn' onClick={() => navigate('/dashboard')}>חזור</button>
+            <button className='addComponent-btn btn' onClick={handleAddComponent}>{text.addComponent}</button>
+            <button className='btn send-btn' onClick={handleSendReport}>{text.addComponent}</button>
+            <button className='showComponents-btn btn' onClick={() => showReportComponents()}>{text.addComponent}</button>
+            <button className='btn cancel-btn' onClick={() => navigate('/dashboard')}>{text.addComponent}</button>
           </div>
           {/* Display error and success messages if present */}
           {error && <p className="errorMessage">{error}</p>}
@@ -393,11 +397,11 @@ const ComponentPage = () => {
 
         {/* Section displaying all available components */}
         <div className="all_components">
-          <h2 className='move_right border_bottom'>כל הרכיבים במערכת</h2>
+          <h2 className='move_right border_bottom'>{text.addComponentsInDB}</h2>
           {/* Search bar for filtering all components */}
           <input 
             type="text" // Changed to text for better flexibility
-            placeholder="חפש לפי מספר רכיב..." 
+            placeholder={`${text.filterByComponentNum}...`} 
             value={filterAllComponents} // Use the filter state here
             onChange={(e) => setFilterAllComponents(e.target.value)} // Update state on input change
             className="search-bar noMaxWidth"
@@ -406,9 +410,9 @@ const ComponentPage = () => {
             {/* Render each available component in a list item */}
             {filteredComponents.map((comp, index) => (
               <li key={`allComp-${comp.serialNumber}-${index}`}>
-                <b>שם:</b> {comp.name} <br />
-                <b>מספר רכיב:</b> {comp.serialNumber}<br />
-                <b>כמות:</b> {comp.stock}
+                <b>{text.name}:</b> {comp.name} <br />
+                <b>{text.componentNum}:</b> {comp.serialNumber}<br />
+                <b>{text.quantity}:</b> {comp.stock}
               </li>
             ))}
           </ul>
@@ -421,10 +425,10 @@ const ComponentPage = () => {
           <div className="modal-components">
 
             <button className="close-btn" onClick={handleCloseCheckEmployeeModal}>✕</button>
-            <h2>{'האם אתה בטוח?'}</h2>
+            <h2>{text.areYouSure}</h2>
             <div className='button-container'>
-              <button className="cancel-btn btn" onClick={handleCloseCheckEmployeeModal}>ביטול</button>
-              <button className="submit-btn btn" onClick={handleSubmitStorageReport}>שלח</button>
+              <button className="cancel-btn btn" onClick={handleCloseCheckEmployeeModal}>{text.cancel}</button>
+              <button className="submit-btn btn" onClick={handleSubmitStorageReport}>{text.send}</button>
             </div>
 
           </div>

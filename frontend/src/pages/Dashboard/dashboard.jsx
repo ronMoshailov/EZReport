@@ -1,17 +1,16 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-// import { useDebounce } from 'use-debounce';
 
 import TableContainer from '../../components/TableContainer/tableContainer';
 import Slidebar from '../../components/Slidebar/slidebar';
-// import OperationModal from '../../components/modals/OperationModal';
-import ModalTransferWorkspace from '../../components/modals/transferWorkspaceModal';
 
 import './dashboard.scss';
 import '../../components/Slidebar/slidebar.scss';
 
-import { handleEscKey } from '../../components/utils/functions';
+// import { handleEscKey } from '../../utils/functions';
 import { fetchAllReports } from '../../components/APIs/report';
+
+import { LanguageContext } from '../../utils/globalStates';
 
 const Dashboard = ({isQueue}) => {
 
@@ -20,12 +19,8 @@ const Dashboard = ({isQueue}) => {
   const [report, setReport] = useState(null);                                             // Holds specific report
   const [loading, setLoading] = useState(true);                                           // Is loading state
   const [error, setError] = useState(null);                                               // Holds error message
-  // const [isOperationModal, setIsOperationModal] = useState(false);                        // Show operation modal or remove
-  const [isSendModalOpen, setIsSendModalOpen] = useState(false);                          // Show transfer modal or remove
   const [isReceived, setIsReceived] = useState(false);                                    // Tetermine if client receiving report or send report
-  const [refreshReports, setRefreshReports] = useState(false);                            // Handle case that if this change so fetch reports again
   const [reportFilter, setReportFilter] = useState('');                                   // Filter text for reports
-  // const [operationType, setOperationType] = useState('');                            // Handle case that if this change so fetch reports again
 
   // Constant variables
   const workspace = localStorage.getItem('workspace') || '';
@@ -39,12 +34,8 @@ const Dashboard = ({isQueue}) => {
     'report_orderedCount'
   ];
 
-  const workspaceMap = {
-    Packing: 'אריזה',
-    Production: 'יצור',
-    Storage: 'מחסן'
-  };
-
+    const { text } = useContext(LanguageContext);
+  
 
 
 
@@ -58,7 +49,7 @@ const Dashboard = ({isQueue}) => {
 
   useEffect(() => {
     handleFetchReports();                                         // Fetch all reports
-  }, [isQueue, refreshReports]);
+  }, [isQueue]);
 
   // useEffect(() => {
   //   window.addEventListener('keydown', addEscListener);           // Add keydown event listener to listen for Escape key press
@@ -89,27 +80,6 @@ const Dashboard = ({isQueue}) => {
     }
   };
 
-  // Function to handle card click and show modal
-  // const handleClickOnCard = useCallback((report) => {
-  //   if (!isQueue) {                           // If we are not in queue page
-  //     setReport(report);                      // Holds the selected report
-  //     // setIsOperationModal(true);              // Show the operation modal
-  //     };
-  //   }, [isQueue]);
-
-  // Function to handle sending card click and show modal
-  const handleMoveWorkspaceButton = useCallback((report) => {
-    setReport(report);                        // Holds the selected report
-    setIsSendModalOpen(true);                 // Show the transfer modal
-  }, []);
-
-  // Function to close the modal
-  const handleCloseModal = () => {
-    // setIsOperationModal(false);               // Close the operation modal
-    setReport(null);                          // Clear the state the holds the report
-    setIsSendModalOpen(false);                // Close the transfer modal
-  };
-
   // Add Esc press key listener
   // const addEscListener = (event) => handleEscKey(event, handleCloseModal);
 
@@ -126,10 +96,10 @@ const Dashboard = ({isQueue}) => {
     <div className="dashboard-layout">
       <div className="dashboard-content">
         <div id='headerDashboard'>
-          <h1>עמדת {workspaceMap[workspace]}</h1>                   {/* Label */}
+          <h1>{`${text.station} ${text[workspace.toLowerCase()]}`}</h1>                   {/* Label */}
           <input                                                    // Report filter
             type="text"                                             
-            placeholder="פקודת עבודה לחיפוש..." 
+            placeholder={text.dashboardFilter} 
             value={reportFilter}
             onChange={(e) => setReportFilter(e.target.value)}
             className="search-bar"
@@ -149,27 +119,6 @@ const Dashboard = ({isQueue}) => {
         <Slidebar 
           setIsReceived={setIsReceived}                                 // Pass setIsReceived function to Slidebar
         />
-
-      {/* Modal for report details, only visible when isOperationModal and not in queue */}
-      {/* {isOperationModal && !isQueue && 
-        <OperationModal 
-          onClose={addEscListener} 
-          report_id={report._id} 
-          report_serialNum={report.serialNumber} 
-          report_packedCount={ report.packedCount } 
-          report_producedCount={ report.producedCount } 
-          report_orderedCount={ report.orderedCount } 
-          workspace={workspace}
-          setIsOperationModal={setIsOperationModal}
-        />} */}
-
-      {/* Send modal for moving reports, only visible when isSendModalOpen */}
-      {/* {isSendModalOpen && 
-        <ModalTransferWorkspace 
-          onClose={handleCloseModal} 
-          selectedReport={report} 
-          isReceived={isReceived} 
-        />} */}
 
     </div>
   );

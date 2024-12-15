@@ -1,13 +1,17 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { displayReportComments, ClosePackingReporting } from '../../components/APIs/report';
-import CommentsModal from '../../components/modals/CommentsModal'; 
+import CommentsModal from '../../components/modals/CommentsModal/CommentsModal'; 
 import './reportingPacking.scss'; 
 
-import { handleEscKey } from '../../components/utils/functions';
+import { handleEscKey } from '../../utils/functions';
+
+import { LanguageContext } from '../../utils/globalStates';
 
 const NewReportPage = () => {
 
+  const { text } = useContext(LanguageContext);
+  
   // States
   const [newCompleted, setNewCompleted] = useState(0);                                                          // Holds the new completed quantity
   const [newComment, setNewComment] = useState('');                                                             // Holds the new comment for this reporting
@@ -90,22 +94,22 @@ const NewReportPage = () => {
         {/* Right Side */}
         <div className="form-column">
           <div className="form-group">
-            <label>מספר עובד לדיווח</label>
+            <label>{text.employeeNumToReport}</label>
             <input type="text" placeholder="הכנס מספר עובד" value={employeeNum} disabled />
           </div>
 
           <div className="form-group">
-            <label>מקט</label>
+            <label>{text.catalogNumber}</label>
             <input type="text" placeholder="הכנס מקט" value={reportSerialNum} disabled />
           </div>
 
           <div className="form-group">
-            <label>נארזו</label>
-            <input type="text" placeholder="תקינים" value={packedCount} disabled />
+            <label>{text.packed}</label>
+            <input type="text" placeholder={text.packed} value={packedCount} disabled />
           </div>
 
           <div className="form-group">
-            <label>יוצרו</label>
+            <label>{text.produced}</label>
             <input type="text" placeholder="הוזמנו" value={producedCount} disabled />
           </div>
 
@@ -114,8 +118,8 @@ const NewReportPage = () => {
         {/* Left Side */}
         <div className="form-column">
           <div className="form-group">
-            <label>כמות יחידות</label>
-            <input type="Number" placeholder="כמות יחידות" value={newCompleted}
+            <label>{text.quantitySize}</label>
+            <input type="Number" placeholder={text.quantitySize} value={newCompleted}
               onChange={(e) => {
                 setNewCompleted(e.target.value);
               }}
@@ -123,8 +127,8 @@ const NewReportPage = () => {
           </div>
 
           <div className="form-group">
-            <label>הערות</label>
-            <input id="comments" type="text" placeholder="הערות" value={newComment}
+            <label>{text.comments}</label>
+            <input id="comments" type="text" placeholder={text.comments} value={newComment}
               onChange={(e) => {setNewComment(e.target.value)}}
             />
           </div>
@@ -140,13 +144,13 @@ const NewReportPage = () => {
       {/* Action Buttons */}
       <div className="buttons-container">
         <button className="btn cancel-btn" onClick={() => navigate('/dashboard')}>
-          חזור
+          {text.return}
         </button>
         <button className="btn showComment-btn" onClick={handleShowComments}>
-          הצג הערות
+          {text.showComments}
         </button>
         <button className="btn send-btn" onClick={handleSubmit} disabled={isSubmitting}>
-          {isSubmitting ? 'שולח...' : 'שלח'}
+          {isSubmitting ? `${text.sending}...` : text.sendNow}
         </button>
       </div>
 

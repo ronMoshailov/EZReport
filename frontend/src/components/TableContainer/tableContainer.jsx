@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import './tableContainer.scss';
 
 import WorkSessionModal from '../../components/modals/WorkSessionModal/WorkSessionModal'
+import { LanguageContext } from '../../utils/globalStates';
 
 const TableContainer = ({ reports, isQueue }) => {
   
@@ -10,6 +11,8 @@ const TableContainer = ({ reports, isQueue }) => {
   const [selectedReportId, setSelectedReportId] = useState('');
 
   const workspace = localStorage.getItem('workspace');
+
+  const { text } = useContext(LanguageContext);
 
   const handleOperation = (reportId, operation, serialNum, orderedCount, producedCount, packedCount) => (event) => {
     event.stopPropagation(); // Prevent row click
@@ -35,17 +38,17 @@ const TableContainer = ({ reports, isQueue }) => {
     <table className="report-table">
       <thead>
         <tr>
-          <th>שם</th>
-          <th>מספר סידורי</th>
-          <th>סטטוס</th>
-          <th>תחנה נוכחית</th>
-          <th>יוצרו</th>
-          <th>נארזו</th>
-          <th>הוזמנו</th>
-          <th>תאריך פתיחה</th>
-          <th>תחילת עבודה</th>
-          <th>סיום ודיווח</th>
-          <th>שליחה</th>
+          <th>{text.name}</th>
+          <th>{text.serialNum}</th>
+          <th>{text.status}</th>
+          <th>{text.currentStation}</th>
+          <th>{text.produced}</th>
+          <th>{text.packed}</th>
+          <th>{text.ordered}</th>
+          <th>{text.openedDate}</th>
+          <th>{text.startSession}</th>
+          <th>{text.endSession}</th>
+          <th>{text.send}</th>
         </tr>
       </thead>
       <tbody>
@@ -95,15 +98,12 @@ const TableContainer = ({ reports, isQueue }) => {
         ))}
       </tbody>
     </table>
-{/*  (!isQueue || operationType === 'receive' || operationType === 'send') &&  */}
     {isWorkSession && 
         <WorkSessionModal
           reportId={selectedReportId}
           operationType={operationType}
           onClose={setIsWorkSession}
           inQueue={isQueue}
-          // orderedCount={}
-          // producedCount={}
     />}
   </>
   );

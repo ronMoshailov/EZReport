@@ -3,21 +3,19 @@
   width: 200px;
   background-color: #eaf7fc;
   padding: 20px;
-  position: relative;  /* Fix the sidebar in place */
-  right: 0;  /* Position the sidebar to the right */
-  top: 0;
-  height: 100vh;  /* Full height */
+  // position: relative;  /* Fix the sidebar in place */
+  // right: 0;  /* Position the sidebar to the right */
+  // top: 0;
+  // height: 100vh;  /* Full height */
   box-shadow: -5px 0 5px rgba(0, 0, 0, 0.1);
 
   .sidebar-content {
     display: flex;
+    align-items: center;
     flex-direction: column;
-    align-items: flex-start;
     margin-top: 10%;
-    display: flex;
     align-content: space-around;
     flex-wrap: wrap;
-    align-items: center;
 
     #slider_logo{
       width: -webkit-fill-available;

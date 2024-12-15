@@ -1,10 +1,14 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useContext} from 'react';
 import './errorPage.scss';
 import { useNavigate } from 'react-router-dom';
+
+import { LanguageContext } from '../../utils/globalStates';
 
 const ErrorPage = () => {
   const navigate = useNavigate();
 
+  const { text } = useContext(LanguageContext);
+  
   useEffect(() => {
     localStorage.clear();
   }, []);
@@ -12,10 +16,10 @@ const ErrorPage = () => {
   return (
     <div className="error-page-container">
       <div className="error-box">
-        <h1>שגיאה</h1>
-        <p>אירעה שגיאה במערכת. אנא נסה להתחבר מחדש.</p>
+        <h1>text.error</h1>
+        <p>text.errorPageMessage</p>
         <button className="reconnect-button" onClick={() => navigate('/')}>
-          התחבר מחדש
+          text.loginBack
         </button>
       </div>
     </div>

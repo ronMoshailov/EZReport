@@ -7,7 +7,7 @@ import './WorkSessionModal.scss';
 import { startSession, isStartedSession } from '../../APIs/report'
 import { getEmployeeId } from '../../APIs/employee';
 import { sendReport } from '../../APIs/workspace';
-const { isEmpty } = require('../../utils/functions');
+const { isEmpty } = require('../../../utils/functions');
 
 let workspace = '';
 let message = '';
@@ -44,8 +44,6 @@ const WorkSessionModal = ({ reportId, operationType, onClose }) => {
         setErrorLoading('עובד לא נמצא במערכת', false);
         return;
       }
-      console.log('operationType');
-      console.log(operationType);
       switch(operationType){
         case 'send':
           case 'receive':
@@ -58,10 +56,9 @@ const WorkSessionModal = ({ reportId, operationType, onClose }) => {
             break;
 
         case 'start':
-          const answer = startSession(reportId, employeeNumber);
+          const answer = await startSession(reportId, employeeNumber);
           if(answer){
-            setErrorLoading('', false);
-            onClose(false)
+            setErrorLoading(answer, false);
           }
           else
             setErrorLoading('דיווח לא נוצר', false)
