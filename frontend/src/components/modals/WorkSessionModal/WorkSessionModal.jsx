@@ -1,5 +1,5 @@
 // Modal_Transfer_Workspace.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom'
 
 import './WorkSessionModal.scss';
@@ -7,7 +7,10 @@ import './WorkSessionModal.scss';
 import { startSession, isStartedSession } from '../../APIs/report'
 import { getEmployeeId } from '../../APIs/employee';
 import { sendReport } from '../../APIs/workspace';
+import { LanguageContext } from '../../../utils/globalStates';
+
 const { isEmpty } = require('../../../utils/functions');
+
 
 let workspace = '';
 let message = '';
@@ -15,14 +18,18 @@ let isSucceeded = false;
 
 const WorkSessionModal = ({ reportId, operationType, onClose }) => {
   
+  
   const [employeeNumber, setEmployeeNumber] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  const { direction, text } = useContext(LanguageContext);
 
   const navigate = useNavigate();
 
   useEffect(() => {
     workspace = localStorage.getItem('workspace');
+    document.documentElement.dir = direction;
   }, []);
 
   const setErrorLoading = (message, loading) => {
@@ -41,7 +48,7 @@ const WorkSessionModal = ({ reportId, operationType, onClose }) => {
       const employeeData = await getEmployeeId(Number(employeeNumber));
 
       if (!employeeData.exist){
-        setErrorLoading('עובד לא נמצא במערכת', false);
+        setErrorLoading(text.employeeNotExist, false);
         return;
       }
       switch(operationType){
@@ -51,7 +58,7 @@ const WorkSessionModal = ({ reportId, operationType, onClose }) => {
             if(isSucceeded){
               onClose(false);
             } else{
-              setErrorLoading('לא הצליח', false);
+              setErrorLoading(text.notSuccess, false);
             }
             break;
 
@@ -61,14 +68,12 @@ const WorkSessionModal = ({ reportId, operationType, onClose }) => {
             setErrorLoading(answer, false);
           }
           else
-            setErrorLoading('דיווח לא נוצר', false)
+            setErrorLoading(text.reortNotCreated, false)
           break;
 
         case 'end':
           [isSucceeded, message] = await isStartedSession(reportId, employeeNumber);
           if(!isSucceeded){
-            // console.log('workspace');
-            // console.log(workspace);
             setErrorLoading(message, false);
             return;
           }
@@ -87,48 +92,46 @@ const WorkSessionModal = ({ reportId, operationType, onClose }) => {
             navigate('/ReportingPacking');
           }
           else{
-            alert('יש בעיה עם העמדה, אנה התחבר מחדש');
+            alert(text.workspaceError);
             navigate('/');
           }
           break;
 
         default:
-          alert('סוג הפעולה לא תקינה');
+          alert(text.InvalidOperation);
           setIsLoading(false);
       }
 
     } catch (err) {
       console.error('Error during submission:', err.message);
-      setErrorLoading('שגיאה במהלך הביצוע', false);
+      setErrorLoading(text.generalError, false);
     }
   };
 
   /* Render */
   return (
-    <div className="WorkSessionModal-container">
+    <div className="WorkSessionModal-container" style={{direction}}>
       <div className="modal">
         <button className="close-btn" onClick={() => {onClose(false)}}>✕</button>
         {/* {console.log(operationType)} */}
-        <h2>{operationType === 'send' ? 'שליחה לתחנה הבאה' : ''}</h2>
-        <h2>{operationType === 'receive' ? 'קבלה לתחנה הנוכחית' : ''}</h2>
-        <h2>{operationType === 'start' ? 'תחילת עבודה' : ''}</h2>
-        <h2>{operationType === 'end' ? 'סיום ודיווח' : ''}</h2>
+        <h2>{operationType === 'send' ? text.sendReport : ''}</h2>
+        <h2>{operationType === 'receive' ? text.receiveReport : ''}</h2>
+        <h2>{operationType === 'start' ? text.startSession : ''}</h2>
+        <h2>{operationType === 'end' ? text.endSession : ''}</h2>
 
         <div className="form-group">
-          <label>מספר עובד:</label>
+          <label>{text.employeeNum}:</label>
           <input
             id="sendModalInput"
             type="text"
             value={employeeNumber}
             onChange={(e) => setEmployeeNumber(e.target.value)}
-            placeholder="הכנס מספר עובד"
+            placeholder={text.enterEmployeeNum}
           />
         </div>
         {error && <p className="errorMessage">{error}</p>}
-        {/* {console.log('operationType')}
-        {console.log(operationType)} */}
         <button className="submit-btn" onClick={handleSubmit} disabled={isLoading}>
-          {isLoading ? 'מבצע...' : 'המשך'}
+          {isLoading ? `${text.wait}...` : text.sendNow }
         </button>
       </div>
     </div>

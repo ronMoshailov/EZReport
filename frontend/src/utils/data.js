@@ -8,6 +8,12 @@
         areYouSure: 'האם אתה בטוח?',
         sending: 'שולח',
         sendNow: 'שלח',
+        employeeNotExist: 'עובד לא נמצא במערכת',
+        notSuccess: 'לא הצליח',
+        reortNotCreated: 'דיווח לא נוצר',
+        workspaceError: 'יש בעיה עם העמדה, אנה התחבר מחדש',
+        InvalidOperation: 'סוג הפעולה לא תקינה',
+        generalError: 'שגיאה במהלך הביצוע',
         // Login
         workspaceNumber: 'מספר עמדה',
         enterNumWorkspace: 'הכנס מספר עמדה',
@@ -28,7 +34,7 @@
         dashboardFilter: 'חפש לפי מספר סידורי...',
         station: 'עמדת',
         storage: 'מחסן',
-        prodution: 'יצור',
+        production: 'יצור',
         packing: 'אריזה',
         // Sliderbar
         paka: 'פקעו"ת',
@@ -62,29 +68,35 @@
         notAvailableComponents: 'אין הערות זמינות',
         // Components Modal
         componentList: 'רשימת רכיבים',
-        // Prodution
+        // Production & Packing
         employeeNumToReport: 'מספר עובד לדיווח',
         catalogNumber: 'מקט',
         good: 'תקינים',
         quantitySize: 'כמות יחידות',
         showComments: 'הצג הערות',
-        enterCatalogNum: 'הכנס מקט'
-        // Packing
-
-
-
-
-
-
+        enterCatalogNum: 'הכנס מקט',
+        // Settings
+        chooseLanguage: 'בחר שפה',
+        // Session Modal
+        sendReport: 'שליחה לתחנה הבאה',
+        receiveReport: 'קבלה לתחנה הנוכחית',
+        employeeNum: 'מספר עובד',
+        enterEmployeeNum: 'הכנס מספר עובד',
     },
     en: {
         // General
         direction: 'ltr',
-        return: 'return',
-        cancel: 'cancel',
+        return: 'Return',
+        cancel: 'Cancel',
         areYouSure: 'Are you sure?',
-        sending: 'sending',
-        sendNow: 'send',
+        sending: 'Sending',
+        sendNow: 'Send',
+        employeeNotExist: 'Employee does not exist in the system',
+        notSuccess: 'Operation was not successful',
+        reportNotCreated: 'Report was not created',
+        workspaceError: 'There is an issue with the workspace, please reconnect',
+        InvalidOperation: 'The operation type is invalid',
+        generalError: 'Error occurred during execution',
         // Login
         workspaceNumber: 'Workspace number',
         enterNumWorkspace: 'Enter workspace number',
@@ -105,7 +117,7 @@
         dashboardFilter: 'Seach by serial number...',
         station: 'Workspace',
         storage: 'Storage',
-        prodution: 'Production',
+        production: 'Production',
         packing: 'Packing',
         // Sliderbar
         paka: 'Work orders',
@@ -139,18 +151,20 @@
         notAvailableComponents: 'No comments available',
         // Components Modal
         componentList: 'List of components',
-        // Prodution
+        // Production & Packing
         employeeNumToReport: 'Employee number for reporting',
         catalogNumber: 'Catalog number',
         good: 'OK',
         quantitySize: 'Quantity of units',
         showComments: 'Sow comments',
-        enterCatalogNum: 'Enter catalog number'
-        // Packing
-
-
-
-
+        enterCatalogNum: 'Enter catalog number',
+        // Settings
+        chooseLanguage: 'choose language',
+        // Session Modal
+        sendReport: 'Send to the next station',
+        receiveReport: 'Receive at the current station',
+        employeeNum: 'Employee Number',
+        enterEmployeeNum: 'Enter Employee Number',
     },
     ru: {
         return: 'возврат',
@@ -158,6 +172,12 @@
         areYouSure: 'Вы уверены?',
         sending: 'отправка',
         sendNow: 'отправить',
+        employeeNotExist: 'Сотрудник не найден в системе',
+        notSuccess: 'Операция не удалась',
+        reportNotCreated: 'Отчет не создан',
+        workspaceError: 'Проблема с рабочим местом, пожалуйста, переподключитесь',
+        InvalidOperation: 'Тип операции недействителен',
+        generalError: 'Произошла ошибка при выполнении',
         // Login
         workspaceNumber: 'Номер рабочего места',
         enterNumWorkspace: 'Введите номер рабочего места',
@@ -178,7 +198,7 @@
         dashboardFilter: 'Поиск по серийному номеру...',
         station: 'Рабочая станция',
         storage: 'Склад',
-        prodution: 'Производство',
+        production: 'Производство',
         packing: 'Упаковка',
         // Sliderbar
         paka: 'Рабочие заказы',
@@ -212,14 +232,22 @@
         notAvailableComponents: 'Комментарии недоступны',
         // Components Modal
         componentList: 'Список компонентов',
-        // Production
+        // Production & Packing
         employeeNumToReport: 'Номер сотрудника для отчетности',
         catalogNumber: 'Каталожный номер',
         good: 'ОК',
         quantitySize: 'Количество единиц',
         showComments: 'Показать комментарии',
         enterCatalogNum: 'Введите каталожный номер',
+        // Settings
+        chooseLanguage: 'выберите язык',
+        // Session Modal
+        sendReport: 'Отправить на следующую станцию',
+        receiveReport: 'Получить на текущей станции',
+        employeeNum: 'Номер сотрудника',
+        enterEmployeeNum: 'Введите номер сотрудника',
         },
+
 };
 
 const localStorageStrings = [

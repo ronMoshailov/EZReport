@@ -3,23 +3,18 @@
   display: flex;  /* Flexbox to position sidebar and dashboard side by side */
   min-height: 100vh;  /* Full viewport height */
   text-align: right;
+  flex-direction: row-reverse; /* Sidebar on the left for RTL */
 
   .dashboard-content {
     flex: 1;  /* Allow dashboard content to take the remaining space */
     padding: 20px;
-    // background-color: #f0f4f7;
     height: 95vh;
-    direction: rtl;
 
     .table-container-wrapper {
-      // max-height: 89vh; /* Set the maximum height for the scrollable area */
-      // max-height: 900px; /* Set the maximum height for the scrollable area */
-      // max-height: fit-content;
       overflow-y: auto; /* Enable vertical scrolling */
       border: 1px solid #ccc; /* Optional: Define the scrollable area visually */
       background-color: white; /* Match the table background */
       height: 86vh;
-      // box-shadow: -5px 0 5px rgba(0, 0, 0, 0.1);
     }
 
     #headerDashboard {

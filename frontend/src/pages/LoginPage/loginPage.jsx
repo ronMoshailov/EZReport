@@ -10,7 +10,7 @@ import { resetLocalStorage } from '../../utils/functions';
 
 const LoginPage = () => {
 
-  const { text } = useContext(LanguageContext);
+  const { direction, text } = useContext(LanguageContext);
 
   const [errorMessage, setErrorMessage] = useState('');   // Holds any error messages
   const [loading, setLoading] = useState(false);          // Indicates loading state during server call
@@ -66,7 +66,7 @@ const LoginPage = () => {
   }
 
   return (
-      <div className="modal-container-loginPage">
+      <div className="modal-container-loginPage" style={{ direction }}>
           <div className="modal" onKeyDown={handleKeyDown}>
               <label                                              // Label
                 className='bold' 

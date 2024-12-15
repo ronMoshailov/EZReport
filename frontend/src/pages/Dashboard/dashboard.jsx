@@ -34,7 +34,7 @@ const Dashboard = ({isQueue}) => {
     'report_orderedCount'
   ];
 
-    const { text } = useContext(LanguageContext);
+    const { direction, text } = useContext(LanguageContext);
   
 
 
@@ -93,9 +93,12 @@ const Dashboard = ({isQueue}) => {
     if (error) return <p>Error: {error}</p>;
 
   return (
-    <div className="dashboard-layout">
+    <div className="dashboard-layout"  style={{ direction }}>
       <div className="dashboard-content">
         <div id='headerDashboard'>
+          {console.log(workspace.toLowerCase())}
+          {console.log(text[workspace.toLowerCase()])}
+          {console.log(text)}
           <h1>{`${text.station} ${text[workspace.toLowerCase()]}`}</h1>                   {/* Label */}
           <input                                                    // Report filter
             type="text"                                             
@@ -116,9 +119,9 @@ const Dashboard = ({isQueue}) => {
         </div>
       </div>
       
-        <Slidebar 
-          setIsReceived={setIsReceived}                                 // Pass setIsReceived function to Slidebar
-        />
+      <Slidebar 
+        setIsReceived={setIsReceived}                                 // Pass setIsReceived function to Slidebar
+      />
 
     </div>
   );

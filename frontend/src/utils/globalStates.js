@@ -1,4 +1,4 @@
-import { createContext, useState } from 'react';
+import { createContext, useState, useMemo } from 'react';
 import { textResources } from './data';
 
 const LanguageContext = createContext();
@@ -6,13 +6,15 @@ const LanguageContext = createContext();
 const LanguageProvider = ({ children }) => {
     const [language, setLanguage] = useState('he');
   
-    const contextValue = {
+    const contextValue = useMemo(() => ({
       language,
-      setLanguage,
-      direction: textResources[language].direction,
       text: textResources[language],
-    };
-
+      direction: textResources[language]?.direction || 'ltr',
+      setLanguage: (lang) => {
+          localStorage.setItem('language', lang);
+          setLanguage(lang);
+      },
+  }), [language]);
     
     return (
         <LanguageContext.Provider value={contextValue}>

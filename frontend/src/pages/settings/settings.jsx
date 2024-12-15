@@ -5,12 +5,12 @@ import { LanguageContext } from '../../utils/globalStates';
 import './settings.scss';
 
 const Settings = () => {
-  const { language, setLanguage } = useContext(LanguageContext);
+  const { language, setLanguage, text } = useContext(LanguageContext);
   const navigate = useNavigate(); // Initialize navigation
 
   return (
     <div className="settings-container">
-      <h2 className="settings-title">Choose Language</h2>
+      <h2 className="settings-title">{text.chooseLanguage}</h2>
       <form className="settings-form">
         <label>
           <input
@@ -40,7 +40,7 @@ const Settings = () => {
           Русский
         </label>
       </form>
-      <button className="return-button" onClick={() => navigate(-1)}>Return</button>
+      <button className="return-button" onClick={() => navigate(-1)}>{text.return}</button>
     </div>
   );
 };

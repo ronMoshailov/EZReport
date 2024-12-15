@@ -12,7 +12,7 @@ const TableContainer = ({ reports, isQueue }) => {
 
   const workspace = localStorage.getItem('workspace');
 
-  const { text } = useContext(LanguageContext);
+  const { direction, text } = useContext(LanguageContext);
 
   const handleOperation = (reportId, operation, serialNum, orderedCount, producedCount, packedCount) => (event) => {
     event.stopPropagation(); // Prevent row click
@@ -90,7 +90,7 @@ const TableContainer = ({ reports, isQueue }) => {
                 id="sendIcon"
                 onClick={handleOperation(report._id, isQueue ? 'receive' : 'send')}
               >
-                {isQueue ? '→' : '←'}
+                {direction === 'rtl' ? (isQueue ? '→' : '←') : (isQueue ? '←' : '→')}
               </button>
             </td>
 
