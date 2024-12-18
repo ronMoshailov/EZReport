@@ -69,7 +69,6 @@
         // Components Modal
         componentList: 'רשימת רכיבים',
         // Production & Packing
-        employeeNumToReport: 'מספר עובד לדיווח',
         catalogNumber: 'מקט',
         good: 'תקינים',
         quantitySize: 'כמות יחידות',
@@ -152,7 +151,6 @@
         // Components Modal
         componentList: 'List of components',
         // Production & Packing
-        employeeNumToReport: 'Employee number for reporting',
         catalogNumber: 'Catalog number',
         good: 'OK',
         quantitySize: 'Quantity of units',
@@ -233,7 +231,6 @@
         // Components Modal
         componentList: 'Список компонентов',
         // Production & Packing
-        employeeNumToReport: 'Номер сотрудника для отчетности',
         catalogNumber: 'Каталожный номер',
         good: 'ОК',
         quantitySize: 'Количество единиц',

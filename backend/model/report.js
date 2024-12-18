@@ -5,21 +5,22 @@ const { STATUS, STATIONS } = require('./enums');
 const reportSchema = new mongoose.Schema({
     serialNumber: {
         type: String,
-        required: true
+        required: [true, 'Serial number is required'],
     },
     title: {
         type: String,
-        required: true
+        required: [true, 'Title is required'],
     },
     components: [{
         component: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Component', // Refers to the Component model
-            required: true
+            required: [true, 'Component is required'],
         },
         stock: {
             type: Number,
-            required: true
+            required: [true, 'Stock is required'],
+            min: [0, 'Stock should not be negative']
         }
     }],
     status: {
@@ -29,19 +30,26 @@ const reportSchema = new mongoose.Schema({
     },
     current_workspace: {
         type: String,
-        enum: Object.values(STATIONS)  // Enforce valid values from STATIONS enum
+        enum: Object.values(STATIONS),  // Enforce valid values from STATIONS enum
+        default: STATIONS.STORAGE,
     },
     producedCount: {
         type: Number,
-        default: 0
+        required: [true, 'Produced count is required'],
+        min: [0, 'Produced count cannot be negative'],
+        default: 0,
     },
     packedCount: {
         type: Number,
+        required: [true, 'Packed count is required'],
+        min: [0, 'Packed count cannot be negative'],
         default: 0
     },
     orderedCount: {
         type: Number,
-        required: true
+        required: [true, 'Ordered count is required'],
+        min: [0, 'Ordered count cannot be negative'],
+        default: 0
     },
     reportingStorage_list: [{
         type: mongoose.Schema.Types.ObjectId,
@@ -60,21 +68,23 @@ const reportSchema = new mongoose.Schema({
     }],
     transferDetails: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'transferDetails'  // Refers to TransitionBetweenStations model
+        ref: 'transferDetails'
     }],
     openDate: {
         type: Date,
-        default: Date.now
+        required: [true, 'Open date is required'],
+        default: Date.now,
     },
     closeDate: {
-        type: Date
+        type: Date,
+        default: null,
     },
     inQueue: {
         type: Boolean,
-        default: true
+        default: true,
+        required: [true, 'inQueue is required']
     },
 });
 
-// Create and export the Report model
 const Report = mongoose.model('Report', reportSchema);
 module.exports = Report;

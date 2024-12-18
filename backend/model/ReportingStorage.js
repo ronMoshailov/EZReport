@@ -5,24 +5,27 @@ const reportingStorageSchema = new mongoose.Schema({
     employee_id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Employee',
-        required: true
+        required: [true, 'Employee number is required']
     },
     start_date: {
         type: Date,
-        required: true
+        required: [true, 'Open date is required'],
+        default: Date.now,
     },
     end_date: {
         type: Date,
+        default: null,
     },
     components_list: [{
         component: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Component', // Refers to the Component model
-            required: true
+            required: [true, 'Component is required'],
         },
         stock: {
             type: Number,
-            required: true
+            required: [true, 'Stock is required'],
+            min: [0, 'Stock should not be negative']
         }
     }],
     comment: {

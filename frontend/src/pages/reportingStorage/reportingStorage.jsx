@@ -40,7 +40,7 @@ const ComponentPage = () => {
   const employee_err_msg = 'עובד לא קיים או מספר עובד שגוי';
   const success_msg = `השליחה הצליחה`;
 
-  const { text } = useContext(LanguageContext);
+  const { direction, text } = useContext(LanguageContext);
 
   // Navigate
   const navigate = useNavigate();
@@ -315,7 +315,7 @@ const ComponentPage = () => {
   
   /* Return */    
   return (
-    <div className="component-page">
+    <div className="component-page" style={{direction}}>
     
       {/* Left Panel - Displays the list of selected components */}
       <div className="left-panel">
@@ -385,10 +385,10 @@ const ComponentPage = () => {
 
           {/* Buttons for adding component and submitting report */}
           <div className='buttons-container'>
+            <button className='btn cancel-btn' onClick={() => navigate('/dashboard')}>{text.return}</button>
+            <button className='showComponents-btn btn' onClick={() => showReportComponents()}>{text.showReportComponents}</button>
+            <button className='btn send-btn' onClick={handleSendReport}>{text.sendReporting}</button>
             <button className='addComponent-btn btn' onClick={handleAddComponent}>{text.addComponent}</button>
-            <button className='btn send-btn' onClick={handleSendReport}>{text.addComponent}</button>
-            <button className='showComponents-btn btn' onClick={() => showReportComponents()}>{text.addComponent}</button>
-            <button className='btn cancel-btn' onClick={() => navigate('/dashboard')}>{text.addComponent}</button>
           </div>
           {/* Display error and success messages if present */}
           {error && <p className="errorMessage">{error}</p>}

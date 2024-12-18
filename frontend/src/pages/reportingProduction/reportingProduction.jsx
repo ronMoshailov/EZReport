@@ -28,7 +28,7 @@ const NewReportingPage = () => {
   // Navigate
   const navigate = useNavigate();                         // Router navigation setup
 
-  const { text } = useContext(LanguageContext);
+  const { direction, text } = useContext(LanguageContext);
   
   // useEffect
   useEffect(() => {
@@ -85,14 +85,14 @@ const NewReportingPage = () => {
   };
 
   return (
-    <div className="new-report-page">
+    <div className="new-report-page" style={{direction}}>
       <h1>דיווח חדש מספר 0007</h1>
 
       <div className="form-container">
         {/* Right Side */}
         <div className="form-column">
           <div className="form-group">
-            <label>{text.employeeNumToReport}</label>
+            <label>{text.employeeNum}</label>
             <input type="text" placeholder="הכנס מספר עובד" value={employeeNum} disabled />
           </div>
 

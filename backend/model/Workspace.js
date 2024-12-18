@@ -5,12 +5,13 @@ const workspaceSchema = new mongoose.Schema({
 
     workspace_number: {
         type: Number,
-        required: true,
-        unique: true
+        required: [true, 'Number workspace is required'],
+        unique: true,
     },
-        name: {
+    name: {
         type: String,
-        required: true
+        required: [true, 'Workspace name is required'],
+        unique: true,
     }
     
 });

@@ -4,11 +4,11 @@ const mongoose = require('mongoose');
 const employeeSchema = new mongoose.Schema({
     fullName: {
         type: String,
-        required: true
+        required: [true, 'Full name is required'],
     },
     number_employee: {
         type: Number,
-        required: true,
+        required: [true, 'Number employee is required'],
         unique: true
     },
 });

@@ -1,23 +1,23 @@
 const mongoose = require('mongoose');
 
-// Define the schema
 const componentSchema = new mongoose.Schema({
     serialNumber: {
         type: Number,
-        required: true,
+        required: [true, 'Serial number is required'],
         unique: true
     },
     name: {
         type: String,
-        required: true
+        required: [true, 'Name is required'],
     },
     stock: {
         type: Number,
-        required: true
+        required: [true, 'Stock is required'],
+        min: [0, 'Stock cannot be negative'],
+        default: 0,
     }
 });
 
-// Create and export the model
 const Component = mongoose.model('Component', componentSchema);
 module.exports = Component;
 
