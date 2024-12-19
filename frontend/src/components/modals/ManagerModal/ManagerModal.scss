@@ -1,0 +1,97 @@
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+
+  
+  .modal-content {
+    background-color: #fff;
+    border-radius: 12px; // Smooth corners
+    padding: 25px;
+    width: 400px; // Restrict width to avoid overflow
+    max-width: 90%; // Make it responsive on smaller screens
+    position: relative;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+    overflow: hidden; // Prevent content overflow
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 22px; // Adjusted for better readability
+      font-weight: bold;
+      color: #333;
+    }
+
+    .input-group {
+      margin-bottom: 20px;
+
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 15px;
+        font-weight: 500;
+        color: #555;
+      }
+
+      input {
+        width: 100%; // Ensure inputs fit the modal width
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 14px;
+        box-sizing: border-box; // Prevent overflow due to padding
+        transition: border-color 0.3s ease;
+
+        &:focus {
+          border-color: #007bff;
+          outline: none;
+          box-shadow: 0 0 5px rgba(0, 123, 255, 0.4);
+        }
+      }
+    }
+
+    .modalManagerModal {
+      width: 100%; // Button spans the modal width
+      padding: 12px;
+      background-color: #007bff;
+      color: #fff;
+      font-size: 16px;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+
+      &:hover {
+        background-color: darken(#007bff, 10%);
+        transform: translateY(-1px);
+      }
+
+      &:active {
+        background-color: darken(#007bff, 15%);
+        transform: translateY(1px);
+      }
+    }
+
+    .close-btn {
+      position: absolute;
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      color: #333;
+
+      &:hover {
+        color: #555;
+      }
+    }
+  }
+
+}

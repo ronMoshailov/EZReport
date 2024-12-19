@@ -1,9 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const { getAllReports, addComponentsToReport, getReportComponents, removeComponentAndReturnToStock, transferWorkspace, getReportComments, reportingProductionController, reportingPackingController, startSession, isStartedSessionController, closeProductionReportingController, closePackingReportingController } = require('../controller/reportController');
+const { getAllReports, getAllReportsByWorkspace, addComponentsToReport, getReportComponents, removeComponentAndReturnToStock, transferWorkspace, getReportComments, reportingProductionController, reportingPackingController, startSession, isStartedSessionController, closeProductionReportingController, closePackingReportingController, calcAverageTimePerProductController } = require('../controller/reportController');
 
 // Storage
-router.post('/getAllReports', getAllReports);
 router.post('/removeComponentAndReturnToStock', removeComponentAndReturnToStock);
 router.post('/addComponentsToReport', addComponentsToReport);
 router.get('/getReportComponents/:report_id', getReportComponents);
@@ -16,9 +15,11 @@ router.get('/getReportComponents/:report_id', getReportComponents);
 // General
 router.get('/displayReportComments/:report_id', getReportComments);
 router.post('/transferWorkspace', transferWorkspace);
+router.post('/getAllReportsByWorkspace', getAllReportsByWorkspace);
+router.get('/getAllReports', getAllReports);
 
-
-
+// Manager
+router.post('/calcAverageTimePerProductController/:serialNum', calcAverageTimePerProductController);
 
 
 

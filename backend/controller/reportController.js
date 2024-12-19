@@ -3,14 +3,14 @@ const Report = require('../model/Report');  // Import the User model
 const mongoose = require('mongoose');
 
 // Import libs
-const { removeComponentAndUpdateStock, handleAddComponentsToReport, fetchReportsByWorkspace, fetchReportComponents, handleTransferWorksplace, getEmployeeReporting, handleCloseProductionReporting, handleClosePackingReporting } = require('../libs/reportLib');
+const { removeComponentAndUpdateStock, handleAddComponentsToReport, fetchReportsByWorkspace, fetchReportComponents, handleTransferWorksplace, getEmployeeReporting, handleCloseProductionReporting, handleClosePackingReporting, calcAverageTime } = require('../libs/reportLib');
 const { fetchStorageComments, initializeReportingStorage } = require('../libs/reportingStorageLib');
 const { initializeReportingPacking } = require('../libs/reportingPacking');
 const { findEmployeeByNumber } = require('../libs/employeeLib');
 const { initializeReportingProduction, fetchProductionComments } = require('../libs/reportingProductionLib');
 
 // Getting information from DB
-const getAllReports = async (req, res) => {
+const getAllReportsByWorkspace = async (req, res) => {
   const { workspace, isQueue } = req.body;
   try {
     const reports = await fetchReportsByWorkspace(workspace, isQueue);
@@ -25,6 +25,18 @@ const getAllReports = async (req, res) => {
   }
 };
 
+const getAllReports = async (req, res) => {
+  try {
+    const allReports = await Report.find().select('_id serialNumber title status current_workspace');
+
+    if(!allReports)
+      return res.status(404).json({message: 'Reports not found'});
+    return res.status(200).json({message: 'Reports was found', reports: allReports});
+  } catch (error) {
+    console.Error("Error in getAllReports:", error.message);
+    return res.status(500).json({message: error.message});
+  }
+};
 // Change information in DB
 
 // Getting information from DB - Storage
@@ -338,23 +350,23 @@ const closePackingReportingController = async (req, res) => {
     const {employeeNum, reportId, completed, comment} = req.body;
     if(employeeNum === undefined){
       console.error("Error in CloseProductionReportingController: Employee number is undefined");
-      res.status(404).json({message: "Employee number is undefined"});
+      res.status(400).json({message: "Employee number is undefined"});
     } 
     if(reportId === undefined){
       console.error("Error in CloseProductionReportingController: reportId is undefined");
-      res.status(404).json({message: "reportId is undefined"});
+      res.status(400).json({message: "reportId is undefined"});
     } 
     if(completed === undefined){
       console.error("Error in CloseProductionReportingController: completed is undefined");
-      res.status(404).json({message: "completed is undefined"});
+      res.status(400).json({message: "completed is undefined"});
     } 
     if(comment === undefined){
       console.error("Error in CloseProductionReportingController: comment is undefined");
-      res.status(404).json({message: "comment is undefined"});
+      res.status(400).json({message: "comment is undefined"});
     } 
     if(completed <= 0){
       console.error("Error in CloseProductionReportingController: completed are equal or less than zero");
-      res.status(404).json({message: "completed is undefined"});
+      res.status(400).json({message: "completed is undefined"});
     } 
   
     const employee = await findEmployeeByNumber(employeeNum);
@@ -369,6 +381,28 @@ const closePackingReportingController = async (req, res) => {
   }
   
   }
+
+// Manager
+const calcAverageTimePerProductController = async (req, res) => {
+  const { serialNum } = req.params;
+  if(serialNum === undefined){
+    console.error("Error in CloseProductionReportingController: serialNum is undefined");
+    res.status(400).json({message: "serialNum is undefined"});
+  } 
+  const report = await Report.findOne({serialNumber: serialNum}).select('reportingProduction_list');
+  
+  if(!report){
+    console.error("Error in CloseProductionReportingController: report not found");
+    return res.status(404).json({message: "Report not found"});
+  }
+
+  const productionList = report.reportingProduction_list;
+
+  const averageTime = await calcAverageTime(productionList);
+  
+  return res.status(200).json({averageTime: averageTime});
+
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -440,7 +474,8 @@ const closePackingReportingController = async (req, res) => {
 
 // Export the controller functions
 module.exports = { 
-  getAllReports, 
+  getAllReports,
+  getAllReportsByWorkspace, 
   getReportComponents, 
   removeComponentAndReturnToStock, 
   addComponentsToReport, 
@@ -451,5 +486,6 @@ module.exports = {
   startSession,
   isStartedSessionController,
   closeProductionReportingController,
-  closePackingReportingController
+  closePackingReportingController,
+  calcAverageTimePerProductController
  };

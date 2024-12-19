@@ -8,7 +8,7 @@ import './dashboard.scss';
 import '../../components/Slidebar/slidebar.scss';
 
 // import { handleEscKey } from '../../utils/functions';
-import { fetchAllReports } from '../../components/APIs/report';
+import { fetchAllReportsByWorkspace } from '../../components/APIs/report';
 
 import { LanguageContext } from '../../utils/globalStates';
 
@@ -65,7 +65,7 @@ const Dashboard = ({isQueue}) => {
   // // Fetch all reports
   const handleFetchReports = async () => {
     try {
-      const [check, data] = await fetchAllReports(workspace, isQueue);
+      const [check, data] = await fetchAllReportsByWorkspace(workspace, isQueue);
       if (check){
         setReports(data);
         // console.log(reports);

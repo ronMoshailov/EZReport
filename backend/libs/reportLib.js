@@ -396,6 +396,31 @@ const getEmployeeReporting = async(workspace, reportingList, employeeId) => {
   }
 }
 
+//
+const calcAverageTime = async (productionList) => {
+
+  let count = 0;
+  let hours = 0;
+  let minutes = 0;
+
+  for (const documentId of productionList){
+    const document = await ReportingProduction.findById(documentId);
+    if(!document.end_date)
+      continue;
+    const timePassed = document.end_date - document.start_date;
+
+    count += document.completedCount;
+    hours += Math.floor(timePassed / (1000 * 60 * 60));
+    minutes += Math.floor((timePassed % (1000 * 60 * 60)) / (1000 * 60));
+  }
+
+  hours += Math.floor(minutes / 60);
+  minutes = minutes % 60;
+
+  console.log(`Passed ${hours} hours and ${minutes} minutes.}`);
+  return count/ (hours*60 + minutes);
+}
+
 module.exports = { 
   removeComponentAndUpdateStock,
   handleAddComponentsToReport, 
@@ -407,5 +432,6 @@ module.exports = {
   // startReportingPacking,
   getEmployeeReporting,
   handleCloseProductionReporting,
-  handleClosePackingReporting
+  handleClosePackingReporting,
+  calcAverageTime
  };

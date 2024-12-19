@@ -7,15 +7,26 @@ const getEmployeeId = async (inputValue) => {
       headers: { 'Content-Type': 'application/json' },  // Set content type to JSON
       body: JSON.stringify({ employeeNumber: inputValue })  // Pass the input value in the request body
     });
-    
-    // if (response.status == '404'){
-    //   return [false, 'מספר עובד לא קיים'];
-    // }
-
-    // // Check if the response is successful
-    // if (!response.ok) throw new Error(`Failed to fetch employee data. Status: ${response.status}`);
-
     return await response.json();
 }
 
-export { getEmployeeId }
+const addEmployee = async (employeeName, employeeNum) => {
+  const response = await fetch('http://localhost:5000/api/addEmployee', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },  // Set content type to JSON
+    body: JSON.stringify({ number_employee: employeeNum, fullName: employeeName })  // Pass the input value in the request body
+  });
+  const data = await response.json();
+  return data;
+}
+
+const removeEmployee = async (employeeNum) => {
+  const response = await fetch(`http://localhost:5000/api/removeEmployee/${employeeNum}`, {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },  // Set content type to JSON
+  });
+  const data = await response.json();
+  return data;
+}
+
+export { getEmployeeId, addEmployee, removeEmployee }

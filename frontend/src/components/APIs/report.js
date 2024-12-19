@@ -1,9 +1,9 @@
 /* General */
 
-// Fetch all reports
-const fetchAllReports = async (workspace, isQueue) => {
+// Fetch all reports by workspace
+const fetchAllReportsByWorkspace = async (workspace, isQueue) => {
   try {
-    const response = await fetch('http://localhost:5000/api/getAllReports', {
+    const response = await fetch('http://localhost:5000/api/getAllReportsByWorkspace', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({ workspace, isQueue }),
@@ -16,6 +16,23 @@ const fetchAllReports = async (workspace, isQueue) => {
     else if( response.status === 500 ) throw new Error('Internal Server Error: Something went wrong on the server');
     else if (!response.ok) throw new Error(`Unexpected Error: Status code ${response.status}`);
     
+    return [true, data];
+
+  } catch (err) {
+    return [false, err.message];
+  }
+};
+
+// Fetch all reports
+const fetchAllReports = async () => {
+  try {
+    const response = await fetch('http://localhost:5000/api/getAllReports');
+
+    const data = await response.json();
+
+    if( response.status === 404 ) throw new Error('Reports not found');
+    else if( response.status === 500 ) throw new Error('Internal Server Error: Something went wrong on the server');
+    else if (!response.ok) throw new Error(`Unexpected Error: Status code ${response.status}`);
     return [true, data];
 
   } catch (err) {
@@ -154,50 +171,31 @@ const fetchAddComponents = async (employee_id, report_id, componentsToAdd, input
 };
 
 /* Manager */
+const calcAverage = async (serialNum) => {
+  try {
+    // Send a POST request to add components to the specified report
+    const response = await fetch(`http://localhost:5000/api/calcAverageTimePerProductController/${serialNum}`, {
+      method: 'POST', // Use POST to send data to the server
+    });
+
+    // Check if the response indicates a failure
+    if (!response.ok) {
+      throw new Error(`Failed to process the report. Status: ${response.status}`);
+    }
+
+    // Parse and return the JSON response from the server
+    const data = await response.json();
+    return data;
+    
+  } catch (error) {
+    // Log any errors encountered during the request
+    console.error('Error adding components to the report:', error.message);
+    throw error; // Re-throw the error for further handling if needed
+  }
+}
 
 
-
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
-
-
-
-
-
-
-
-// const toggleReportEnable = async (report_id) => {
-//   try {
-//     // Send a POST request to toggle the "enable" field of a specific report
-//     const response = await fetch('http://localhost:5000/api/toggleEnable', {
-//       method: 'POST', // Use POST method to send data to the server
-//       headers: { 
-//         'Content-Type': 'application/json' // Specify JSON format for the request body
-//       },
-//       body: JSON.stringify({ report_id: report_id }), // Send the report ID as JSON in the request body
-//     });
-
-//     // Check if the response indicates a failure (non-2xx status code)
-//     if (!response.ok) {
-//       throw new Error(`Failed to toggle enable field. Status: ${response.status}`);
-//     }
-
-//     // Parse the response data to JSON
-//     const data = await response.json();
-
-//     // Optionally handle the response data (e.g., update UI or application state)
-//     return data.message; // Return the message from the server
-//   } catch (error) {
-//     // Log any errors that occur during the request
-//     console.error('Error toggling enable field:', error.message);
-//   }
-// };
-
-
+////////////////////////
 
 const displayReportComments = async (report_id) =>{
   console.log('report_id');
@@ -308,7 +306,9 @@ const ClosePackingReporting = async (employeeNum, reportId, completed, comment) 
   }
 }
 
-export { fetchAllReports, 
+export { 
+  fetchAllReports,
+  fetchAllReportsByWorkspace, 
   fetchReportComponents, 
   handleRemoveComponentFromReport, 
   // toggleReportEnable, 
@@ -318,7 +318,8 @@ export { fetchAllReports,
   startSession,
   isStartedSession,
   CloseProductionReporting,
-  ClosePackingReporting
+  ClosePackingReporting,
+  calcAverage
  };
 
 

@@ -16,7 +16,6 @@
     "mongoose": "^8.7.2",
     "react-router-dom": "^6.27.0",
     "socket.io": "^4.8.1",
-    "socket.io-client": "^4.8.1",
     "use-debounce": "^10.0.4"
   }
 }

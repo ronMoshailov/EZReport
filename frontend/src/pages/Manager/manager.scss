@@ -1,0 +1,152 @@
+$primary-color: #007bff;
+$secondary-color: #f7f7f7;
+$border-color: #ccc;
+$table-header-color: #f0f0f0;
+$hover-bg-color: #eef;
+
+.manager-layout {
+  display: flex;
+  height: 100vh; // Full page height
+  font-family: Arial, sans-serif;
+
+  .left-side {
+    flex: 3; // Takes up 75% of the width
+    padding: 20px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); // 2 columns with equal width
+    gap: 20px; // Space between rectangles
+    background-color: $secondary-color;
+
+    .rectangle {
+      display: flex;
+      flex-direction: column;
+      background-color: white;
+      border: 1px solid $border-color;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      transition: box-shadow 0.3s ease;
+      height: 400px; // Fixed height for each rectangle
+      
+      &:hover {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        border-color: $primary-color;
+      }
+    
+      // Label styling
+      .rectangle-title {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 10px;
+        text-align: center;
+        color: $primary-color;
+      }
+      
+      .rectangle-table-container {
+        background-color: white;
+        border: 1px solid $border-color;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        height: 400px; // Fixed height
+        overflow-y: auto; // Enable vertical scroll
+        transition: box-shadow 0.3s ease;
+      
+        &:hover {
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+      
+        table {
+          width: 100%; // Full width
+          border-collapse: collapse;
+      
+          th, td {
+            border: 1px solid #ddd;
+            text-align: center;
+            padding: 8px;
+            font-size: 14px;
+          }
+      
+          th {
+            background-color: $table-header-color;
+            position: sticky;
+            top: 0;
+          }
+      
+          tr:nth-child(even) {
+            background-color: #f9f9f9;
+          }
+      
+          tr:hover {
+            background-color: $hover-bg-color;
+          }
+        }
+      }
+      
+    }
+  }
+
+  .right-side {
+    flex: 1; // Takes up 25% of the width
+    background-color: #ffffff;
+    border-left: 1px solid $border-color;
+    padding: 20px;
+
+    .section {
+      margin-bottom: 20px;
+
+      .label {
+        font-size: 16px;
+        font-weight: bold;
+        margin-bottom: 10px;
+        display: block;
+        text-align: left;
+      }
+
+      .button-group {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+
+        button {
+          // flex: 1;
+          padding: 10px 15px;
+          font-size: 14px;
+          color: white;
+          background-color: $primary-color;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+          width: 30%;
+
+          &:hover {
+            background-color: darken($primary-color, 10%);
+          }
+        }
+      }
+    }
+  }
+
+  .error-message {
+    color: red;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+
+    .left-side {
+      flex: none;
+      width: 100%;
+    }
+
+    .rectangle {
+      width: 100%;
+    }
+
+    .right-side {
+      flex: none;
+      width: 100%;
+      margin-top: 20px;
+    }
+  }
+}

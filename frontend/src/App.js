@@ -13,6 +13,7 @@ import ReportingStorage from './pages/reportingStorage/reportingStorage'
 import ReportingPacking from './pages/reportingPacking/reportingPacking'
 
 import Settings from './pages/settings/settings'
+import Manager from './pages/Manager/manager'
 
 // import ErrorPage from './components/errorPage';
 // import 'react-toastify/dist/ReactToastify.css';
@@ -44,6 +45,7 @@ function App() {
         <Route path="/ReportingStorage" element={<ReportingStorage />} />
         <Route path="/ReportingProduction" element={<ReportingProduction />} />
         <Route path="/ReportingPacking" element={<ReportingPacking />} />
+        <Route path="/Manager" element={<Manager />} />
         {/*
         <Route path="/error" element={<ErrorPage/>} />
         */}

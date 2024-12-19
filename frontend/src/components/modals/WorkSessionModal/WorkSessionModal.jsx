@@ -18,7 +18,6 @@ let isSucceeded = false;
 
 const WorkSessionModal = ({ reportId, operationType, onClose }) => {
   
-  
   const [employeeNumber, setEmployeeNumber] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);

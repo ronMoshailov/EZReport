@@ -58,7 +58,7 @@ const removeEmployeeController = async (req, res) => {
       console.error("Error in isEmployeeExist: employee wasn't found")
       return res.status(404).json({message: "Employee not found"})
     }
-    return res.status(200).json({message: "Employee removed successfully"});
+    return res.status(200).json({message: 'Employee removed successfully'});
   } catch (error) {
     console.error('Error in removeEmployeeHandler:', error.message);
     return res.status(500).json({message: error.message});;
