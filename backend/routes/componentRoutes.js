@@ -1,6 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const {getAllComponentsController, addComponentController, removeComponentController, increaseStockBySerialNumberController, increaseStockByIdController, updateStockController} = require('../controller/componentController');
+
+const {
+    getAllComponentsController, 
+    addComponentController, 
+    removeComponentController, 
+    increaseStockBySerialNumberController, 
+    increaseStockByIdController, 
+    updateStockController
+} = require('../controller/componentController');
 
 router.get('/getAllComponents', getAllComponentsController);
 router.post('/addComponent', addComponentController);

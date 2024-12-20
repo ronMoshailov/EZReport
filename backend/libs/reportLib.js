@@ -368,7 +368,7 @@ const getEmployeeReporting = async(workspace, reportingList, employeeId) => {
       case 'Storage':
         for(const documentId of reportingList.slice().reverse()){
           const storageReporting = await ReportingStorage.findById(documentId);
-          if(storageReporting.employee_id.toString() === employeeId.toString() && storageReporting.end_date === undefined)
+          if(storageReporting.employee_id.toString() === employeeId.toString() && storageReporting.end_date === null)
             return({message: "Reporting was found", reporting: storageReporting});
         }   
         return null;
@@ -377,7 +377,7 @@ const getEmployeeReporting = async(workspace, reportingList, employeeId) => {
           
           for(const documentId of reportingList.slice().reverse()){
             const productionReporting = await ReportingProduction.findById(documentId);
-            if(productionReporting.employee_id.toString() === employeeId.toString() && productionReporting.end_date === undefined)
+            if(productionReporting.employee_id.toString() === employeeId.toString() && productionReporting.end_date === null)
               return({message: "Reporting was found", reporting: productionReporting});
           }   
           return null;
@@ -385,7 +385,7 @@ const getEmployeeReporting = async(workspace, reportingList, employeeId) => {
         case 'Packing':
           for(const documentId of reportingList.slice().reverse()){
             const packingReporting = await ReportingPacking.findById(documentId);
-            if(packingReporting.employee_id.toString() === employeeId.toString() && packingReporting.end_date === undefined)
+            if(packingReporting.employee_id.toString() === employeeId.toString() && packingReporting.end_date === null)
             return({message: "Reporting was found", reporting: packingReporting});
         }   
           return null;

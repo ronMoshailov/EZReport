@@ -16,10 +16,10 @@ const ErrorPage = () => {
   return (
     <div className="error-page-container">
       <div className="error-box">
-        <h1>text.error</h1>
-        <p>text.errorPageMessage</p>
+        <h1>{text.error}</h1>
+        <p>{text.errorPageMessage}</p>
         <button className="reconnect-button" onClick={() => navigate('/')}>
-          text.loginBack
+          {text.loginBack}
         </button>
       </div>
     </div>
