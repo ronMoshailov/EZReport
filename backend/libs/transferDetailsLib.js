@@ -26,6 +26,7 @@ const recieveUpdate = async (lastTransferDocument, workspace, employeeId, sessio
   lastTransferDocument.received_worker_id = employeeId;
   lastTransferDocument.received_date = date;
   lastTransferDocument.received_workspace = workspace;
+
   await lastTransferDocument.save({ session })
   return lastTransferDocument;
 }

@@ -191,6 +191,9 @@ const handleTransferWorksplace = async (employeeId, report, session) => {
         send_worker_id: employeeId,
         send_workspace: report.current_workspace,
         send_date: date,
+        received_worker_id: null,
+        received_date: null,
+        received_workspace: null,
       };
       // Create new transfer document
       const newTransfer = await createTransferDocument(transferData, session);

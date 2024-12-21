@@ -4,7 +4,7 @@ import './tableContainer.scss';
 import WorkSessionModal from '../../components/modals/WorkSessionModal/WorkSessionModal'
 import { LanguageContext } from '../../utils/globalStates';
 
-const TableContainer = ({ reports, isQueue }) => {
+const TableContainer = ({ reports, isQueue, setRefreshReports }) => {
   
   const [isWorkSession, setIsWorkSession] = useState(false);                            // Handle case that if this change so fetch reports again
   const [operationType, setOperationType] = useState(false);
@@ -104,6 +104,7 @@ const TableContainer = ({ reports, isQueue }) => {
           operationType={operationType}
           onClose={setIsWorkSession}
           inQueue={isQueue}
+          setRefreshReports={setRefreshReports}
     />}
   </>
   );

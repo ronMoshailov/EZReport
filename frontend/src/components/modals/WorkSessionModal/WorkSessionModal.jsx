@@ -16,7 +16,7 @@ let workspace = '';
 let message = '';
 let isSucceeded = false;
 
-const WorkSessionModal = ({ reportId, operationType, onClose }) => {
+const WorkSessionModal = ({ reportId, operationType, onClose, setRefreshReports }) => {
   
   const [employeeNumber, setEmployeeNumber] = useState('');
   const [error, setError] = useState('');
@@ -56,6 +56,7 @@ const WorkSessionModal = ({ reportId, operationType, onClose }) => {
             isSucceeded = await sendReport(reportId, employeeNumber);
             if(isSucceeded){
               onClose(false);
+              setRefreshReports((perv) => !perv);
             } else{
               setErrorLoading(text.notSuccess, false);
             }

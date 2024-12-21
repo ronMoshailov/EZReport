@@ -21,6 +21,7 @@ const Dashboard = ({isQueue}) => {
   const [error, setError] = useState(null);                                               // Holds error message
   const [isReceived, setIsReceived] = useState(false);                                    // Tetermine if client receiving report or send report
   const [reportFilter, setReportFilter] = useState('');                                   // Filter text for reports
+  const [refreshReports, setRefreshReports] = useState(false);
 
   // Constant variables
   const workspace = localStorage.getItem('workspace') || '';
@@ -40,16 +41,14 @@ const Dashboard = ({isQueue}) => {
 
 
   const navigate = useNavigate();
-  // const [debouncedReportFilter] = useDebounce(reportFilter, 300);
-
-
-
-
-
 
   useEffect(() => {
     handleFetchReports();                                         // Fetch all reports
   }, [isQueue]);
+
+  useEffect(() => {
+    handleFetchReports();                                         // Fetch all reports
+  }, [refreshReports]);
 
   // useEffect(() => {
   //   window.addEventListener('keydown', addEscListener);           // Add keydown event listener to listen for Escape key press
@@ -115,6 +114,7 @@ const Dashboard = ({isQueue}) => {
           reports={filteredReports}
           // onClickRow={handleClickOnCard}
           isQueue={isQueue}
+          setRefreshReports={setRefreshReports}
         />
         </div>
       </div>
