@@ -8,10 +8,10 @@ const getAllComponentsController = async (req, res) => {
     if(!components || components.length === 0)                                              // Check if the result is valid
       return res.status(404).json({message: 'Components not found'});                       // Respond with HTTP 404 (Not Found) to indicate the requested resource was not found
     
-      return res.status(200).json({components: components, message: 'Components found'});     // Respond with HTTP 200 (OK) to indicate the request was successful
+      return res.status(200).json({components: components, message: 'Components found'});   // Respond with HTTP 200 (OK) to indicate the request was successful
 
     } catch (error) {
-    console.error('Error in getAllComponentsHandler:', error.message);                      // Log the error
+    console.error('Error in getAllComponentsController:', error.message);                   // Log the error
     return res.status(500).json({ message: error.message });                                // Respond with HTTP 500 (Internal Server Error) and an error message 
   }
 };
@@ -23,13 +23,13 @@ const addComponentController = async (req, res) => {
 
     if(!serialNumber || !name || isNaN(Number(stock)) || stock <= 0){                                       // Check if the any data is not valid
       if(!serialNumber)                                                                                     // Check if the serialNumber is undefined
-        console.error("Error in addComponentHandler: serialNumber are invalid");                            // Log the error
+        console.error("Error in addComponentController: serialNumber are invalid");                         // Log the error
       if(!name)                                                                                             // Check if the name is undefined
-        console.error("Error in addComponentHandler: name are null");                                       // Log the error
+        console.error("Error in addComponentController: name are null");                                    // Log the error
       if(isNaN(Number(stock)))                                                                              // Check if the stock is invalid
-        console.error("Error in addComponentHandler: the stock number is invalid");                         // Log the error
+        console.error("Error in addComponentController: the stock number is invalid");                      // Log the error
       if(stock <= 0)                                                                                        // Check if the stock less or equal than 0
-        console.error("Error in addComponentHandler: the stock is zero or negative");                       // Log the error
+        console.error("Error in addComponentController: the stock is zero or negative");                    // Log the error
       return res.status(400).json({message: 'Invalid parameters was sent'});                                // Respond with HTTP 400 (Bad Request) to indicate the request was invalid
     } 
 
@@ -43,33 +43,33 @@ const addComponentController = async (req, res) => {
     return res.status(201).json({message: "New component created successfully", component: newComponent});  // Respond with HTTP 201 (Created) to indicate the resource was successfully created
     
   } catch (error) {  
-    console.error('Error in addComponentHandler:', error.message);                            // Log the error
-    return res.status(500).json({ message: error.message });                                  // Respond with HTTP 500 (Internal Server Error) and an error message
+    console.error('Error in addComponentController:', error.message);                           // Log the error
+    return res.status(500).json({ message: error.message });                                    // Respond with HTTP 500 (Internal Server Error) and an error message
   }
 };
 
 // Remove a component by serial number
 const removeComponentController = async (req, res) => {
   try {
-    const serialNumber = Number(req.params.serialNumber);                           // Get data from the request
+    const serialNumber = Number(req.params.serialNumber);                               // Get data from the request
 
-    if(!serialNumber){                                                              // Check if the serialNumber is undefined 
-      console.error("Error in removeComponentHandler: serialNumber is undefined");  // Log the error
-      return res.status(400).json({message: "Invalid parameter"});                  // Respond with HTTP 400 (Bad Request) to indicate the request was invalid
+    if(!serialNumber){                                                                  // Check if the serialNumber is undefined 
+      console.error("Error in removeComponentController: serialNumber is undefined");   // Log the error
+      return res.status(400).json({message: "Invalid parameter"});                      // Respond with HTTP 400 (Bad Request) to indicate the request was invalid
     }
 
-    const result = await removeComponent(serialNumber);                             // Try remove the component
+    const result = await removeComponent(serialNumber);                                 // Try remove the component
     
     if(!result){
-      console.error("Error in removeComponentController: Component not found");     // Log the error
-      return res.status(404).json({message: "Component not found"});                // Respond with HTTP 404 (Not Found) to indicate the requested resource was not found
+      console.error("Error in removeComponentController: Component not found");         // Log the error
+      return res.status(404).json({message: "Component not found"});                    // Respond with HTTP 404 (Not Found) to indicate the requested resource was not found
     }
 
-    return res.status(200).json({message: "Component removed successfully"});       // Respond with HTTP 200 (OK) to indicate the request was successful  
+    return res.status(200).json({message: "Component removed successfully"});           // Respond with HTTP 200 (OK) to indicate the request was successful  
 
   } catch (error) {
-    console.error('Error in removeComponentHandler:', error.message);               // Log the error
-    return res.status(500).json({ message: error.message });                        // Respond with HTTP 500 (Internal Server Error) and an error message
+    console.error('Error in removeComponentController:', error.message);                // Log the error
+    return res.status(500).json({ message: error.message });                            // Respond with HTTP 500 (Internal Server Error) and an error message
   }
 };
 
@@ -123,13 +123,13 @@ const increaseStockByIdController = async (req, res) => {
     // Check if the data is valid
     if(!component_id || isNaN(Number(amount)) || amount <= 0 || amount === undefined) {
       if(!component_id) 
-        console.error("Error in increaseStockByIdHandler: The component id is missing");
+        console.error("Error in increaseStockByIdController: The component id is missing");
       if(isNaN(amount)) 
-        console.error("Error in increaseStockByIdHandler: The amount is invalid");
+        console.error("Error in increaseStockByIdController: The amount is invalid");
       if(amount <= 0) 
-        console.error("Error in increaseStockByIdHandler: The amount is less or equal to zero");
+        console.error("Error in increaseStockByIdController: The amount is less or equal to zero");
       if(amount === undefined) 
-        console.error("Error in increaseStockByIdHandler: The amount undefined");
+        console.error("Error in increaseStockByIdController: The amount undefined");
       return res.status(400).json({message: "Invalid parameters"});
     }
     
@@ -138,7 +138,7 @@ const increaseStockByIdController = async (req, res) => {
 
     // Check if the component was found
     if(!updatedComponent){
-      console.error("Error in increaseStockByIdHandler: Component not found");
+      console.error("Error in increaseStockByIdController: Component not found");
       return res.status(404).json({message: "Component not found"});
     }
 
@@ -185,7 +185,7 @@ const updateStockController = async (req, res) => {
     return res.status(200).json({message: "The component updated successfully", stock: updatedStock});
 
   } catch (error) {
-    console.error('Error in updateStockHandler:', error.message);
+    console.error('Error in updateStockController:', error.message);
     return res.status(500).json({ message: error.message });
   }
 };
