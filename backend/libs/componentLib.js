@@ -102,12 +102,14 @@ const increaseStockById = async (component_id, amount, session) => {
 
 // Update the stock (called by controller)
 const updateStock = async (serialNumber, stock) => {
+
   const component = await Component.findOneAndUpdate(
     { serialNumber },
     { stock },
     {new: true}
   ).select('stock');
-
+  if(!component)
+    return null
   return component.stock;
 };
 

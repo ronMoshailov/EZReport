@@ -19,9 +19,9 @@ const NotFoundPage = () => {
 
   return (
     <div className="not-found-page">
-      <h1>text.pageNotFound404</h1>
-      <p>text.pageNotFoundOps</p>
-      <button onClick={handleGoHome}>text.returnMainPage</button>
+      <h1>{text.pageNotFound404}</h1>
+      <p>{text.pageNotFoundOps}</p>
+      <button onClick={handleGoHome}>{text.returnMainPage}</button>
     </div>
   );
 };

@@ -91,34 +91,13 @@ const removeComponentAndUpdateStock = async (report, componentId, stockToAdd) =>
 };
 
 // Fetch all components of a report (Used for storage) (called by controller)
-const handleAddComponentsToReport = async ({ employee_id, report_id, components_list, comment }) => {
+const handleAddComponentsToReport = async ({ report, reporting, components_list, comment }) => {
   const session = await mongoose.startSession();
   session.startTransaction();
   
   try {
     const date = new Date();
     date.setHours(date.getHours() + 2);
-
-    // Update the report with components
-    const report = await Report.findById(report_id).session(session);
-    if (!report){
-      await session.abortTransaction();
-      session.endSession();  
-      console.error("Error in handleAddComponentsToReport: Report not found");
-      return {success: false, message: 'Report not found'};
-    }
-
-    // Get the employee reporting
-    const employeeReporting = await getEmployeeReporting(report.current_workspace, report.reportingStorage_list, employee_id);
-    if(!employeeReporting){
-      await session.abortTransaction();
-      session.endSession();  
-      console.error("Error in handleAddComponentsToReport: User not started a session");
-      return {success: false, message: 'employee reporting not found'};
-    }
-
-    // Get the reporting
-    const reporting = employeeReporting.reporting;
 
     // Update the reporting
     reporting.end_date = date;
@@ -191,6 +170,9 @@ const handleTransferWorksplace = async (employeeId, report, session) => {
         send_worker_id: employeeId,
         send_workspace: report.current_workspace,
         send_date: date,
+        received_worker_id: null,
+        received_date: null,
+        received_workspace: null,
       };
       // Create new transfer document
       const newTransfer = await createTransferDocument(transferData, session);

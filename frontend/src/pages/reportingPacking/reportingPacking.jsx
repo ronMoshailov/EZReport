@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { displayReportComments, ClosePackingReporting } from '../../components/APIs/report';
+import { displayReportComments, ClosePackingReporting } from '../../utils/APIs/report';
 import CommentsModal from '../../components/modals/CommentsModal/CommentsModal'; 
 import './reportingPacking.scss'; 
 
@@ -13,7 +13,7 @@ const NewReportPage = () => {
   const { direction, text } = useContext(LanguageContext);
   
   // States
-  const [newCompleted, setNewCompleted] = useState(0);                                                          // Holds the new completed quantity
+  const [newCompleted, setNewCompleted] = useState('');                                                          // Holds the new completed quantity
   const [newComment, setNewComment] = useState('');                                                             // Holds the new comment for this reporting
   const [allComments, setAllComments] = useState([]);                                                                 // Holds all the comments for the previous workspace
   const [isCommentsModalOpen, setIsCommentsModalOpen] = useState(false);                                        // Show/Hide the comments from the previous workspace
@@ -40,14 +40,17 @@ const NewReportPage = () => {
 
   // Handle show comments
   const handleShowComments = async () => {
-    try {
-      setIsCommentsModalOpen(true);
-      setAllComments([]); // Clear previous comments
-      const fetchedComments = await displayReportComments(reportId);
+    setError('');
+    setIsCommentsModalOpen(true);
+    setAllComments([]); // Clear previous comments
+    const [isTrue, fetchedComments] = await displayReportComments(reportId);
+    if(isTrue){
       setAllComments(fetchedComments);
-    } catch (error) {
-      console.error('Error fetching comments:', error.message);
-      alert('שגיאה בהצגת ההערות');
+      return;
+    }
+    else{
+      setError(fetchedComments);
+      setIsCommentsModalOpen(false);
     }
   };
 
@@ -61,22 +64,22 @@ const NewReportPage = () => {
 
     try {
       if (!newCompleted || isNaN(newCompleted) || newCompleted <= 0){
-        setError('הזן כמות תקינה');
+        setError(text.invalidQuantity);
         return;
       }
 
       setError(''); // Clear previous errors
       if ( Number(newCompleted) + packedCount > producedCount) {
-        setError('הכמות שהוכנסה גבוהה ממה שהוזמן');
+        setError(text.oversizeQuantity);
         return;
       }
 
-      const answer = await ClosePackingReporting(employeeNum, reportId, Number(newCompleted), newComment);
+      const [isTrue, data] = await ClosePackingReporting(employeeNum, reportId, Number(newCompleted), newComment);
 
-      if (answer)
+      if (isTrue)
         navigate('/dashboard')
       
-      setError('Failed');
+      setError(text[data]);
     } catch (err) {
       console.error('Error submitting production report:', err.message);
     } finally {

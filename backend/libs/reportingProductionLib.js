@@ -2,17 +2,19 @@ const ReportProduction = require('../model/ReportingProduction'); // Replace wit
 const Report = require('../model/Report'); // Replace with the correct path to the Report model
 
 const fetchProductionComments = async (reportingProduction_list) => {
-  const comments = await ReportProduction.find(
-    { _id: { $in: reportingProduction_list } }, // Match `_id` with the provided list
-    { comment: 1, _id: 0 } // Project only the `comment` field
-  );
+  const comments = (
+    await ReportProduction.find(
+      { _id: { $in: reportingProduction_list } }, // Match `_id` with the provided list
+      { comment: 1, _id: 0 } // Project only the `comment` field
+    )
+  ).filter((item) => item.comment != null); // Remove entries with null or undefined comments
+
   if(!comments){
     console.error("Error in fetchProductionComments: Comments not found");
     throw new Error("Comments not found");
   }
   return comments.map((item) => item.comment); // Extract only the `comment` field
 };
-
 
 const fetchReportProductionList = async (report_id) => {
   try {

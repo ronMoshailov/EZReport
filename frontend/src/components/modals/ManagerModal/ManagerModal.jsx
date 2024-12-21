@@ -3,72 +3,61 @@ import './ManagerModal.scss';
 
 import { LanguageContext } from '../../../utils/globalStates';
 
-import { addEmployee, removeEmployee } from '../../../components/APIs/employee';
-import { addComponent, removeComponent, addStock, updateStock } from '../../../components/APIs/components';
-import { calcAverage } from '../../../components/APIs/report';
+import { addEmployee, removeEmployee } from '../../../utils/APIs/employee';
+import { addComponent, removeComponent, addStock, updateStock } from '../../../utils/APIs/components';
+import { calcAverage } from '../../../utils/APIs/report';
 
+import { print } from '../../../utils/functions' 
 const ManagerModal = ({ operationType, setIsModal }) => {
 
+  // useState
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
   const [stock, setStock] = useState('');
   const [error, setError] = useState('');
 
+  // useContext
   const { direction, text } = useContext(LanguageContext);
 
+  // function for submit any button
   const handleSubmit = async (func, functionType) =>{
-    const data = await func();
+    setError('');
+    const [isTrue, data] = await func();
+
+    if (!isTrue){
+      setError(text[data]);
+      return;
+    }
 
     switch(functionType){
 
       case 'addEmployee':
-        if(data.employee){
-          setIsModal(false);
-        }
-        setError(data.message);
+        setIsModal(false);
         break;
 
       case 'removeEmployee':
-        if(data.message === 'Employee removed successfully'){
-          setIsModal(false);
-        }
-        setError(data.message);
+        setIsModal(false);
         break;
       
       case 'addComponent':
-        if(data.component){
-          setIsModal(false);
-        }
-        setError(data.message);
+        setIsModal(false);
         break;
 
       case 'removeComponent':
-        if(data.message === 'Component removed successfully'){
-          setIsModal(false);
-        }
-        setError(data.message);
+        setIsModal(false);
         break;
 
       case 'addStock':
-        if(data.stock){
-          setIsModal(false);
-        }
-        setError(data.message);
+        setIsModal(false);
         break;
     
     case 'updateStock':
-      if(data.stock){
-        setIsModal(false);
-      }
-      setError(data.message);
+      setIsModal(false);
       break;
   
     case 'calcAverage':
-      if(data){
-        console.log(data);
-        setIsModal(false);
-      }
-      setError(data.message);
+      setIsModal(false);
+      print(data)           /// make it toast
       break;
 
 

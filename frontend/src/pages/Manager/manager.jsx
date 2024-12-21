@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import { io } from 'socket.io-client';
 
 import ManagerModal from '../../components/modals/ManagerModal/ManagerModal';
-import { fetchAllReports } from '../../components/APIs/report';
+import { fetchAllReports } from '../../utils/APIs/report';
 
 import './manager.scss';
 
@@ -53,7 +53,6 @@ const Manager = () => {
       try {
         const [isValid, data] = await fetchAllReports();
         if (isValid) setAllReports(data.reports);
-        console.log(data.reports);
       } catch (error) {
         console.error('Error in handleReports:', error.message);
       }

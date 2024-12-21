@@ -58,4 +58,8 @@ const resetLocalStorage = () => {
     }
 }
 
-export { handleEscKey, handleEnterKey, isEmpty, setCookie, getCookie, deleteCookie, resetLocalStorage };
+
+const print = (arg) => console.log(arg);
+const printError = (arg) => console.error(arg);
+
+export { handleEscKey, handleEnterKey, isEmpty, setCookie, getCookie, deleteCookie, resetLocalStorage, print, printError };

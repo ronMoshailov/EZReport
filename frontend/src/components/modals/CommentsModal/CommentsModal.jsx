@@ -1,15 +1,17 @@
 import React, { useContext } from 'react';
-import PropTypes from 'prop-types';
+
 import './CommentsModal.scss';
 
 import { LanguageContext } from '../../../utils/globalStates';
 
 const CommentsModal = ({ isOpen, onClose, comments }) => {
   
+  // use Context
   const { text } = useContext( LanguageContext );
-
-  if (!isOpen) return null;
-
+  
+  // Check if the modal already open
+  if (!isOpen)
+     return null;
   
   return (
     <div className="modal-container-comments">
@@ -30,12 +32,6 @@ const CommentsModal = ({ isOpen, onClose, comments }) => {
       </div>
     </div>
   );
-};
-
-CommentsModal.propTypes = {
-  isOpen: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired,
-  comments: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
 export default CommentsModal;

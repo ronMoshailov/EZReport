@@ -6,6 +6,7 @@ import { LanguageContext } from '../../utils/globalStates';
 
 const Slidebar = ({setIsReceived}) => {
 
+  // useContext
   const { text } = useContext(LanguageContext);
 
   return (

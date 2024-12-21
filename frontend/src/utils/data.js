@@ -110,6 +110,23 @@
         operationNotFound: 'לא נמצאה פעולה',
         pakaNumber: 'מספר פק"ע',
         EnterPaka: 'הכנס מספר פק"ע...',
+        // Errors
+        compNotFound: 'רכיב לא נמצא',               // 404
+        serverError: 'שגיאה בשרת',                  // 500
+        unexpectedError: 'שגיאה לא צפויה',          // exception
+        compConflict: 'הרכיב כבר קיים בשרת',        // 409 
+        invalidParameters: 'הנתונים לא תקינים',     // 400
+        employeeNotFound: 'העובד לא נמצא במערכת',   // 404
+        workspaceNotFound: 'מספר עמדה לא קיים',     // 404
+        reportNotFound: 'דוח לא קיים במערכת',       // 404
+        connectionFailed: 'החיבור לשרת לא הצליח',   // 500
+        reportOrEmployeeNotFound: 'דוח או עובד לא נמצאו במערכת',    // 404
+        reportOrSerialNumNotFound: 'דוח או המספר סיריאלי לא נמצאו במערכת',    // 404
+        employeeStartedReporting: 'העובד כבר התחיל דיווח',  // 409
+        invalidQuantity: 'כמות לא תקינה',
+        oversizeQuantity: 'הכמות שהוכנסה גבוהה ממה שהוזמן',
+
+
     },
     en: {
         // General
@@ -222,6 +239,21 @@
         operationNotFound: 'Operation not found',
         pakaNumber: 'Operation Work Number',
         EnterPaka: 'Enter Operation Work Number...',
+        // Errors
+        compNotFound: 'Component not found',               // 404
+        serverError: 'Server error',                       // 500
+        unexpectedError: 'Unexpected error',               // exception || unexpected error
+        compConflict: 'The component already exists on the server', // 409
+        invalidParameters: 'Invalid parameters',           // 400
+        employeeNotFound: 'Employee not found in the system', // 404
+        workspaceNotFound:  'Workspace number does not exist', // 404
+        reportNotFound: 'Report does not exist in the system',       // 404
+        connectionFailed: 'Failed to connect to the server',         // 500
+        reportOrEmployeeNotFound: 'Report or employee not found in the system',    // 404
+        reportOrSerialNumNotFound: 'Report or serial number not found in the system',    // 404
+        employeeStartedReporting: 'The employee has already started reporting',   // 409
+        invalidQuantity: 'Invalid quantity',
+        oversizeQuantity: 'The entered quantity exceeds the ordered amount',
     },
     ru: {
         return: 'возврат',
@@ -332,6 +364,23 @@
         operationNotFound: 'Операция не найдена',
         pakaNumber: 'Номер Пака',
         EnterPaka: 'Введите номер Пака...',
+        // Error
+        errorInServer: 'Ошибка на сервере',
+        // Errors
+        compNotFound: 'Компонент не найден',               // 404
+        serverError: 'Ошибка на сервере',                  // 500
+        unexpectedError: 'Неожиданная ошибка',             // exception
+        compConflict: 'Компонент уже существует на сервере', // 409
+        invalidParameters: 'Некорректные параметры',        // 400
+        employeeNotFound: 'Сотрудник не найден в системе',  // 404
+        workspaceNotFound: 'Номер рабочего места не существует', // 404
+        reportNotFound: 'Отчет не существует в системе',       // 404
+        connectionFailed: 'Не удалось подключиться к серверу',   // 500
+        reportOrEmployeeNotFound: 'Отчет или сотрудник не найдены в системе',    // 404
+        reportOrSerialNumNotFound: 'Отчет или серийный номер не найдены в системе',    // 404
+        employeeStartedReporting: 'Сотрудник уже начал отчет',   // 409
+        invalidQuantity: 'Недопустимое количество',
+        oversizeQuantity: 'Введенное количество превышает заказанное',
     },
 };
 

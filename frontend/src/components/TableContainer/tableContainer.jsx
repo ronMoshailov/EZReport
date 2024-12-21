@@ -4,16 +4,20 @@ import './tableContainer.scss';
 import WorkSessionModal from '../../components/modals/WorkSessionModal/WorkSessionModal'
 import { LanguageContext } from '../../utils/globalStates';
 
-const TableContainer = ({ reports, isQueue }) => {
+const TableContainer = ({ reports, isQueue, setRefreshReports }) => {
   
+  // useState
   const [isWorkSession, setIsWorkSession] = useState(false);                            // Handle case that if this change so fetch reports again
   const [operationType, setOperationType] = useState(false);
   const [selectedReportId, setSelectedReportId] = useState('');
-
+  
+  // Contant variables
   const workspace = localStorage.getItem('workspace');
 
+  // useContext
   const { direction, text } = useContext(LanguageContext);
 
+  // Hnadle any operation of the button
   const handleOperation = (reportId, operation, serialNum, orderedCount, producedCount, packedCount) => (event) => {
     event.stopPropagation(); // Prevent row click
     setIsWorkSession(true);
@@ -104,6 +108,7 @@ const TableContainer = ({ reports, isQueue }) => {
           operationType={operationType}
           onClose={setIsWorkSession}
           inQueue={isQueue}
+          setRefreshReports={setRefreshReports}
     />}
   </>
   );

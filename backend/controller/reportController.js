@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 const { removeComponentAndUpdateStock, handleAddComponentsToReport, fetchReportsByWorkspace, fetchReportComponents, handleTransferWorksplace, getEmployeeReporting, handleCloseProductionReporting, handleClosePackingReporting, calcAverageTime } = require('../libs/reportLib');
 const { fetchStorageComments, initializeReportingStorage } = require('../libs/reportingStorageLib');
 const { initializeReportingPacking } = require('../libs/reportingPacking');
-const { findEmployeeByNumber } = require('../libs/employeeLib');
+const { findEmployeeByNumber, findEmployeeById } = require('../libs/employeeLib');
 const { initializeReportingProduction, fetchProductionComments } = require('../libs/reportingProductionLib');
 
 // Get all the report by the workspace
@@ -44,7 +44,7 @@ const getAllReportsController = async (req, res) => {
     return res.status(200).json({message: 'Reports was found', reports: allReports});
 
   } catch (error) {
-    console.Error("Error in getAllReportsController:", error.message);
+    console.error("Error in getAllReportsController:", error.message);
     return res.status(500).json({message: error.message});
   }
 };
@@ -126,22 +126,44 @@ const addComponentsToReport = async (req, res) => {
         console.error("Error in addComponentsToReport: comment is undefined");
       return res.statue(400).json({message: "Invalid parameters"});
     }
-    
+
+    // Check if report exist
+    const report = await Report.findById(report_id).select('_id current_workspace reportingStorage_list components');
+    if(!report){
+      console.error('Error in addComponentsToReport: Report not found');
+      return res.status(404).json({message: 'Report not found'});
+    }
+
+    // Check if employee exist
+    const employee = await findEmployeeById(employee_id);
+    if(!employee){
+      console.error('Error in addComponentsToReport: Employee not found');
+      return res.status(404).json({message: 'Employee not found'});
+    }
+
+    // Get the employee reporting
+    const employeeReporting = await getEmployeeReporting(report.current_workspace, report.reportingStorage_list, employee_id);
+    if(!employeeReporting){
+      console.error("Error in addComponentsToReport: User not started a session");
+      return {success: false, message: 'employee reporting not found'};
+    }
+
     // Add components to report
-    const response = await handleAddComponentsToReport({ employee_id, report_id, components_list, comment });
+    const reporting = employeeReporting.reporting;
+    const response = await handleAddComponentsToReport({ report, reporting, components_list, comment });
     
     // Check if succeeded
     if(response.success)
       return res.status(200).json({ message: response.message });
     
   } catch (error) {
+    console.error("Error in addComponentsToReport:", error.meesage);
     return res.status(500).json({ message: error.message });
   }
 };
 
 // Getting information from DB - All stations
 const getReportComments = async (req, res) => {
-
   try {
 
     // Get data from the request
@@ -329,28 +351,36 @@ try {
   // Check data
   if(employeeNum === undefined){
     console.error("Error in CloseProductionReportingController: Employee number is undefined");
-    return res.status(404).json({message: "Employee number is undefined"});
+    return res.status(400).json({message: "Employee number is undefined"});
   } 
   if(reportId === undefined){
     console.error("Error in CloseProductionReportingController: reportId is undefined");
-    return res.status(404).json({message: "reportId is undefined"});
+    return res.status(400).json({message: "reportId is undefined"});
   } 
   if(completed === undefined){
     console.error("Error in CloseProductionReportingController: completed is undefined");
-    return res.status(404).json({message: "completed is undefined"});
+    return res.status(400).json({message: "completed is undefined"});
   } 
   if(comment === undefined){
     console.error("Error in CloseProductionReportingController: comment is undefined");
-    return res.status(404).json({message: "comment is undefined"});
+    return res.status(400).json({message: "comment is undefined"});
   } 
   if(completed <= 0){
     console.error("Error in CloseProductionReportingController: completed are equal or less than zero");
-    return res.status(404).json({message: "completed is undefined"});
+    return res.status(400).json({message: "completed is undefined"});
   } 
 
   // Check if the employee and report exist 
   const employee = await findEmployeeByNumber(employeeNum);
+  if(!employee){
+    console.error('Error in closeProductionReportingController: Employee not found');
+    return res.status(404).json({message: 'Employee not found'});
+  }
   const report = await Report.findById(reportId);
+  if(!report){
+    console.error('Error in closeProductionReportingController: Report not found');
+    return res.status(404).json({message: 'Report not found'});
+  }
 
   // Close the production reporting
   const response = await handleCloseProductionReporting(employee._id, report, completed, comment);
@@ -358,6 +388,7 @@ try {
   // Check if succeeded
   if(response.success)
     return res.status(200).json({message: response.message});
+  return res.status(500).json({message: 'Unexpected failure'});
 
 } catch (error) {
   console.error('Error in closeProductionReportingController:',error.message);
@@ -394,9 +425,17 @@ const closePackingReportingController = async (req, res) => {
       res.status(400).json({message: "completed is undefined"});
     } 
     
-    // Check if the employee and report exist 
-    const employee = await findEmployeeByNumber(employeeNum);
-    const report = await Report.findById(reportId);
+  // Check if the employee and report exist 
+  const employee = await findEmployeeByNumber(employeeNum);
+  if(!employee){
+    console.error('Error in closeProductionReportingController: Employee not found');
+    return res.status(404).json({message: 'Employee not found'});
+  }
+  const report = await Report.findById(reportId);
+  if(!report){
+    console.error('Error in closeProductionReportingController: Report not found');
+    return res.status(404).json({message: 'Report not found'});
+  }
 
     // Close the packing reporting
     const response = await handleClosePackingReporting(employee._id, report, completed, comment);
@@ -404,6 +443,8 @@ const closePackingReportingController = async (req, res) => {
     // Check if succeeded
     if(response.success)
       return res.status(200).json({message: response.message});
+    return res.status(500).json({message: 'Unexpected failure'});
+
   } catch (error) {
     console.error('Error in closePackingReportingController:',error.message);
     return res.status(500).json({message: error.message});

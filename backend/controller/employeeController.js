@@ -39,13 +39,15 @@ const addEmployeeController = async (req, res) => {
     const { number_employee, fullName } = req.body;
 
     // Check if the data is valid
-    if(isNaN(Number(number_employee)) || !number_employee || fullName === undefined){
+    if(isNaN(Number(number_employee)) || !number_employee || fullName === undefined || number_employee <= 0 ){
       if(isNaN(Number(number_employee))) 
         console.error("Error in addEmployeeController: invalid employee number");
       if(!number_employee) 
         console.error("Error in addEmployeeController: number employee is undefined");
       if(!fullName) 
         console.error("Error in addEmployeeController: fullName is undefined");
+      if(number_employee <= 0) 
+        console.error("Error in addEmployeeController: number_employee equal or below zero");
       return res.status(400).json({message: "Invalid parameters"});
     }
 

@@ -4,33 +4,38 @@ import { useNavigate } from 'react-router-dom'
 
 import './WorkSessionModal.scss';
 
-import { startSession, isStartedSession } from '../../APIs/report'
-import { getEmployeeId } from '../../APIs/employee';
-import { sendReport } from '../../APIs/workspace';
+import { startSession } from '../../../utils/APIs/report'
+import { getEmployeeId } from '../../../utils/APIs/employee';
+import { sendReport } from '../../../utils/APIs/workspace';
 import { LanguageContext } from '../../../utils/globalStates';
 
-const { isEmpty } = require('../../../utils/functions');
-
+import { isEmpty, handleEscKey } from '../../../utils/functions';
 
 let workspace = '';
 let message = '';
 let isSucceeded = false;
 
-const WorkSessionModal = ({ reportId, operationType, onClose }) => {
+const WorkSessionModal = ({ reportId, operationType, onClose, setRefreshReports }) => {
   
+  // useStates
   const [employeeNumber, setEmployeeNumber] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
+  // useContext
   const { direction, text } = useContext(LanguageContext);
 
+  // useNavigate
   const navigate = useNavigate();
 
+  // useEffect
   useEffect(() => {
     workspace = localStorage.getItem('workspace');
     document.documentElement.dir = direction;
+    window.addEventListener('keydown', (event) => handleEscKey(event, () => onClose(false)));   // Add keydown event listener to listen for Escape key press
   }, []);
 
+  // Function for set error and loading
   const setErrorLoading = (message, loading) => {
     setError(message);
     setIsLoading(loading);
@@ -44,36 +49,38 @@ const WorkSessionModal = ({ reportId, operationType, onClose }) => {
       if (!isEmpty(employeeNumber, setError, setIsLoading)) 
         return;
 
-      const employeeData = await getEmployeeId(Number(employeeNumber));
+      const [isExist, employee] = await getEmployeeId(Number(employeeNumber));
 
-      if (!employeeData.exist){
-        setErrorLoading(text.employeeNotExist, false);
+      if (!isExist){
+        setErrorLoading(text[employee], false);
         return;
       }
+
       switch(operationType){
         case 'send':
           case 'receive':
             isSucceeded = await sendReport(reportId, employeeNumber);
             if(isSucceeded){
               onClose(false);
+              setRefreshReports((perv) => !perv);
             } else{
               setErrorLoading(text.notSuccess, false);
             }
             break;
 
         case 'start':
-          const answer = await startSession(reportId, employeeNumber);
-          if(answer){
-            setErrorLoading(answer, false);
+          [isSucceeded, message] = await startSession(reportId, employeeNumber);
+          if(isSucceeded){
+            onClose(false);
           }
           else
-            setErrorLoading(text.reortNotCreated, false)
+            setErrorLoading(text[message], false)
           break;
 
         case 'end':
           [isSucceeded, message] = await startSession(reportId, employeeNumber);
-          if(!isSucceeded){
-            setErrorLoading(message, false);
+          if(isSucceeded){
+            setErrorLoading(text[message], false);
             return;
           }
           localStorage.setItem('employee_number', employeeNumber);
@@ -112,7 +119,7 @@ const WorkSessionModal = ({ reportId, operationType, onClose }) => {
     <div className="WorkSessionModal-container" style={{direction}}>
       <div className="modal">
         <button className="close-btn" onClick={() => {onClose(false)}}>✕</button>
-        {/* {console.log(operationType)} */}
+
         <h2>{operationType === 'send' ? text.sendReport : ''}</h2>
         <h2>{operationType === 'receive' ? text.receiveReport : ''}</h2>
         <h2>{operationType === 'start' ? text.startSession : ''}</h2>

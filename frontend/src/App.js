@@ -6,7 +6,8 @@ import { LanguageContext } from './utils/globalStates'
 
 import LoginPage from './pages/LoginPage/loginPage';
 import Dashboard from './pages/Dashboard/dashboard';
-import NotFoundPage from './pages/errorPage/errorPage';
+import NotFoundPage from './pages/notFoundPage/notFoundPage';
+import ErrorPage from './pages/errorPage/errorPage';
 
 import ReportingProduction from './pages/reportingProduction/reportingProduction'
 import ReportingStorage from './pages/reportingStorage/reportingStorage'
@@ -41,13 +42,13 @@ function App() {
         <Route path="/dashboard" element={<Dashboard isQueue={false} />} />
         <Route path="/settings" element={<Settings/>} />
         <Route path="/queue" element={<Dashboard isQueue={true} />} />
-        <Route path="*" element={<NotFoundPage />} />
         <Route path="/ReportingStorage" element={<ReportingStorage />} />
         <Route path="/ReportingProduction" element={<ReportingProduction />} />
         <Route path="/ReportingPacking" element={<ReportingPacking />} />
         <Route path="/Manager" element={<Manager />} />
-        {/*
         <Route path="/error" element={<ErrorPage/>} />
+        <Route path="*" element={<NotFoundPage />} />
+        {/*
         */}
       </Routes>
     </Router>

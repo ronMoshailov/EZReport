@@ -1,14 +1,16 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import {fetchReportComponents, handleRemoveComponentFromReport, fetchAddComponents} from '../../components/APIs/report'
-import { fetchAllComponents } from '../../components/APIs/components'
-import { getEmployeeId } from '../../components/APIs/employee'
+import {fetchReportComponents, handleRemoveComponentFromReport, fetchAddComponents} from '../../utils/APIs/report'
+import { fetchAllComponents } from '../../utils/APIs/components'
+import { getEmployeeId } from '../../utils/APIs/employee'
 
 import './reportingStorage.scss'
 import ComponentsModal from '../../components/modals/ComponentsModal/ComponentsModal'; // Import the modal component
 
 import { LanguageContext } from '../../utils/globalStates';
+
+import { print } from '../../utils/functions'
 
 const ComponentPage = () => {
 
@@ -37,7 +39,6 @@ const ComponentPage = () => {
   const not_exist_msg = 'פריט לא קיים במערכת';
   const over_capacity_msg = 'הכמות הכוללת גדולה ממה שקיים במערכת';
   const empty_report_msg = 'דיווח ריק ולכן לא נשלח';
-  const employee_err_msg = 'עובד לא קיים או מספר עובד שגוי';
   const success_msg = `השליחה הצליחה`;
 
   const { direction, text } = useContext(LanguageContext);
@@ -91,8 +92,12 @@ const ComponentPage = () => {
   const showReportComponents = async () => {
     try {
 
-      const data = await fetchReportComponents(reportId);
+      const [isTrue, data] = await fetchReportComponents(reportId);
 
+      if(!isTrue){
+        setError(text[data]);
+        return;
+      }
       // Get the array of the components
       const componentsList = data.components_list;
 
@@ -107,32 +112,6 @@ const ComponentPage = () => {
   const handleCloseCheckEmployeeModal = () => setIsModalOpen(false);
 
   const handleCloseComponentsModal = () => setIsComponentsModalOpen(false);
-
-
-
-
-
-
-
-
-
-  /////////////////////////////////////
-    // const location = useLocation();
-
-
-
-
-
-
-
-
-
-
-
-  
-
-
-
 
   const handleAddComponent = async () => {
     try {
@@ -213,9 +192,10 @@ const ComponentPage = () => {
     try {
       
       // Check if the employee exists
-      const employee_id = await checkGetEmployeeId();
-      if (!employee_id) {
-        setError(employee_err_msg);
+      const [isExist, employeeData] = await getEmployeeId(inputValue);
+
+      if (!isExist) {
+        setError(text[employeeData]);
         setIsModalOpen(false);
         return;
       }
@@ -226,14 +206,13 @@ const ComponentPage = () => {
         stock: comp.stock,            // Quantity of the component
       }));
       
-      const result = await fetchAddComponents(employee_id, reportId, componentsToAdd, inputComment)
-      if(!result[0]){
-        alert('הדיווח נכשל');
-        await handleFetchAllComponents();
+      const [isTrue, data] = await fetchAddComponents(employeeData.id, reportId, componentsToAdd, inputComment)
+      if(!isTrue){
+        setError(text[data]);
         setLoading(false);
+        setIsModalOpen(false);
         return;
       }
-      console.log(result[1].message);
 
       // Clear & Reset states
       setInputId('');
@@ -255,23 +234,6 @@ const ComponentPage = () => {
     }
   };
 
-  /**
- * Check if the employee exist.
- * @returns If the employee exist return his `_id` || `null` if the employee doesn't exist.
- */
-  const checkGetEmployeeId = async () => {
-    try {
-
-      const employeeData = await getEmployeeId(inputValue);
-      return employeeData.id;
-  
-    } catch (err) {
-      // Log the error message if an exception occurs
-      console.log(err.message);
-      return null;  // Return null if an error occurred
-    }
-  };
-
   // Handle the send of the storage report
   const handleSendReport = () => {
     if (collectedComponents.length === 0) {
@@ -285,16 +247,25 @@ const ComponentPage = () => {
   const handleRemoveFromReport = async (component) => {
     try {
       // Call the function to remove the component from the report
-      console.log(component);
-      await handleRemoveComponentFromReport(reportId, component._id, component.stock);
-      
+      const [isTrue, data] = await handleRemoveComponentFromReport(reportId, component._id, component.stock);
+
+      if(!isTrue){
+        setError(text[data]);
+        return;
+      }
       console.log('Component removed successfully.');
 
       // Fetch the updated components and refresh the modal
-      const updatedData = await fetchReportComponents(reportId); // Fetch updated report components
+      const [isSucceeded, updatedData] = await fetchReportComponents(reportId); // Fetch updated report components
+
+      if(!isSucceeded){
+        print(updatedData);
+        setError(updatedData);
+        setIsComponentsModalOpen(false);
+        return;
+      }
 
       const updatedComponentsList = updatedData.components_list;
-
       // Update modal state with the updated components list
       setComponentsToShow(updatedComponentsList);
 

@@ -171,10 +171,10 @@ const updateStockController = async (req, res) => {
         console.error("Error in updateStockController: The stock undefined");
       return res.status(400).json({message: "Invalid parameters"});
     }
-
+    console.log(1)
     // Update the stock
     const updatedStock = await updateStock(serialNumber, stock);
-
+    
     // Check if the component was found
     if(!updatedStock){
       console.error("Component Not found");

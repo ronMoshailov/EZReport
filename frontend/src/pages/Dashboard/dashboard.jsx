@@ -7,8 +7,7 @@ import Slidebar from '../../components/Slidebar/slidebar';
 import './dashboard.scss';
 import '../../components/Slidebar/slidebar.scss';
 
-// import { handleEscKey } from '../../utils/functions';
-import { fetchAllReportsByWorkspace } from '../../components/APIs/report';
+import { fetchAllReportsByWorkspace } from '../../utils/APIs/report';
 
 import { LanguageContext } from '../../utils/globalStates';
 
@@ -16,14 +15,14 @@ const Dashboard = ({isQueue}) => {
 
   // States
   const [reports, setReports] = useState([]);                                             // Holds all the reports
-  const [report, setReport] = useState(null);                                             // Holds specific report
   const [loading, setLoading] = useState(true);                                           // Is loading state
   const [error, setError] = useState(null);                                               // Holds error message
   const [isReceived, setIsReceived] = useState(false);                                    // Tetermine if client receiving report or send report
   const [reportFilter, setReportFilter] = useState('');                                   // Filter text for reports
+  const [refreshReports, setRefreshReports] = useState(false);
 
   // Constant variables
-  const workspace = localStorage.getItem('workspace') || '';
+  const workspace = localStorage.getItem('workspace');
 
   const clearStorage = [
     'employee_number', 
@@ -34,43 +33,31 @@ const Dashboard = ({isQueue}) => {
     'report_orderedCount'
   ];
 
-    const { direction, text } = useContext(LanguageContext);
+  const { direction, text } = useContext(LanguageContext);
   
-
-
-
   const navigate = useNavigate();
-  // const [debouncedReportFilter] = useDebounce(reportFilter, 300);
-
-
-
-
-
 
   useEffect(() => {
     handleFetchReports();                                         // Fetch all reports
   }, [isQueue]);
 
-  // useEffect(() => {
-  //   window.addEventListener('keydown', addEscListener);           // Add keydown event listener to listen for Escape key press
+  useEffect(() => {
+    handleFetchReports();                                         // Fetch all reports
+  }, [refreshReports]);
+
+  useEffect(() => {
   //   clearStorage.forEach((str) => localStorage.removeItem(str));  // Clean the local storage
 
-  //   if(workspace == null)
-  //     navigate('/error');
-  // }, []);
-
-  // Trigger the refresh of the reports
-  // const triggerRefresh = () => setRefreshReports((prev) => !prev);        
+    if(workspace == null)
+      navigate('/error');
+  }, []);
 
   // // Fetch all reports
   const handleFetchReports = async () => {
     try {
       const [check, data] = await fetchAllReportsByWorkspace(workspace, isQueue);
-      if (check){
+      if (check)
         setReports(data);
-        // console.log(reports);
-        // triggerRefresh();
-      }
       else
         setError(data);
     } catch (err) {
@@ -79,9 +66,6 @@ const Dashboard = ({isQueue}) => {
       setLoading(false);
     }
   };
-
-  // Add Esc press key listener
-  // const addEscListener = (event) => handleEscKey(event, handleCloseModal);
 
   // Filtered reports
   const filteredReports = reports.filter((report) =>
@@ -96,9 +80,6 @@ const Dashboard = ({isQueue}) => {
     <div className="dashboard-layout"  style={{ direction }}>
       <div className="dashboard-content">
         <div id='headerDashboard'>
-          {console.log(workspace.toLowerCase())}
-          {console.log(text[workspace.toLowerCase()])}
-          {console.log(text)}
           <h1>{`${text.station} ${text[workspace.toLowerCase()]}`}</h1>                   {/* Label */}
           <input                                                    // Report filter
             type="text"                                             
@@ -115,6 +96,7 @@ const Dashboard = ({isQueue}) => {
           reports={filteredReports}
           // onClickRow={handleClickOnCard}
           isQueue={isQueue}
+          setRefreshReports={setRefreshReports}
         />
         </div>
       </div>

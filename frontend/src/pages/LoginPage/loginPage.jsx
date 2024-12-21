@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { isWorkspaceExist } from '../../components/APIs/workspace';
+import { isWorkspaceExist } from '../../utils/APIs/workspace';
 import { LanguageContext } from '../../utils/globalStates';
 
 import './loginPage.scss';
 
-import { resetLocalStorage } from '../../utils/functions';
+import { resetLocalStorage, print } from '../../utils/functions';
 
 const LoginPage = () => {
 
@@ -17,9 +17,9 @@ const LoginPage = () => {
   const [isValid, setIsValid] = useState(null);           // Tracks if Workspace is valid
   const [barcodeBuffer, setBarcodeBuffer] = useState('');           // Tracks if Workspace is valid
 
+
   useEffect(() => {
     resetLocalStorage();
-
   }, []);
 
   useEffect(() =>{
@@ -35,8 +35,8 @@ const LoginPage = () => {
   const handleSubmit = async () => {                              
       setLoading(true);                                           // Show loading spinner 
       setErrorMessage('');                                        // Reset error message
-      const [check, data] = await isWorkspaceExist(barcodeBuffer);    // Check if the workspace exist in DB
-      check ? valid(data) : notValid(data);
+      const [isTrue, data] = await isWorkspaceExist(barcodeBuffer);    // Check if the workspace exist in DB
+      isTrue ? valid(data) : notValid(data);
       setLoading(false);                              // Hide loading spinner
   }
 
@@ -47,7 +47,7 @@ const LoginPage = () => {
   }
   function notValid(data){
     setIsValid(false);                          // Set as invalid
-    setErrorMessage(data);                      // Display error
+    setErrorMessage(text[data]);                // Display error
   }
 
   const handleKeyDown = (event) =>{

@@ -4,10 +4,13 @@ const ReportingStorage = require('../model/ReportingStorage'); // Replace with t
 
 // Return all the comments of the storage reporting
 const fetchStorageComments = async (reportingStorage_list) => {
-  const comments = await ReportingStorage.find(
-    { _id: { $in: reportingStorage_list } }, // Match `_id` with the provided list
-    { comment: 1, _id: 0 } // Project only the `comment` field
-  );
+  const comments = (
+    await ReportingStorage.find(
+      { _id: { $in: reportingStorage_list } }, // Match `_id` with the provided list
+      { comment: 1, _id: 0 } // Project only the `comment` field
+    )
+  ).filter((item) => item.comment != null); // Remove entries with null or undefined comments
+  
   if(!comments){
     console.error("Error in fetchStorageComments: Comments not found");
     throw new Error("Comments not found");

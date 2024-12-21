@@ -6,12 +6,17 @@ import { LanguageContext } from '../../../utils/globalStates';
 
 const ComponentsModal = ({ isOpen, onClose, components = [], onRemove }) => {
 
+  // use State
   const [filterText, setFilterText] = useState('');
 
+  // useContext
   const { text } = useContext(LanguageContext);
 
-  if (!isOpen) return null;
+  // Check if the modal already open
+  if (!isOpen) 
+    return null;
 
+  // Components after the filter
   const filteredComponents = components.filter((comp) =>
     comp.serialNumber.toString().includes(filterText) ||
     comp.name.toLowerCase().includes(filterText.toLowerCase())

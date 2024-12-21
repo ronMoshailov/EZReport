@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { displayReportComments, CloseProductionReporting } from '../../components/APIs/report';
+import { displayReportComments, CloseProductionReporting } from '../../utils/APIs/report';
 import CommentsModal from '../../components/modals/CommentsModal/CommentsModal'; 
 import './reportingProduction.scss'; 
 
@@ -40,14 +40,17 @@ const NewReportingPage = () => {
 
   // Functions
   const handleShowComments = async () => {
-    try {
-      setIsCommentsModalOpen(true);
-      setAllComments([]); // Clear previous comments
-      const fetchedComments = await displayReportComments(reportId);
+    setError('');
+    setIsCommentsModalOpen(true);
+    setAllComments([]); // Clear previous comments
+    const [isTrue, fetchedComments] = await displayReportComments(reportId);
+    if(isTrue){
       setAllComments(fetchedComments);
-    } catch (error) {
-      console.error('Error fetching comments:', error.message);
-      alert('שגיאה בהצגת ההערות');
+      return;
+    }
+    else{
+      setError(fetchedComments);
+      setIsCommentsModalOpen(false);
     }
   };
 
@@ -61,22 +64,22 @@ const NewReportingPage = () => {
 
     try {
       if (!newCompleted || isNaN(newCompleted) || newCompleted <= 0){
-        setError('הזן כמות תקינה');
+        setError(text.invalidQuantity);
         return;
       }
 
       setError(''); // Clear previous errors
       if ( Number(newCompleted) + producedCount > orderedCount) {
-        setError('הכמות שהוכנסה גבוהה ממה שהוזמן');
+        setError(text.oversizeQuantity);
         return;
       }
 
-      const answer = await CloseProductionReporting(employeeNum, reportId, Number(newCompleted), newComment);
+      const [isTrue, data] = await CloseProductionReporting(employeeNum, reportId, Number(newCompleted), newComment);
 
-      if (answer)
+      if (isTrue)
         navigate('/dashboard')
       
-      setError('Failed');
+      setError(text[data]);
     } catch (err) {
       console.error('Error submitting production report:', err.message);
     } finally {
