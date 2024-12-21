@@ -13,17 +13,11 @@ const fetchAllComponents = async () => {
   }
 };
 
-// I still don't know why I wrote this.
+// Get the component serial number and name (used by fetchComponentByID of reportLib.js)
 const fetchComponentByID = async (id) => {
 
   try {
     const componentData = await Component.findOne({ _id: id }).select('serialNumber name');
-
-    if (!componentData) {
-      console.error(`Error in fetchComponentByID: Component not found`);
-      return null;
-    }
-
     return componentData;
 
   } catch (error) {

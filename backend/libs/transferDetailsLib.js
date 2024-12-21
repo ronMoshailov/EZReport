@@ -1,7 +1,7 @@
 const TransferDetails = require('../model/TransferDetails');
 
 
-
+// Create new transfer document
 const createTransferDocument = async (transferData, session) => {
   try {
     const [newTransfer] = await TransferDetails.create([transferData], { session });
@@ -12,6 +12,7 @@ const createTransferDocument = async (transferData, session) => {
   }
 };
 
+// Get the transfer document (Called by reportLib)
 const getTransferDocument = async (documentId) => {
   const lastDocument = await TransferDetails.findById(documentId)
   return lastDocument;

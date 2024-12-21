@@ -16,7 +16,7 @@ const fetchAllReportsByWorkspace = async (workspace, isQueue) => {
     else if( response.status === 500 ) throw new Error('Internal Server Error: Something went wrong on the server');
     else if (!response.ok) throw new Error(`Unexpected Error: Status code ${response.status}`);
     
-    return [true, data];
+    return [true, data.reports];
 
   } catch (err) {
     return [false, err.message];
@@ -65,34 +65,34 @@ const startSession = async (reportId, employeeNum) => {
 };
 
 // Check if there is started session
-const isStartedSession = async (reportId, employeeNum) => {
-  try {
-    const response = await fetch('http://localhost:5000/api/isStartedSession?employeeNum=' + employeeNum + '&reportId=' + reportId);
-    const data = await response.json();
+// const isStartedSession = async (reportId, employeeNum) => {
+//   try {
+//     const response = await fetch('http://localhost:5000/api/isStartedSession?employeeNum=' + employeeNum + '&reportId=' + reportId);
+//     const data = await response.json();
 
-    if(response.ok){
-      return [true, data.reportingId];
-    }
+//     if(response.ok){
+//       return [true, data.reportingId];
+//     }
     
-    switch(response.status){
-      case 400:
-        console.error(data.message);
-        return [false, data.message === 'Employee not found' ? 'עובד לא קיים במערכת' : 'דוח לא קיים במערכת'];
-      case 404:
-        console.error(data.message);
-        return [false, data.message === 'Employee not started a session' ? 'לא דווח על תחילת עבודה' : 'שגיאה'];
-      case 500:
-        console.error(data.message);
-        return [false, data.message === 'Server error' ? 'שגיאה בשרת' : 'שגיאה'];
-      default:
-        return [false, 'שגיאה לא צפויה'];
-    }
+//     switch(response.status){
+//       case 400:
+//         console.error(data.message);
+//         return [false, data.message === 'Employee not found' ? 'עובד לא קיים במערכת' : 'דוח לא קיים במערכת'];
+//       case 404:
+//         console.error(data.message);
+//         return [false, data.message === 'Employee not started a session' ? 'לא דווח על תחילת עבודה' : 'שגיאה'];
+//       case 500:
+//         console.error(data.message);
+//         return [false, data.message === 'Server error' ? 'שגיאה בשרת' : 'שגיאה'];
+//       default:
+//         return [false, 'שגיאה לא צפויה'];
+//     }
 
-  } catch (error) {
-    console.error(error.message);
-    return [false, error.message];
-  }
-};
+//   } catch (error) {
+//     console.error(error.message);
+//     return [false, error.message];
+//   }
+// };
 
 /* Storage */
 
@@ -316,7 +316,7 @@ export {
   displayReportComments, 
   sendProductionReport, 
   startSession,
-  isStartedSession,
+  // isStartedSession,
   CloseProductionReporting,
   ClosePackingReporting,
   calcAverage

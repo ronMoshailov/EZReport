@@ -71,7 +71,7 @@ const WorkSessionModal = ({ reportId, operationType, onClose }) => {
           break;
 
         case 'end':
-          [isSucceeded, message] = await isStartedSession(reportId, employeeNumber);
+          [isSucceeded, message] = await startSession(reportId, employeeNumber);
           if(!isSucceeded){
             setErrorLoading(message, false);
             return;
