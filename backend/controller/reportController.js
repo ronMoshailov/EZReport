@@ -249,7 +249,7 @@ const startSession = async (req, res) => {
 
   try{
     // Get data from the request
-    const {reportId, employeeNum} = req.body;
+    const {reportId, employeeNum, operationType} = req.body;
 
     // Check data
     if(reportId === undefined || employeeNum === undefined){
@@ -257,7 +257,9 @@ const startSession = async (req, res) => {
         console.error("Error in startSession: reportId not found");
       if(employeeNum === undefined) 
         console.error("Error in startSession: employeeNum not found");
-      return res.status(400).json({ message: "Invalid parameters" });
+      if(operationType === undefined || operationType || (operationType !== 'start' && operationType !== 'end')) 
+        console.error("Error in startSession: Invalid operationType");
+      return res.status(400).json({ message: "Invalid operationType" });
     }
     
     // Find report
@@ -285,56 +287,91 @@ const startSession = async (req, res) => {
       case 'Storage':
         // Check if the employee already has not finished reporting
         isStarted = await getEmployeeReporting(workspace, report.reportingStorage_list, employee._id);      
-        if(isStarted){
+        if(!isStarted &&  operationType === 'start'){
+          // Initialize reporting
+          const newStorageReporting = await initializeReportingStorage(employee._id, session);
+
+          // Update the report
+          report.reportingStorage_list.push(newStorageReporting._id);
+          await report.save({session})
+          await session.commitTransaction();
+          session.endSession();
+          return res.status(201).json({message: "Initialized successfully"});
+        }
+        else if(isStarted &&  operationType === 'start'){
           console.error("Error in reportingProductionController: Employee already started a session");
           return res.status(409).json({message: "העובד כבר התחיל דיווח"});
         }
-
-        // Initialize reporting
-        const newStorageReporting = await initializeReportingStorage(employee._id, session);
-
-        // Update the report
-        report.reportingStorage_list.push(newStorageReporting._id);
-        await report.save({session})
-        await session.commitTransaction();
-        session.endSession();
-        return res.status(201).json({message: "Initialized successfully"});
+        else if(!isStarted &&  operationType === 'end'){
+          console.error("Error in reportingProductionController: Employee not started a session");
+          return res.status(409).json({message: "העובד לא התחיל דיווח"});
+        }
+        else if(isStarted &&  operationType === 'end'){
+          return res.status(201).json({message: "Employee has reporting to end"});
+        }
+        else{
+          return res.status(400).json({message: "Bad request"});
+        }
 
       case 'Production':
         // Check if the employee already has not finished reporting
         isStarted = await getEmployeeReporting(workspace, report.reportingProduction_list, employee._id);
-        if(isStarted){
+        if(!isStarted &&  operationType === 'start'){
+          // Initialize reporting
+          const newProductionReporting = await initializeReportingProduction(employee._id, session);
+
+          // Update the report
+          report.reportingProduction_list.push(newProductionReporting._id);
+          await report.save({session})
+          await session.commitTransaction();
+          session.endSession();
+          return res.status(201).json({message: "Initialized successfully"});
+        }
+        else if(isStarted &&  operationType === 'start'){
           console.error("Error in reportingProductionController: Employee already started a session");
-          return res.status(409).json({message: "העובד כבר התחיל דיווח"});    
+          return res.status(409).json({message: "העובד כבר התחיל דיווח"});
+        }
+        else if(!isStarted &&  operationType === 'end'){
+          console.error("Error in reportingProductionController: Employee not started a session");
+          return res.status(409).json({message: "העובד לא התחיל דיווח"});
+        }
+        else if(isStarted &&  operationType === 'end'){
+          return res.status(201).json({message: "Employee has reporting to end"});
+        }
+        else{
+          return res.status(400).json({message: "Bad request"});
         }
 
-        // Initialize reporting
-        const newProductionReporting = await initializeReportingProduction(employee._id, session);
-
-        // Update the report
-        report.reportingProduction_list.push(newProductionReporting._id);
-        await report.save({session})
-        await session.commitTransaction();
-        session.endSession();
-        return res.status(201).json({message: "Initialized successfully"});
+        
 
       case 'Packing':
         // Check if the employee already has not finished reporting
         isStarted = await getEmployeeReporting(workspace, report.reportingPacking_list, employee._id);
-        if(isStarted){
-          console.error("Error in reportingProductionController: Employee already started a session");
-          return res.status(409).json({message: "העובד כבר התחיל דיווח"});    
+        if(!isStarted &&  operationType === 'start'){
+          // Initialize reporting
+          const newPackingReporting = await initializeReportingPacking(employee._id, session);
+
+          // Update the report
+          report.reportingPacking_list.push(newPackingReporting._id);
+          await report.save({session})
+          await session.commitTransaction();
+          session.endSession();
+          return res.status(201).json({message: "Initialized successfully"});
         }
-
-        // Initialize reporting
-        const newPackingReporting = await initializeReportingPacking(employee._id, session);
-
-        // Update the report
-        report.reportingPacking_list.push(newPackingReporting._id);
-        await report.save({session})
-        await session.commitTransaction();
-        session.endSession();
-        return res.status(201).json({message: "Initialized successfully"});
+        else if(isStarted &&  operationType === 'start'){
+          console.error("Error in reportingProductionController: Employee already started a session");
+          return res.status(409).json({message: "העובד כבר התחיל דיווח"});
+        }
+        else if(!isStarted &&  operationType === 'end'){
+          console.error("Error in reportingProductionController: Employee not started a session");
+          return res.status(409).json({message: "העובד לא התחיל דיווח"});
+        }
+        else if(isStarted &&  operationType === 'end'){
+          return res.status(201).json({message: "Employee has reporting to end"});
+        }
+        else{
+          return res.status(400).json({message: "Bad request"});
+        }
     }
   } catch (error){
     console.error("Error in startSession:", error.meesage);

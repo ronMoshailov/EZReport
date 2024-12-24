@@ -69,7 +69,7 @@ const WorkSessionModal = ({ reportId, operationType, onClose, setRefreshReports 
             break;
 
         case 'start':
-          [isSucceeded, message] = await startSession(reportId, employeeNumber);
+          [isSucceeded, message] = await startSession(reportId, employeeNumber, operationType);
           if(isSucceeded){
             onClose(false);
           }
@@ -78,8 +78,8 @@ const WorkSessionModal = ({ reportId, operationType, onClose, setRefreshReports 
           break;
 
         case 'end':
-          [isSucceeded, message] = await startSession(reportId, employeeNumber);
-          if(isSucceeded){
+          [isSucceeded, message] = await startSession(reportId, employeeNumber, operationType);
+          if(!isSucceeded){
             setErrorLoading(text[message], false);
             return;
           }

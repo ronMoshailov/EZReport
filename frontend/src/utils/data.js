@@ -125,6 +125,7 @@
         employeeStartedReporting: 'העובד כבר התחיל דיווח',  // 409
         invalidQuantity: 'כמות לא תקינה',
         oversizeQuantity: 'הכמות שהוכנסה גבוהה ממה שהוזמן',
+        employeeNotStartedReporting: 'העובד לא התחיל דיווח',
 
 
     },

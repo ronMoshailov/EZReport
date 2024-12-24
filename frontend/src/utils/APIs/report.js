@@ -48,12 +48,12 @@ const fetchAllReports = async () => {
 };
 
 // Start session
-const startSession = async (reportId, employeeNum) => {
+const startSession = async (reportId, employeeNum, operationType) => {
   try {
     const response = await fetch('http://localhost:5000/api/startSession', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ reportId, employeeNum }),
+      body: JSON.stringify({ reportId, employeeNum, operationType }),
     });
     
     const data = await response.json();
@@ -66,8 +66,10 @@ const startSession = async (reportId, employeeNum) => {
         print(data.message);
         return [false, 'reportOrEmployeeNotFound'];
       }
-      if(response.status === 409)
+      if(response.status === 409 && operationType === 'start')
         return [false, 'employeeStartedReporting'];
+      if(response.status === 409 && operationType === 'end')
+        return [false, 'employeeNotStartedReporting'];
       if(response.status === 500)
           return [false, 'serverError'];
       return [false, 'unexpectedError']

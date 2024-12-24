@@ -296,12 +296,12 @@ const getEmployeeReporting = async(workspace, reportingList, employeeId) => {
   try {
     switch(workspace){
       case 'Storage':
-        for(const documentId of reportingList.slice().reverse()){
-          const storageReporting = await ReportingStorage.findById(documentId);
-          if(storageReporting.employee_id.toString() === employeeId.toString() && storageReporting.end_date === null)
-            return({message: "Reporting was found", reporting: storageReporting});
+        for(const documentId of reportingList.slice().reverse()){                                                                     // For each document_id
+          const storageReporting = await ReportingStorage.findById(documentId);                                                       // Find the reporting that holds the document_id
+          if(storageReporting.employee_id.toString() === employeeId.toString() && storageReporting.end_date === null)                 // Check if the reporting belong to the employee && the reporting didn't end
+            return({message: "Reporting was found", reporting: storageReporting});                                                      // return the reporting
         }   
-        return null;
+        return null;                                                                                                                  // If didn't found any reporting return null
   
         case 'Production':
           for(const documentId of reportingList.slice().reverse()){
