@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { isWorkspaceExist } from '../../utils/APIs/workspace';
 import { LanguageContext } from '../../utils/globalStates';
 
+import { toast } from 'react-toastify';
+
 import './loginPage.scss';
 
 import { resetLocalStorage, print } from '../../utils/functions';
@@ -14,7 +16,7 @@ const LoginPage = () => {
 
   const [errorMessage, setErrorMessage] = useState('');   // Holds any error messages
   const [loading, setLoading] = useState(false);          // Indicates loading state during server call
-  const [isValid, setIsValid] = useState(null);           // Tracks if Workspace is valid
+  // const [isValid, setIsValid] = useState(null);           // Tracks if Workspace is valid
   const [barcodeBuffer, setBarcodeBuffer] = useState('');           // Tracks if Workspace is valid
 
 
@@ -41,12 +43,13 @@ const LoginPage = () => {
   }
 
   function valid(data){
-    setIsValid(true);                           // Set as valid
+    // setIsValid(true);                           // Set as valid
     localStorage.setItem('workspace', data);    // Set workspace in localStorage
     navigate('/dashboard');                     // Redirect to dashboard
+    toast.success('Info Message!', {position: "top-center", className:"toast-message"});
   }
   function notValid(data){
-    setIsValid(false);                          // Set as invalid
+    // setIsValid(false);                          // Set as invalid
     setErrorMessage(text[data]);                // Display error
   }
 

@@ -2,7 +2,8 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import React, { useContext, useState } from 'react';
 import { textResources } from './utils/data'
 import { LanguageContext } from './utils/globalStates'
-// import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer, Zoom } from 'react-toastify'; // Import Toastify components
+import 'react-toastify/dist/ReactToastify.css'; // Import Toastify styles
 
 import LoginPage from './pages/LoginPage/loginPage';
 import Dashboard from './pages/Dashboard/dashboard';
@@ -15,10 +16,6 @@ import ReportingPacking from './pages/reportingPacking/reportingPacking'
 
 import Settings from './pages/settings/settings'
 import Manager from './pages/Manager/manager'
-
-// import ErrorPage from './components/errorPage';
-// import 'react-toastify/dist/ReactToastify.css';
-
 
 function App() {
 
@@ -52,7 +49,18 @@ function App() {
         */}
       </Routes>
     </Router>
-    {/* <ToastContainer /> */}
+
+      {/* ToastContainer to display toast messages */}
+      <ToastContainer 
+        position="top-center" // Default position
+        autoClose={3000}      // Default auto-close duration in milliseconds
+        hideProgressBar={true} // Hide progress bar
+        newestOnTop={true}    // Show the newest toast on top
+        closeOnClick={true}   // Close the toast when clicked
+        transition={Zoom}
+        closeButton={false}
+        icon={false}
+      />
     </LanguageContext.Provider>
     
   );

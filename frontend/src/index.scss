@@ -168,3 +168,12 @@ code {
   font-weight: bold;
 }
 
+// Toast
+.toast-message{
+  border-radius: 100px !important;
+  color: #000 !important;
+  background-color: rgb(197, 255, 205) !important;
+  border: 1px solid rgb(0, 0, 0) !important;
+  justify-content: center;
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1) !important; /* Subtle shadow for depth */
+}
