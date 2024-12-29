@@ -1,19 +1,32 @@
+// Import React libraries
 import React, { useEffect, useState, useCallback, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { displayReportComments, CloseProductionReporting } from '../../utils/APIs/report';
-import CommentsModal from '../../components/modals/CommentsModal/CommentsModal'; 
+
+// Import Toast
+import { toast } from 'react-toastify';
+
+// Import scss
 import './reportingProduction.scss'; 
 
-import { handleEscKey } from '../../utils/functions';
-
+// Import context
 import { LanguageContext } from '../../utils/globalStates';
 
+// Import API
+import { displayReportComments, CloseProductionReporting } from '../../utils/APIs/report';
+
+// Import components
+import CommentsModal from '../../components/modals/CommentsModal/CommentsModal'; 
+
+// Import functions
+import { handleEscKey } from '../../utils/functions';
+
+// NewReportingPage component
 const NewReportingPage = () => {
 
   // States
-  const [newCompleted, setNewCompleted] = useState('');                                                          // Holds the new completed quantity
+  const [newCompleted, setNewCompleted] = useState('');                                                         // Holds the new completed quantity
   const [newComment, setNewComment] = useState('');                                                             // Holds the new comment for this reporting
-  const [allComments, setAllComments] = useState([]);                                                                 // Holds all the comments for the previous workspace
+  const [allComments, setAllComments] = useState([]);                                                           // Holds all the comments for the previous workspace
   const [isCommentsModalOpen, setIsCommentsModalOpen] = useState(false);                                        // Show/Hide the comments from the previous workspace
   const [error, setError] = useState('');                                                                       // Holds the error message
   const [isSubmitting, setIsSubmitting] = useState(false);                                                      // Holds the state if the client in the middle of submitting
@@ -24,20 +37,34 @@ const NewReportingPage = () => {
   const reportId = localStorage.getItem('reportId');
   const orderedCount = Number(localStorage.getItem('total'));
   const producedCount = Number(localStorage.getItem('completed'));
-  
-  // Navigate
-  const navigate = useNavigate();                         // Router navigation setup
+  const title = localStorage.getItem('title');
+
+  // useNavigate
+  const navigate = useNavigate();
 
   const { direction, text } = useContext(LanguageContext);
   
-  // useEffect
-  useEffect(() => {
-    window.addEventListener('keydown', addEscListener);                   // Add keydown event listener to listen for Escape key press
-    if (employeeNum === null || reportSerialNum === null || reportId === null || orderedCount === null || producedCount === null){
-      navigate('/error');
-    }
-  }, []);
-
+    // useEffect for initialized component
+    useEffect(() => {
+      // Add ESC listener
+      const addEscListener = (event) => {
+        if (event.key === 'Escape') {
+          setIsCommentsModalOpen(false);
+        }
+      };
+      window.addEventListener('keydown', addEscListener);
+  
+      // Check data valid for this page
+      if (employeeNum === null || reportSerialNum === null || reportId === null || orderedCount === null || producedCount === null || title === null){
+        navigate('/error');
+      }
+  
+      // remove listener
+      return () => {
+        window.removeEventListener('keydown', addEscListener);
+      }
+    }, []);
+    
   // Functions
   const handleShowComments = async () => {
     setError('');
@@ -54,10 +81,13 @@ const NewReportingPage = () => {
     }
   };
 
+  // ESC action listener
   const addEscListener = (event) => handleEscKey(event, () => setIsCommentsModalOpen(false));
 
+  // show component modal with useCallback
   const handleCommentModalClose = useCallback(() => setIsCommentsModalOpen(false), []);
 
+  // Handle submit
   const handleSubmit = async () => {
     if (isSubmitting) return;
     setIsSubmitting(true);
@@ -76,8 +106,10 @@ const NewReportingPage = () => {
 
       const [isTrue, data] = await CloseProductionReporting(employeeNum, reportId, Number(newCompleted), newComment);
 
-      if (isTrue)
-        navigate('/dashboard')
+      if (isTrue){
+        toast.success(text.connectionToWorkspaceSucceeded, {className:"toast-success-message"});    // Show display message
+        navigate('/dashboard')        
+      }
       
       setError(text[data]);
     } catch (err) {
@@ -87,10 +119,10 @@ const NewReportingPage = () => {
     }
   };
 
+  // Render
   return (
     <div className="new-report-page" style={{direction}}>
-      <h1>דיווח חדש מספר 0007</h1>
-
+      <h1>{title}</h1>
       <div className="form-container">
         {/* Right Side */}
         <div className="form-column">
@@ -165,4 +197,5 @@ const NewReportingPage = () => {
   );
 };
 
+// Export component
 export default NewReportingPage;

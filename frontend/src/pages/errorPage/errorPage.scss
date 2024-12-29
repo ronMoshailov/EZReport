@@ -1,9 +1,11 @@
+@import '../../styles/utility.scss';
+
 .error-page-container {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh; /* Full screen height */
-    background-color: #f0f4f7;
+    @include backgroundStyleWithPicture;
 
     .error-box {
         text-align: center;

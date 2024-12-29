@@ -1,73 +1,94 @@
+// Import React libraries
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { isWorkspaceExist } from '../../utils/APIs/workspace';
-import { LanguageContext } from '../../utils/globalStates';
-
+// Import Toast
 import { toast } from 'react-toastify';
 
+// Import scss
 import './loginPage.scss';
 
-import { resetLocalStorage, print } from '../../utils/functions';
+// Import API
+import { isWorkspaceExist } from '../../utils/APIs/workspace';
 
+// import context
+import { LanguageContext } from '../../utils/globalStates';
+
+// Import functions
+import { resetLocalStorageLoginPage } from '../../utils/functions';
+
+// LoginPage component
 const LoginPage = () => {
 
+  // useState
+  const [errorMessage, setErrorMessage] = useState('');     // Holds any error messages
+  const [loading, setLoading] = useState(false);            // Indicates loading state during server call
+  const [barcodeBuffer, setBarcodeBuffer] = useState('');   // Tracks if Workspace is valid
+
+  // Constant variables
+  const workspaceLength = process.env.REACT_APP_BARCODE_BUFFER_LENGTH;
+
+  // use Context
   const { direction, text } = useContext(LanguageContext);
 
-  const [errorMessage, setErrorMessage] = useState('');   // Holds any error messages
-  const [loading, setLoading] = useState(false);          // Indicates loading state during server call
-  // const [isValid, setIsValid] = useState(null);           // Tracks if Workspace is valid
-  const [barcodeBuffer, setBarcodeBuffer] = useState('');           // Tracks if Workspace is valid
-
-
+  // useEffect for initialized component
   useEffect(() => {
-    resetLocalStorage();
+    resetLocalStorageLoginPage();
   }, []);
 
+  // useEffect for changing input
   useEffect(() =>{
-    if(barcodeBuffer.length === 3){
+    if(barcodeBuffer.length === workspaceLength){
       handleSubmit();
-      setBarcodeBuffer('');
       return;
     }
   }, [barcodeBuffer]);
-  
-  const navigate = useNavigate();                         // Router navigation setup
 
+  // useNavigate
+  const navigate = useNavigate();
+
+  // Functions
+  // Handle submit
   const handleSubmit = async () => {                              
-      setLoading(true);                                           // Show loading spinner 
-      setErrorMessage('');                                        // Reset error message
-      const [isTrue, data] = await isWorkspaceExist(barcodeBuffer);    // Check if the workspace exist in DB
-      isTrue ? valid(data) : notValid(data);
-      setLoading(false);                              // Hide loading spinner
+      setLoading(true);                                               // Show loading spinner 
+      setBarcodeBuffer('');                                           // Reset the input value
+      setErrorMessage('');                                            // Reset error message
+      const [isTrue, data] = await isWorkspaceExist(barcodeBuffer);   // Check if the workspace exist in DB
+      isTrue ? valid(data) : setErrorMessage(text[data]);;            // If exist set valid operations , else set error message
+      setLoading(false);                                              // Hide loading spinner
   }
 
+  // Handle valid workspace
   function valid(data){
-    // setIsValid(true);                           // Set as valid
-    localStorage.setItem('workspace', data);    // Set workspace in localStorage
-    navigate('/dashboard');                     // Redirect to dashboard
-    toast.success('Info Message!', {position: "top-center", className:"toast-message"});
-  }
-  function notValid(data){
-    // setIsValid(false);                          // Set as invalid
-    setErrorMessage(text[data]);                // Display error
+    localStorage.setItem('workspace', data);                                                     // Set workspace in localStorage
+    if(data === 'Manager')
+      navigate('/manager');  
+    else{
+      navigate('/dashboard');                                                                      // Redirect to dashboard
+      toast.success(text.connectionToWorkspaceSucceeded, {className:"toast-success-message"});     // Show display message  
+    }
   }
 
+  // Handle key down
   const handleKeyDown = (event) =>{
-    if(event.key.length > 1 && event.key != 'Backspace' && event.key != 'Enter') return;
-    
+    // If it's not a lette && not Enter && not Backspace => Every operation that is not a letter, Enter or Backspace
+    if(event.key.length > 1 && event.key !== 'Backspace' && event.key !== 'Enter')    
+      return;
+        
+    // If selected 'Enter'
     if(event.key === 'Enter'){
       handleSubmit();
-      setBarcodeBuffer('');
       return;
     }
+
+    // If selected 'Backspace'
     if(event.key === 'Backspace'){
       setBarcodeBuffer((prev) => prev.slice(0, -1));
       return;
     }
-    
   }
 
+  // Render
   return (
       <div className="modal-container-loginPage" style={{ direction }}>
           <div className="modal" onKeyDown={handleKeyDown}>
@@ -83,6 +104,7 @@ const LoginPage = () => {
                 value={barcodeBuffer}
                 onChange={(event) => setBarcodeBuffer(event.target.value)}
                 required 
+                disabled={loading}
               />
               <button                                             // Submit button
                 className="submit-btn" 
@@ -96,8 +118,10 @@ const LoginPage = () => {
               </p>
               }
           </div>
+          <button id='settingsButton' style={{[direction === 'ltr' ? 'left' : 'right']: '20px'}} onClick={() => navigate('/settings')}>{text.settings}</button>
       </div>
   );
 };
 
+// Export component
 export default LoginPage;

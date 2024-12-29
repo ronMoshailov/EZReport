@@ -1,18 +1,28 @@
+// Import React libraries
 import React, {useEffect, useContext} from 'react';
-import './errorPage.scss';
 import { useNavigate } from 'react-router-dom';
 
+// Import scss
+import './errorPage.scss';
+
+// import context
 import { LanguageContext } from '../../utils/globalStates';
 
+// ErrorPage conponent
 const ErrorPage = () => {
+
+  // useNaviate
   const navigate = useNavigate();
 
+  // use Context
   const { text } = useContext(LanguageContext);
   
+  // useEffect for initialized component
   useEffect(() => {
     localStorage.clear();
   }, []);
   
+  // Render
   return (
     <div className="error-page-container">
       <div className="error-box">
@@ -26,4 +36,5 @@ const ErrorPage = () => {
   );
 };
 
+// Export component
 export default ErrorPage;

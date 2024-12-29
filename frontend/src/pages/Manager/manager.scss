@@ -3,6 +3,7 @@ $secondary-color: #f7f7f7;
 $border-color: #ccc;
 $table-header-color: #f0f0f0;
 $hover-bg-color: #eef;
+$red-color: #f11010;
 
 .manager-layout {
   display: flex;
@@ -119,6 +120,14 @@ $hover-bg-color: #eef;
 
           &:hover {
             background-color: darken($primary-color, 10%);
+          }
+        }
+
+        #redButton{
+          background-color: $red-color;
+
+          &:hover {
+            background-color: darken($red-color, 10%);
           }
         }
       }

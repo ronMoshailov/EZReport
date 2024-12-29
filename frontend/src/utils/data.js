@@ -97,6 +97,7 @@
         title: 'כותרת',
         updateStock: 'עדכן כמות',
         updateStock: 'עדכן כמות',
+        moreOperation: 'פעולות נוספות',
         // Manager Modal
         employeeName: 'שם עובד',
         enterEmployeeName: 'הכנס שם עובד...',
@@ -120,14 +121,19 @@
         workspaceNotFound: 'מספר עמדה לא קיים',     // 404
         reportNotFound: 'דוח לא קיים במערכת',       // 404
         connectionFailed: 'החיבור לשרת לא הצליח',   // 500
-        reportOrEmployeeNotFound: 'דוח או עובד לא נמצאו במערכת',    // 404
-        reportOrSerialNumNotFound: 'דוח או המספר סיריאלי לא נמצאו במערכת',    // 404
-        employeeStartedReporting: 'העובד כבר התחיל דיווח',  // 409
+        reportOrEmployeeNotFound: 'דוח או עובד לא נמצאו במערכת',                // 404
+        reportOrSerialNumNotFound: 'דוח או המספר סיריאלי לא נמצאו במערכת',      // 404
+        employeeStartedReporting: 'העובד כבר התחיל דיווח',                      // 409
         invalidQuantity: 'כמות לא תקינה',
         oversizeQuantity: 'הכמות שהוכנסה גבוהה ממה שהוזמן',
         employeeNotStartedReporting: 'העובד לא התחיל דיווח',
-
-
+        missingData: 'נתונים חסרים',
+        // Toast messages
+        connectionToWorkspaceSucceeded: 'ההתחברות לעמדה הצליחה',
+        sentSuccessfully: 'השליחה הצליחה',
+        emptyReport: 'הדיווח ריק',
+        oversizeCapacity: 'הכמות הכוללת גדולה ממה שקיים במערכת',
+        notPossibleEmptyEmployeeNumber: 'מספר עובד לא יכול להיות ריק',
     },
     en: {
         // General
@@ -255,6 +261,7 @@
         employeeStartedReporting: 'The employee has already started reporting',   // 409
         invalidQuantity: 'Invalid quantity',
         oversizeQuantity: 'The entered quantity exceeds the ordered amount',
+        employeeNotStartedReporting: 'The employee has not started reporting',
     },
     ru: {
         return: 'возврат',
@@ -382,6 +389,7 @@
         employeeStartedReporting: 'Сотрудник уже начал отчет',   // 409
         invalidQuantity: 'Недопустимое количество',
         oversizeQuantity: 'Введенное количество превышает заказанное',
+        employeeNotStartedReporting: 'Сотрудник не начал отчет',
     },
 };
 
@@ -392,7 +400,7 @@ const localStorageStrings = [
     'serialNum',
     'total',
     'completed',
-
-
 ]
+// workspace, employee_number, serialNum, reportId, total, completed
+
   export { textResources, localStorageStrings }

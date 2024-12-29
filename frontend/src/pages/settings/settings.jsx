@@ -1,13 +1,23 @@
+// Import React libraries
 import React, { useContext } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
-import { LanguageContext } from '../../utils/globalStates';
+import { useNavigate } from 'react-router-dom';
 
+// Import scss
 import './settings.scss';
 
+// Import context
+import { LanguageContext } from '../../utils/globalStates';
+
+// Settings context
 const Settings = () => {
+
+  // useContext
   const { language, setLanguage, text } = useContext(LanguageContext);
+
+  // useNavigate
   const navigate = useNavigate(); // Initialize navigation
 
+  // Render
   return (
     <div className="settings-container">
       <h2 className="settings-title">{text.chooseLanguage}</h2>
@@ -15,7 +25,7 @@ const Settings = () => {
         <label>
           <input
             type="radio"
-            value="he"
+            value='he'
             checked={language === 'he'}
             onChange={(event) => setLanguage(event.target.value)}
           />
@@ -24,7 +34,7 @@ const Settings = () => {
         <label>
           <input
             type="radio"
-            value="en"
+            value='en'
             checked={language === 'en'}
             onChange={(event) => setLanguage(event.target.value)}
           />
@@ -33,7 +43,7 @@ const Settings = () => {
         <label>
           <input
             type="radio"
-            value="ru"
+            value='ru'
             checked={language === 'ru'}
             onChange={(event) => setLanguage(event.target.value)}
           />
@@ -45,4 +55,5 @@ const Settings = () => {
   );
 };
 
+// Export component
 export default Settings;

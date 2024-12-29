@@ -1,23 +1,34 @@
+// Import React libraries
 import React, { useEffect, useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { io } from 'socket.io-client';
 
+// Import components
 import ManagerModal from '../../components/modals/ManagerModal/ManagerModal';
 import { fetchAllReports } from '../../utils/APIs/report';
 
+// Import scss
 import './manager.scss';
 
+// Import context
 import { LanguageContext } from '../../utils/globalStates';
 
+// Manager component
 const Manager = () => {
   
-  const [updates, setUpdates] = useState([]); // State to store real-time updates
+  // useState
   const [error, setError] = useState(null);  // State to handle connection errors
   const [allReports, setAllReports] = useState([]); // State to store all reports
   const [isModal, setIsModal] = useState(false);
   const [operationType, setOperationType] = useState(false);
   
+  // use Context
   const { direction, text } = useContext(LanguageContext);
   
+  // useNavigate
+  const navigate = useNavigate();
+
+  // useEffect for initialized component (Socket)
   useEffect(() => {
     const socket = io('http://localhost:5000'); // Connect to Socket.IO server
 
@@ -48,6 +59,7 @@ const Manager = () => {
     };
   }, []);
 
+  // useEffect for initialized component (Fetch reports)
   useEffect(() => {
     const handleReports = async () => {
       try {
@@ -61,6 +73,7 @@ const Manager = () => {
     handleReports();
   }, []);
 
+  // Render
   const renderTable = (title, filterFn) => (
     <div className="rectangle">
       <h2 className="rectangle-title">{title}</h2>
@@ -89,7 +102,7 @@ const Manager = () => {
     </div>
   );
   
-
+  // Render
   return (
     <div className="manager-layout" style={{direction}}>
       {/* Right Side */}
@@ -121,6 +134,14 @@ const Manager = () => {
             <button onClick={() => {setIsModal(true); setOperationType('calcAve')}}>{text.calcAve}</button>
           </div>
         </div>
+
+        {/* Forth Section */}
+        <div className="section">
+          <label className="label">{text.moreOperation}</label>
+          <div className="button-group">
+            <button id='redButton' onClick={() => {navigate(-1)}}>{text.return}</button>
+          </div>
+        </div>
       </div>
 
       {/* Left Side */}
@@ -131,7 +152,7 @@ const Manager = () => {
         {renderTable(text.workOrderFinished, (report) => report.status === 'FINISHED')}
         {renderTable(text.workOrderPending, (report) => report.status === 'PENDING')}
       </div>
-
+      
       {isModal && 
         <ManagerModal
           operationType={operationType}
@@ -141,4 +162,5 @@ const Manager = () => {
   );
 };
 
+// Export component
 export default Manager;

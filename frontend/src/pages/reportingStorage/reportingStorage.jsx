@@ -1,28 +1,34 @@
+// Import React libraries
 import React, { useState, useEffect, useContext } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
-import {fetchReportComponents, handleRemoveComponentFromReport, fetchAddComponents} from '../../utils/APIs/report'
+// Import Toast
+import { toast } from 'react-toastify';
+
+// Import scss
+import './reportingStorage.scss'
+
+// Import context
+import { LanguageContext } from '../../utils/globalStates';
+
+// Import API
+import { fetchReportComponents, handleRemoveComponentFromReport, fetchAddComponents } from '../../utils/APIs/report'
 import { fetchAllComponents } from '../../utils/APIs/components'
 import { getEmployeeId } from '../../utils/APIs/employee'
 
-import './reportingStorage.scss'
-import ComponentsModal from '../../components/modals/ComponentsModal/ComponentsModal'; // Import the modal component
+// Import components
+import ComponentsModal from '../../components/modals/ComponentsModal/ComponentsModal';
 
-import { LanguageContext } from '../../utils/globalStates';
-
-import { print } from '../../utils/functions'
-
+// ComponentPage component
 const ComponentPage = () => {
 
-  /* States */
+  // States
   const [allComponents, setAllComponents] = useState([]);
   const [collectedComponents, setCollectedComponents] = useState([]);
-  const [filterQuery, setFilterQuery] = useState(""); // State for the filter input
+  const [filterQuery, setFilterQuery] = useState("");
   const [inputId, setInputId] = useState('');
   const [inputCount, setInputCount] = useState('');
   const [inputComment, setInputComment] = useState('');
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isComponentsModalOpen, setIsComponentsModalOpen] = useState(false);
   const [componentsToShow, setComponentsToShow] = useState([]);
@@ -33,20 +39,13 @@ const ComponentPage = () => {
   const inputValue = localStorage.getItem('employee_number');
   const reportId = localStorage.getItem('reportId');
 
-  /* Messages */
-  const missing_data_msg = 'נתונים חסרים';
-  const incorrect_stock_msg = 'הכמות שהוכנסה לא תקינה';
-  const not_exist_msg = 'פריט לא קיים במערכת';
-  const over_capacity_msg = 'הכמות הכוללת גדולה ממה שקיים במערכת';
-  const empty_report_msg = 'דיווח ריק ולכן לא נשלח';
-  const success_msg = `השליחה הצליחה`;
-
+  // useContext
   const { direction, text } = useContext(LanguageContext);
 
-  // Navigate
+  // useNavigate
   const navigate = useNavigate();
 
-  // useEffect
+  // useEffect for initialized component
   useEffect(() => {
     handleFetchAllComponents();
     window.addEventListener('keydown', handleEscKey);                   // Add keydown event listener to listen for Escape key press
@@ -54,6 +53,15 @@ const ComponentPage = () => {
       navigate('/error')
     return () => window.removeEventListener('keydown', handleEscKey);   // Clean up event listener on component unmount
   }, []);
+
+  // Style
+  const directionStyle = () => ({
+    textAlign: direction === 'rtl' ? 'right' : 'left',
+  })
+
+  const buttonDirectionStyle = () => ({
+    [direction === 'rtl' ? 'left' : 'right']: '5px',
+  })
 
   // filters
   const filteredComponents = allComponents.filter(comp =>
@@ -95,7 +103,7 @@ const ComponentPage = () => {
       const [isTrue, data] = await fetchReportComponents(reportId);
 
       if(!isTrue){
-        setError(text[data]);
+        toast(text[data], {className:"toast-error-message"});
         return;
       }
       // Get the array of the components
@@ -118,29 +126,27 @@ const ComponentPage = () => {
 
       // Check if there are missing data
       if (inputId === '' || inputCount === '') {
-        setError(missing_data_msg);
-        setSuccess('');
+        toast(LanguageContext.invalidParameters, {className:"toast-error-message"});
         return;
       }
 
       // Check if the inputCount are invalid value
       else if(inputCount <= 0){
-        setError(incorrect_stock_msg);
-        setSuccess('');
+        toast(text.invalidQuantity, {className:"toast-error-message"});
         return;
       }
       
       // Check if the component exists in the database
       const dbComponent = findComponent(allComponents);
       if (dbComponent === undefined) {
-        alert(not_exist_msg);
+        toast(text.compNotFound, {className:"toast-error-message"});
         return;
       }
       
       // Check if there's enough in stock
       const myComponent = findComponent(collectedComponents);
       if (dbComponent.stock < inputCount) {
-        alert(over_capacity_msg);
+        toast(text.oversizeCapacity, {className:"toast-error-message"});
         return;
       }
       
@@ -148,7 +154,7 @@ const ComponentPage = () => {
       if (myComponent) { 
         // Check if the amount of components can be added
         if (dbComponent.stock < myComponent.stock + Number(inputCount)) {
-          alert(over_capacity_msg);
+          toast(text.oversizeCapacity, {className:"toast-error-message"});
           return;
         } else {
           // Update count if component exists in collectedComponents
@@ -173,11 +179,9 @@ const ComponentPage = () => {
       // Clear input fields
       setInputId(''); 
       setInputCount('');
-      setError('');
-      setSuccess('');
 
     } catch (err) {
-      setError(err.message);
+      toast(err.message, {className:"toast-error-message"});
     }
   };
 
@@ -195,7 +199,7 @@ const ComponentPage = () => {
       const [isExist, employeeData] = await getEmployeeId(inputValue);
 
       if (!isExist) {
-        setError(text[employeeData]);
+        toast(text[employeeData], {className:"toast-error-message"});
         setIsModalOpen(false);
         return;
       }
@@ -208,7 +212,7 @@ const ComponentPage = () => {
       
       const [isTrue, data] = await fetchAddComponents(employeeData.id, reportId, componentsToAdd, inputComment)
       if(!isTrue){
-        setError(text[data]);
+        toast.error(text[data], {className:"toast-error-message"});
         setLoading(false);
         setIsModalOpen(false);
         return;
@@ -217,9 +221,8 @@ const ComponentPage = () => {
       // Clear & Reset states
       setInputId('');
       setInputCount('');
-      setSuccess(success_msg);
+      toast.success(text.sentSuccessfully, {className:"toast-success-message"});
       setCollectedComponents([]);
-      setError('');
       setIsModalOpen(false);
       setInputComment('');
   
@@ -229,7 +232,7 @@ const ComponentPage = () => {
 
       setLoading(false);
     } catch (err) {
-      setError(err.message);
+      toast.error(err.message, {className:"toast-error-message"});
       setLoading(false);
     }
   };
@@ -237,8 +240,7 @@ const ComponentPage = () => {
   // Handle the send of the storage report
   const handleSendReport = () => {
     if (collectedComponents.length === 0) {
-      setError(empty_report_msg);
-      setSuccess('');
+      toast(text.emptyReport, {className:"toast-error-message"});
       return;
     }
     setIsModalOpen(true); // Open the modal for employee input
@@ -250,17 +252,15 @@ const ComponentPage = () => {
       const [isTrue, data] = await handleRemoveComponentFromReport(reportId, component._id, component.stock);
 
       if(!isTrue){
-        setError(text[data]);
+        toast.error(text[data], {className:"toast-error-message"});
         return;
       }
-      console.log('Component removed successfully.');
 
       // Fetch the updated components and refresh the modal
       const [isSucceeded, updatedData] = await fetchReportComponents(reportId); // Fetch updated report components
 
       if(!isSucceeded){
-        print(updatedData);
-        setError(updatedData);
+        toast.error(updatedData, {className:"toast-error-message"});
         setIsComponentsModalOpen(false);
         return;
       }
@@ -290,7 +290,7 @@ const ComponentPage = () => {
     
       {/* Left Panel - Displays the list of selected components */}
       <div className="left-panel">
-        <h2 className='move_right border_bottom'>{text.componentList}</h2>
+        <h2 className='border_bottom'>{text.componentList}</h2>
         <ul>
 
         {/* Filter Input */}
@@ -305,8 +305,8 @@ const ComponentPage = () => {
 
           {/* Render each selected component in a list item */}
           {filteredCollectedComponents.map((comp, index) => (
-            <li key={`myComp-${comp.serialNumber}-${index}`} className="component-item">
-              <button className="remove-button" onClick={() => handleRemoveComponent(comp.serialNumber)}>✕</button>
+            <li key={`myComp-${comp.serialNumber}-${index}`} className="component-item" style={directionStyle()}>
+              <button className="remove-button" onClick={() => handleRemoveComponent(comp.serialNumber)} style={buttonDirectionStyle()}>✕</button>
               <b>{text.name}:</b> {comp.name} <br />
               <b>{text.componentList}:</b> {comp.serialNumber}<br />
               <b>{text.quantity}:</b> {comp.stock}
@@ -318,7 +318,7 @@ const ComponentPage = () => {
       {/* Right Panel - Adding components and viewing all available components */}
       <div className="right-panel">
         <div className='add_component_container'>
-          <h2 className='move_right border_bottom'>{text.componentList}</h2>
+          <h2 className='border_bottom'>{text.componentList}</h2>
 
           {/* Input for component number */}
           <div className="input-group">
@@ -338,7 +338,7 @@ const ComponentPage = () => {
               type="number"
               value={inputCount}
               onChange={(e) => setInputCount(Number(e.target.value))}
-              placeholder={text.addQuantity}
+              placeholder={text.enterQuantity}
             />
           </div>
 
@@ -361,14 +361,11 @@ const ComponentPage = () => {
             <button className='btn send-btn' onClick={handleSendReport}>{text.sendReporting}</button>
             <button className='addComponent-btn btn' onClick={handleAddComponent}>{text.addComponent}</button>
           </div>
-          {/* Display error and success messages if present */}
-          {error && <p className="errorMessage">{error}</p>}
-          {success && <p className="successMessage">{success}</p>}
         </div>
 
         {/* Section displaying all available components */}
         <div className="all_components">
-          <h2 className='move_right border_bottom'>{text.addComponentsInDB}</h2>
+          <h2 className='border_bottom'>{text.addComponentsInDB}</h2>
           {/* Search bar for filtering all components */}
           <input 
             type="text" // Changed to text for better flexibility
@@ -394,14 +391,12 @@ const ComponentPage = () => {
       {isModalOpen &&
         <div className="modal-container-send-reporting">
           <div className="modal-components">
-
-            <button className="close-btn" onClick={handleCloseCheckEmployeeModal}>✕</button>
+            <button className="close-btn" onClick={handleCloseCheckEmployeeModal} style={{float: direction === 'rtl' ? 'left' : 'right'}}>✕</button>
             <h2>{text.areYouSure}</h2>
             <div className='button-container'>
               <button className="cancel-btn btn" onClick={handleCloseCheckEmployeeModal}>{text.cancel}</button>
               <button className="submit-btn btn" onClick={handleSubmitStorageReport}>{text.send}</button>
             </div>
-
           </div>
         </div>
       }
@@ -417,4 +412,5 @@ const ComponentPage = () => {
   );
 };
 
+// Export component
 export default ComponentPage;

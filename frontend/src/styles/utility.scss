@@ -1,0 +1,40 @@
+@mixin backgroundStyleSolid{
+    background-color: rgb(195 232 255 / 88%);
+}
+
+@mixin backgroundStyleWithPicture{
+  background: 
+  linear-gradient(
+    to bottom right, 
+    rgba(255, 255, 255, 0), 
+    rgba(39, 172, 255, 0.5)
+  ),
+  url('../../styles/images/Title.png'); /* Add your image path here */
+  background-size: cover; /* Ensures the image covers the entire area */
+  background-position: center; /* Centers the image */
+  background-repeat: no-repeat; /* Prevents tiling */
+}
+
+
+@mixin slideBarStyle{
+    /* For Webkit Browsers (Chrome, Edge, Safari) */
+    &::-webkit-scrollbar {
+      width: 8px; /* Width of the scrollbar */
+    }
+  
+    &::-webkit-scrollbar-track {
+      background: #f1f1f1; /* Background of the scrollbar track */
+    }
+  
+    &::-webkit-scrollbar-thumb {
+      background: #888; /* Color of the scrollbar thumb */
+    }
+  
+    &::-webkit-scrollbar-thumb:hover {
+      background: #555; /* Color of the thumb when hovering */
+    }
+}
+
+@mixin modalBackground{
+  background-color: #eaedfc;
+}

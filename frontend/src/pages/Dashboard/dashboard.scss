@@ -1,30 +1,38 @@
+@import '../../styles/utility.scss';
+
 /* Layout container for dashboard and sidebar */
 .dashboard-layout {
   display: flex;  /* Flexbox to position sidebar and dashboard side by side */
   min-height: 100vh;  /* Full viewport height */
   text-align: right;
   flex-direction: row-reverse; /* Sidebar on the left for RTL */
-
+  @include backgroundStyleSolid;
+  
   .dashboard-content {
     flex: 1;  /* Allow dashboard content to take the remaining space */
-    padding: 20px;
+    // padding: 20px;
     height: 95vh;
 
     .table-container-wrapper {
       overflow-y: auto; /* Enable vertical scrolling */
-      border: 1px solid #ccc; /* Optional: Define the scrollable area visually */
       background-color: white; /* Match the table background */
-      height: 86vh;
+      // height: 86vh;
+      height: 91vh;
+      border: none;
+      @include slideBarStyle;
     }
 
     #headerDashboard {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 15px 20px;
+      // padding: 15px 20px;
+      padding: 1vh 20px;
       background-color: #f8f9fa;
       border-bottom: 2px solid #dee2e6;
       height: fit-content;
+      // border-top-left-radius: 30px;
+      // border-top-right-radius: 30px;
       
       h1 {
         margin: 0;
@@ -33,7 +41,6 @@
         font-weight: 600;
         border-bottom: 2px solid;
       }
-
 
     }
   }

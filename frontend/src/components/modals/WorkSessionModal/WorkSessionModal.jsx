@@ -1,26 +1,35 @@
-// Modal_Transfer_Workspace.jsx
-import React, { useState, useEffect, useContext } from 'react';
+// Import react libraries
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import { useNavigate } from 'react-router-dom'
 
+// Import scss
 import './WorkSessionModal.scss';
 
+// Import API
 import { startSession } from '../../../utils/APIs/report'
 import { getEmployeeId } from '../../../utils/APIs/employee';
 import { sendReport } from '../../../utils/APIs/workspace';
+
+// Import context
 import { LanguageContext } from '../../../utils/globalStates';
 
-import { isEmpty, handleEscKey } from '../../../utils/functions';
+// Import functions
+import { handleEscKey, handleEnterKey } from '../../../utils/functions';
 
-let workspace = '';
-let message = '';
-let isSucceeded = false;
+// 
 
+// WorkSessionModal component
 const WorkSessionModal = ({ reportId, operationType, onClose, setRefreshReports }) => {
   
   // useStates
   const [employeeNumber, setEmployeeNumber] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  
+  // Initialize variables
+  const workspace = localStorage.getItem('workspace');
+  let message = '';
+  let isSucceeded = false;
 
   // useContext
   const { direction, text } = useContext(LanguageContext);
@@ -28,13 +37,29 @@ const WorkSessionModal = ({ reportId, operationType, onClose, setRefreshReports 
   // useNavigate
   const navigate = useNavigate();
 
-  // useEffect
+  // useEffect for initialized component
   useEffect(() => {
-    workspace = localStorage.getItem('workspace');
-    document.documentElement.dir = direction;
-    window.addEventListener('keydown', (event) => handleEscKey(event, () => onClose(false)));   // Add keydown event listener to listen for Escape key press
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        handleEscKey(event, () => onClose(false));
+      } else if (event.key === 'Enter') {
+        handleEnterKey(event, () => handleSubmit());
+      }
+    };
+  
+    window.addEventListener('keydown', handleKeyDown);
+  
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
   }, []);
 
+  // useEffect for initialized component
+  useEffect(() => {
+    if(employeeNumber.length === Number(process.env.REACT_APP_EMPLOYEE_BUFFER_LENGTH)) 
+      handleSubmit()     
+  }, [employeeNumber]);
+  
   // Function for set error and loading
   const setErrorLoading = (message, loading) => {
     setError(message);
@@ -46,8 +71,11 @@ const WorkSessionModal = ({ reportId, operationType, onClose, setRefreshReports 
     setErrorLoading('', true);
 
     try {
-      if (!isEmpty(employeeNumber, setError, setIsLoading)) 
+      if(!employeeNumber.trim()){
+        setError(text.notPossibleEmptyEmployeeNumber);
+        setIsLoading(false);
         return;
+      }
 
       const [isExist, employee] = await getEmployeeId(Number(employeeNumber));
 
@@ -79,17 +107,16 @@ const WorkSessionModal = ({ reportId, operationType, onClose, setRefreshReports 
 
         case 'end':
           [isSucceeded, message] = await startSession(reportId, employeeNumber, operationType);
+          console.log(localStorage)
           if(!isSucceeded){
             setErrorLoading(text[message], false);
             return;
           }
           localStorage.setItem('employee_number', employeeNumber);
           localStorage.setItem('reportId', reportId);
-          console.log(workspace);
 
           if(workspace === 'Storage'){
             navigate('/ReportingStorage');
-            break;
           }
           else if(workspace === 'Production'){
             navigate('/ReportingProduction');
@@ -131,8 +158,9 @@ const WorkSessionModal = ({ reportId, operationType, onClose, setRefreshReports 
             id="sendModalInput"
             type="text"
             value={employeeNumber}
-            onChange={(e) => setEmployeeNumber(e.target.value)}
+            onChange={(e) => setEmployeeNumber(e.target.value)}            
             placeholder={text.enterEmployeeNum}
+            disabled={isLoading}
           />
         </div>
         {error && <p className="errorMessage">{error}</p>}
@@ -144,4 +172,5 @@ const WorkSessionModal = ({ reportId, operationType, onClose, setRefreshReports 
   );
 };
 
+// Export component
 export default WorkSessionModal;

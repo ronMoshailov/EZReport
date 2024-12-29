@@ -1,13 +1,24 @@
-import React, {useContext, useState} from 'react';
+// Import react libraries
+import React, {useContext, useEffect, useState} from 'react';
+
+// Import Toast
+import { toast } from 'react-toastify';
+
+// Import scss
 import './ManagerModal.scss';
 
+// Import context
 import { LanguageContext } from '../../../utils/globalStates';
 
+// Import API
 import { addEmployee, removeEmployee } from '../../../utils/APIs/employee';
 import { addComponent, removeComponent, addStock, updateStock } from '../../../utils/APIs/components';
 import { calcAverage } from '../../../utils/APIs/report';
 
-import { print } from '../../../utils/functions' 
+// Import functions
+import { handleEscKey, handleEnterKey } from '../../../utils/functions'
+
+// ManagerModal component
 const ManagerModal = ({ operationType, setIsModal }) => {
 
   // useState
@@ -16,11 +27,21 @@ const ManagerModal = ({ operationType, setIsModal }) => {
   const [stock, setStock] = useState('');
   const [error, setError] = useState('');
 
+  // useEffect for initialized component
+  useEffect(() => {
+    window.removeEventListener('keydown', (event) => handleEscKey(event, () => setIsModal(false)));
+
+    return () => {
+      window.addEventListener('keydown', (event) => handleEscKey(event, () => setIsModal(false)));
+    }
+  }, [])
+  
   // useContext
   const { direction, text } = useContext(LanguageContext);
 
   // function for submit any button
   const handleSubmit = async (func, functionType) =>{
+    
     setError('');
     const [isTrue, data] = await func();
 
@@ -57,12 +78,11 @@ const ManagerModal = ({ operationType, setIsModal }) => {
   
     case 'calcAverage':
       setIsModal(false);
-      print(data)           /// make it toast
+      toast.info(data.averageTime, {className:"toast-info-message"});
       break;
-
-
   }
 }
+  // Render section
   const renderModalContent = () => {
     switch (operationType) {
       case 'addEmployee':
@@ -176,6 +196,7 @@ const ManagerModal = ({ operationType, setIsModal }) => {
     }
   };
 
+  // Render
   return (
     <div className="modal-backdrop">
       <div className="modal-content">
@@ -188,6 +209,5 @@ const ManagerModal = ({ operationType, setIsModal }) => {
   );
 };
 
-
-
+// Export component
 export default ManagerModal;

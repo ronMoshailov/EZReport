@@ -1,9 +1,13 @@
+// Import react libraries
 import React, { useContext } from 'react';
 
+// Import scss
 import './CommentsModal.scss';
 
+// Import context
 import { LanguageContext } from '../../../utils/globalStates';
 
+// CommentsModal conponent
 const CommentsModal = ({ isOpen, onClose, comments }) => {
   
   // use Context
@@ -13,6 +17,7 @@ const CommentsModal = ({ isOpen, onClose, comments }) => {
   if (!isOpen)
      return null;
   
+  // Render
   return (
     <div className="modal-container-comments">
       <div className="modal-comments">
@@ -34,4 +39,5 @@ const CommentsModal = ({ isOpen, onClose, comments }) => {
   );
 };
 
+// Export component
 export default CommentsModal;

@@ -1,3 +1,5 @@
+@import '../../../styles/utility.scss';
+
 .modal-container-comments {
   position: fixed;
   top: 0;
@@ -12,7 +14,7 @@
 }
 
 .modal-comments {
-  background: #ffffff;
+  @include modalBackground;
   padding: 20px;
   border-radius: 8px;
   width: 400px;

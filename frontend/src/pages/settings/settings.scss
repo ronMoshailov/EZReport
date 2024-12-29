@@ -1,4 +1,9 @@
-// settings.scss
+@import '../../styles/utility.scss';
+
+body{
+  height: 100vh;
+  @include backgroundStyleSolid;
+}
 
 .settings-container {
     max-width: 600px;
@@ -8,7 +13,7 @@
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
-  
+    
     .settings-title {
       font-size: 1.8rem;
       font-weight: bold;

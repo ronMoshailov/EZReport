@@ -1,17 +1,31 @@
+// Import react libraries
 import React, { useState, useContext} from 'react';
-import PropTypes from 'prop-types';
+
+// Import scss
 import './ComponentsModal.scss';
 
+// Import context
 import { LanguageContext } from '../../../utils/globalStates';
 
+// ComponentsModal component
 const ComponentsModal = ({ isOpen, onClose, components = [], onRemove }) => {
 
   // use State
   const [filterText, setFilterText] = useState('');
 
   // useContext
-  const { text } = useContext(LanguageContext);
+  const { direction, text } = useContext(LanguageContext);
 
+  // Style
+  const directionStyle = () => ({
+    textAlign: direction === 'rtl' ? 'right' : 'left',
+  })
+
+  const buttonDirectionStyle = () => ({
+    textAlign: direction === 'rtl' ? 'left' : 'right',
+    [direction === 'rtl' ? 'left' : 'right']: '10px',
+  })
+  
   // Check if the modal already open
   if (!isOpen) 
     return null;
@@ -22,27 +36,30 @@ const ComponentsModal = ({ isOpen, onClose, components = [], onRemove }) => {
     comp.name.toLowerCase().includes(filterText.toLowerCase())
   );
 
+  // Render
   return (
     <div className="modal-container-components">
       <div className="modal-components">
         
-        <button className="close-btn" onClick={onClose}>✕</button>
-        <h2>{text.componentList}</h2>
+        <button className="close-btn" onClick={onClose} style={{float: direction === 'rtl' ? 'left' : 'right'}}>✕</button>
+        <h2 style={{textAlign: direction === 'ltr' ? 'left' : 'right'}}>{text.componentList}</h2>
         <input
           type="text"
           placeholder={`${text.filterByComponentNum}...`}
           onChange={(e) => setFilterText(e.target.value)}
           value={filterText}
           className="search-bar"
+          style={{direction}}
         />
 
         {/* Components List */}
         <ul>
           {filteredComponents.map((component, index) => (
-            <li key={`component-${component.serialNumber}-${index}`}>
+            <li key={`component-${component.serialNumber}-${index}`} style={directionStyle()}>
               <button
                 className="remove-btn"
                 onClick={() => onRemove(component)}
+                style={buttonDirectionStyle()}
               >
                 ✕
               </button>
@@ -57,19 +74,5 @@ const ComponentsModal = ({ isOpen, onClose, components = [], onRemove }) => {
   );
 };
 
-// PropTypes for validation
-ComponentsModal.propTypes = {
-  isOpen: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired,
-  components: PropTypes.arrayOf(
-    PropTypes.shape({
-      serialNumber: PropTypes.number.isRequired,
-      name: PropTypes.string.isRequired,
-      stock: PropTypes.number.isRequired,
-    })
-  ),
-  onFilterChange: PropTypes.func,
-  onRemove: PropTypes.func.isRequired,
-};
-
+// Export component
 export default ComponentsModal;

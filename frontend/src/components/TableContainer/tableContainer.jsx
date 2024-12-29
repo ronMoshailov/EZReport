@@ -1,9 +1,16 @@
+// Import React libraries
 import React, { useState, useContext } from 'react';
+
+// Import scss
 import './tableContainer.scss';
 
+// Import components
 import WorkSessionModal from '../../components/modals/WorkSessionModal/WorkSessionModal'
+
+// Import context
 import { LanguageContext } from '../../utils/globalStates';
 
+// TableContainer component
 const TableContainer = ({ reports, isQueue, setRefreshReports }) => {
   
   // useState
@@ -18,7 +25,7 @@ const TableContainer = ({ reports, isQueue, setRefreshReports }) => {
   const { direction, text } = useContext(LanguageContext);
 
   // Hnadle any operation of the button
-  const handleOperation = (reportId, operation, serialNum, orderedCount, producedCount, packedCount) => (event) => {
+  const handleOperation = (reportId, operation, serialNum, title, orderedCount, producedCount, packedCount) => (event) => {
     event.stopPropagation(); // Prevent row click
     setIsWorkSession(true);
     setSelectedReportId(reportId);
@@ -27,6 +34,7 @@ const TableContainer = ({ reports, isQueue, setRefreshReports }) => {
       return;
     if(operation === 'end'){
       localStorage.setItem('serialNum', serialNum);
+      localStorage.setItem('title', title);
       if(workspace === 'Production'){
         localStorage.setItem('completed', producedCount);
         localStorage.setItem('total', orderedCount);  
@@ -37,6 +45,7 @@ const TableContainer = ({ reports, isQueue, setRefreshReports }) => {
     }
   };
 
+  // Render
   return (
     <>
     <table className="report-table">
@@ -81,7 +90,7 @@ const TableContainer = ({ reports, isQueue, setRefreshReports }) => {
               <button
                 className='buttonIcon'  
                 id="EndWorkingIcon"
-                onClick={handleOperation(report._id, 'end', report.serialNumber, report.orderedCount, report.producedCount, report.packedCount)}
+                onClick={handleOperation(report._id, 'end', report.serialNumber, report.title, report.orderedCount, report.producedCount, report.packedCount)}
                 disabled={isQueue}
               >
                 &#8861;
@@ -114,4 +123,5 @@ const TableContainer = ({ reports, isQueue, setRefreshReports }) => {
   );
 };
 
+// Export component
 export default TableContainer;

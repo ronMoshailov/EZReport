@@ -1,3 +1,4 @@
+@import '../../styles/utility.scss';
 
 .component-page{
   display: flex;
@@ -45,7 +46,6 @@
         .remove-button {
           position: absolute;
           top: 5px;
-          left: 5px;
           background: none;
           border: solid 1px red;
           color: red;
@@ -137,7 +137,6 @@
           background-color: #fff;
           margin-bottom: 8px;
           border-radius: 4px;
-          text-align: right;
           }
       }
     }
@@ -168,7 +167,6 @@
     max-height: 80vh;
     overflow-y: auto;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
-    text-align: right;
     direction: inherit; /* Support for RTL languages */
       
     h2 {
@@ -194,7 +192,6 @@
 
         .remove-btn {
           position: absolute;
-          left: 10px;
           top: 10px;
           background: #ff4d4f;
           color: #fff;
