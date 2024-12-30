@@ -26,6 +26,7 @@ const ManagerModal = ({ operationType, setIsModal }) => {
   const [number, setNumber] = useState('');
   const [stock, setStock] = useState('');
   const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // useEffect for initialized component
   useEffect(() => {
@@ -42,6 +43,8 @@ const ManagerModal = ({ operationType, setIsModal }) => {
   // function for submit any button
   const handleSubmit = async (func, functionType) =>{
     
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     setError('');
     const [isTrue, data] = await func();
 
@@ -81,7 +84,9 @@ const ManagerModal = ({ operationType, setIsModal }) => {
       toast.info(data.averageTime, {className:"toast-info-message"});
       break;
   }
+  setIsSubmitting(false);
 }
+
   // Render section
   const renderModalContent = () => {
     switch (operationType) {

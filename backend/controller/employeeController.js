@@ -55,8 +55,8 @@ const addEmployeeController = async (req, res) => {
 
     // Check if the employee already exist
     if (conflict){
-      console.error('Error in addEmployeeController: Component already exist');
-      return res.status(409).json({message: 'Component already exist'});
+      console.error('Error in addEmployeeController: Employee already exist');
+      return res.status(409).json({message: 'Employee already exist'});
     }
 
     // Respond with HTTP 201 (Created) to indicate the resource was successfully created
