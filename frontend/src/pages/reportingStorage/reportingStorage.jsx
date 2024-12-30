@@ -9,7 +9,7 @@ import { toast } from 'react-toastify';
 import './reportingStorage.scss'
 
 // Import context
-import { LanguageContext } from '../../utils/globalStates';
+import { LanguageContext } from '../../utils/languageProvider';
 
 // Import API
 import { fetchReportComponents, handleRemoveComponentFromReport, fetchAddComponents } from '../../utils/APIs/report'
@@ -221,7 +221,7 @@ const ComponentPage = () => {
       // Clear & Reset states
       setInputId('');
       setInputCount('');
-      toast.success(text.sentSuccessfully, {className:"toast-success-message"});
+      toast.success(text.sendReportingSuccessfully, {className:"toast-success-message"});    // Show display message
       setCollectedComponents([]);
       setIsModalOpen(false);
       setInputComment('');

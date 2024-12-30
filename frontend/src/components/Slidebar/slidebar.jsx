@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import './slidebar.scss';
 
 // Import context
-import { LanguageContext } from '../../utils/globalStates';
+import { LanguageContext } from '../../utils/languageProvider';
 
 // Slidebar component
 const Slidebar = () => {

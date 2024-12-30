@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import './settings.scss';
 
 // Import context
-import { LanguageContext } from '../../utils/globalStates';
+import { LanguageContext } from '../../utils/languageProvider';
 
 // Settings context
 const Settings = () => {

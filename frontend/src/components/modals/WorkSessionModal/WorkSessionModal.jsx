@@ -2,6 +2,9 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import { useNavigate } from 'react-router-dom'
 
+// Import Toast
+import { toast } from 'react-toastify';
+
 // Import scss
 import './WorkSessionModal.scss';
 
@@ -11,7 +14,7 @@ import { getEmployeeId } from '../../../utils/APIs/employee';
 import { sendReport } from '../../../utils/APIs/workspace';
 
 // Import context
-import { LanguageContext } from '../../../utils/globalStates';
+import { LanguageContext } from '../../../utils/languageProvider';
 
 // Import functions
 import { handleEscKey, handleEnterKey } from '../../../utils/functions';
@@ -20,7 +23,6 @@ import { handleEscKey, handleEnterKey } from '../../../utils/functions';
 
 // WorkSessionModal component
 const WorkSessionModal = ({ reportId, operationType, onClose, setRefreshReports }) => {
-  
   // useStates
   const [employeeNumber, setEmployeeNumber] = useState('');
   const [error, setError] = useState('');
@@ -42,8 +44,6 @@ const WorkSessionModal = ({ reportId, operationType, onClose, setRefreshReports 
     const handleKeyDown = (event) => {
       if (event.key === 'Escape') {
         handleEscKey(event, () => onClose(false));
-      } else if (event.key === 'Enter') {
-        handleEnterKey(event, () => handleSubmit());
       }
     };
   
@@ -100,6 +100,8 @@ const WorkSessionModal = ({ reportId, operationType, onClose, setRefreshReports 
           [isSucceeded, message] = await startSession(reportId, employeeNumber, operationType);
           if(isSucceeded){
             onClose(false);
+            toast.success(text.startSessionSuccessfully, {className:"toast-success-message"});            // Show display message  
+            setRefreshReports((perv) => !perv);
           }
           else
             setErrorLoading(text[message], false)

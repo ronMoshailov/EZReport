@@ -13,7 +13,10 @@ const fetchReportsByWorkspace = async (workspace, isQueue) => {
   
   try {
     // Fetch reports from the database
-    const reports = await Report.find({current_workspace: workspace, inQueue: isQueue});
+    const reports = await Report.find({ 
+      current_workspace: workspace, 
+      status: isQueue ? 'PENDING' : { $in: ['OPEN', 'IN_WORK'] } 
+    });
     return reports;
     
   } catch (error) {
@@ -116,9 +119,6 @@ const handleAddComponentsToReport = async ({ report, reporting, components_list,
       existingComponent ? existingComponent.stock += newComponent.stock : report.components.push(newComponent);
     });
     
-    // Save the report
-    await report.save({ session });
-
     // Decrease stock
     for (const comp of components_list) {
       const component = await Component.findById(comp.component).session(session);
@@ -140,7 +140,12 @@ const handleAddComponentsToReport = async ({ report, reporting, components_list,
       await component.save({ session });
     }
 
-    // Add newReportingStorage to the report
+    // Change the status if needed
+    const isWorking = await isReportBeingWorkedOn(report.current_workspace, session);
+    if(!isWorking)
+      report.status = 'OPEN';
+    
+    // Save the report
     await report.save({ session });
 
     // Commit the transaction
@@ -165,7 +170,13 @@ const handleTransferWorksplace = async (employeeId, report, session) => {
     date.setHours(date.getHours() + 2);
 
     // If the report is not in queue so add the data about sending 
-    if (!report.inQueue){
+    if (report.status !== 'FINISHED' && report.status !== 'PENDING'){
+      if (report.current_workspace === 'Packing'){
+        report.status = 'FINISHED';
+        report.current_workspace = 'Finished';
+        await report.save({session});
+        return;
+      }
       const transferData = {
         send_worker_id: employeeId,
         send_workspace: report.current_workspace,
@@ -181,7 +192,7 @@ const handleTransferWorksplace = async (employeeId, report, session) => {
       await updateReportWorkspace(report, newTransfer._id, session);
     }
     // Else, the client try to receive
-    else{
+    else if (report.status === 'PENDING'){
       // Get the last document of transfer id (can be just 1 for each transfer, will be 3 after a full process from storage to packing)
       const lastTransferDocument_id = report.transferDetails[report.transferDetails.length - 1];
 
@@ -192,11 +203,17 @@ const handleTransferWorksplace = async (employeeId, report, session) => {
       await recieveUpdate(transferDocument, report.current_workspace, employeeId, session);
 
       // toggle the inQueue
-      report.inQueue = !report.inQueue;
-      
+      // report.inQueue = !report.inQueue;
+
+      // Update status
+      report.status = 'OPEN';
+
       // Save the report
       await report.save({ session })
 
+    }
+    else{
+      throw new Error('Invalid status');
     }
   } catch(error) {
     console.error("Error in handleTransferWorksplace:", error.message);
@@ -208,7 +225,7 @@ const handleTransferWorksplace = async (employeeId, report, session) => {
 const handleCloseProductionReporting = async (employee_id, report, completed, comment) => {
   const session = await mongoose.startSession();
   session.startTransaction();
-  
+
   try {
     // Initialize date
     const date = new Date();
@@ -225,14 +242,20 @@ const handleCloseProductionReporting = async (employee_id, report, completed, co
     // Update the reporting
     productionReporting.end_date = date;
     productionReporting.completedCount = completed;
-    productionReporting.comment = comment;
+    if (comment != '')
+      productionReporting.comment = comment;
 
     // Save the reporting
-    productionReporting.save({session});
+    await productionReporting.save({session});
+
+    // Change the status if needed
+    const isWorking = await isReportBeingWorkedOn(report.current_workspace, session);
+    if(!isWorking)
+      report.status = 'OPEN';
 
     // Update the report
     report.producedCount += completed;
-    report.save({session});
+    await report.save({session});
 
     // Commit the transaction
     await session.commitTransaction();
@@ -269,14 +292,20 @@ const handleClosePackingReporting = async (employee_id, report, completed, comme
     // Update the reporting
     packingReporting.end_date = date;
     packingReporting.completedCount = completed;
-    packingReporting.comment = comment;
+    if (comment != '')
+      packingReporting.comment = comment;
 
     // Save the reporting
-    packingReporting.save({session});
+    await packingReporting.save({session});
+
+    // Change the status if needed
+    const isWorking = await isReportBeingWorkedOn(report.current_workspace, session);
+    if(!isWorking)
+      report.status = 'OPEN';
 
     // Update the report
     report.packedCount += completed;
-    report.save({session});
+    await report.save({session});
 
     // Commit the transaction
     await session.commitTransaction();
@@ -358,7 +387,7 @@ const calcAverageTime = async (productionList) => {
 const updateReportWorkspace = async (report, newTransitionId, session) => {
 
   const nextWorkspaceMap = {
-    Packing: 'Out of our system!',
+    Packing: 'Finished',
     Production: 'Packing',
     Storage: 'Production',
   };
@@ -370,10 +399,12 @@ const updateReportWorkspace = async (report, newTransitionId, session) => {
       throw new Error(`No mapping found for the current workspace: ${report.current_workspace}`);
     }
   
+    // Update report
     report.current_workspace = nextWorkspace;
-    report.inQueue = !report.inQueue;
+    // report.inQueue = !report.inQueue;
     report.transferDetails.push(newTransitionId);
-  
+    report.status = 'PENDING';
+
     await report.save({ session });
     return report;
 
@@ -384,6 +415,35 @@ const updateReportWorkspace = async (report, newTransitionId, session) => {
     throw error
   }
 };
+
+// 
+const isReportBeingWorkedOn = async (workspace, session) => {
+
+  let isWorking;
+
+  switch(workspace){
+
+    case 'Storage':
+      isWorking = await ReportingStorage.findOne({ end_date: null }).session(session);
+      if(isWorking)
+        return true;
+      return false;
+
+    case 'Production':
+      isWorking = await ReportingProduction.findOne({ end_date: null }).session(session);
+      if(isWorking)
+        return true;
+      return false;
+
+    case 'Packing':
+      isWorking = await ReportingPacking.findOne({ end_date: null }).session(session);
+      if(isWorking)
+        return true;
+      return false;
+
+  }
+
+}
 
 module.exports = { 
   removeComponentAndUpdateStock,

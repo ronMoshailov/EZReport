@@ -2,11 +2,14 @@
 import React, { useEffect, useState, useCallback, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+// Import Toast
+import { toast } from 'react-toastify';
+
 // Import scss
 import './reportingPacking.scss'; 
 
 // Import context
-import { LanguageContext } from '../../utils/globalStates';
+import { LanguageContext } from '../../utils/languageProvider';
 
 // Import API
 import { displayReportComments, ClosePackingReporting } from '../../utils/APIs/report';
@@ -49,7 +52,7 @@ const NewReportPage = () => {
     window.addEventListener('keydown', addEscListener);
 
     // Check data valid for this page
-    if (employeeNum === null || reportSerialNum === null || reportId === null || producedCount === null || packedCount === null || title){
+    if (employeeNum === null || reportSerialNum === null || reportId === null || producedCount === null || packedCount === null || title === null){
       navigate('/error');
     }
 
@@ -94,6 +97,7 @@ const NewReportPage = () => {
       }
 
       const [isTrue, data] = await ClosePackingReporting(employeeNum, reportId, Number(newCompleted), newComment);
+      toast.success(text.sendReportingSuccessfully, {className:"toast-success-message"});    // Show display message
 
       if (isTrue)
         navigate('/dashboard')
@@ -109,7 +113,7 @@ const NewReportPage = () => {
 
 
   return (
-    <div className="new-report-page" style={{direction}}>
+    <div className="new-reporting-packing-page" style={{direction}}>
       <h1>{title}</h1>
       <div className="form-container">
         {/* Right Side */}

@@ -8,7 +8,7 @@ import { toast } from 'react-toastify';
 import './ManagerModal.scss';
 
 // Import context
-import { LanguageContext } from '../../../utils/globalStates';
+import { LanguageContext } from '../../../utils/languageProvider';
 
 // Import API
 import { addEmployee, removeEmployee } from '../../../utils/APIs/employee';

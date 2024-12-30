@@ -1,5 +1,5 @@
 import { createContext, useState, useMemo, useEffect } from 'react';
-import { textResources } from './data';
+import { textResources } from './textResources';
 
 const LanguageContext = createContext();
 

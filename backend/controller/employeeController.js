@@ -15,7 +15,6 @@ const getEmployeeIdController = async (req, res) => {
 
     // Get the employee
     const employee = await findEmployeeByNumber(employeeNumber);
-
     // Check if the employee was found
     if (!employee){
       console.error("Error in getEmployeeIdController: employee not found")

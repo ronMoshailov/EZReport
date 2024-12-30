@@ -12,7 +12,7 @@ import './loginPage.scss';
 import { isWorkspaceExist } from '../../utils/APIs/workspace';
 
 // import context
-import { LanguageContext } from '../../utils/globalStates';
+import { LanguageContext } from '../../utils/languageProvider';
 
 // Import functions
 import { resetLocalStorageLoginPage } from '../../utils/functions';
@@ -64,8 +64,8 @@ const LoginPage = () => {
     if(data === 'Manager')
       navigate('/manager');  
     else{
-      navigate('/dashboard');                                                                      // Redirect to dashboard
       toast.success(text.connectionToWorkspaceSucceeded, {className:"toast-success-message"});     // Show display message  
+      navigate('/dashboard');                                                                      // Redirect to dashboard
     }
   }
 

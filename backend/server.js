@@ -68,23 +68,29 @@ const setupChangeStreams = () => {
     const reportsChangeStream = db.collection('reports').watch();
 
     reportsChangeStream.on('change', (change) => {
-      console.log('Change detected in reports:', change);
+      // console.log('Change detected in reports:', change);
 
       // Check if it's an update operation and if 'status' was changed
       if (
         change.operationType === 'update' &&
         change.updateDescription &&
-        change.updateDescription.updatedFields &&
-        'status' in change.updateDescription.updatedFields
+        change.updateDescription.updatedFields
       ) {
-        const updatedStatus = change.updateDescription.updatedFields.status;
+        const updatedFields = change.updateDescription.updatedFields;
 
-        console.log(`Status field changed to: ${updatedStatus}`);
+        // Extract changes to 'status' and 'current_workspace' if present
+        const updatedStatus = updatedFields.status;
+        const updatedWorkspace = updatedFields.current_workspace;
+
+        // console.log('Detected changes:', {
+        //   updatedStatus,
+        //   updatedWorkspace,
+        // });
 
         // Broadcast the specific change to all connected clients
         io.emit('reportStatusUpdated', {
           documentKey: change.documentKey, // The document ID
-          updatedStatus,                  // The new 'status' value
+          updatedFields,                  // The new 'status' value
         });
       }
     });

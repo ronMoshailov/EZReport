@@ -5,19 +5,20 @@ import { ToastContainer, Zoom } from 'react-toastify';                      // I
 import 'react-toastify/dist/ReactToastify.css';                             // Import Toastify default styles to apply the toast notification styling
 
 // Import main pages
-import LoginPage from './pages/LoginPage/loginPage';
-import Dashboard from './pages/Dashboard/dashboard';
-import NotFoundPage from './pages/notFoundPage/notFoundPage';
-import ErrorPage from './pages/errorPage/errorPage';
-import Settings from './pages/settings/settings'
-import Manager from './pages/Manager/manager'
+import LoginPage from './pages/LoginPage/LoginPage';
+import Dashboard from './pages/Dashboard/Dashboard';
+import NotFoundPage from './pages/notFoundPage/NotFoundPage';
+import ErrorPage from './pages/errorPage/ErrorPage';
+import Settings from './pages/settings/Settings'
+import Manager from './pages/Manager/Manager'
 
 // Import reporting pages
-import ReportingProduction from './pages/reportingProduction/reportingProduction'
-import ReportingStorage from './pages/reportingStorage/reportingStorage'
-import ReportingPacking from './pages/reportingPacking/reportingPacking'
+import ReportingProduction from './pages/reportingProduction/ReportingProduction'
+import ReportingStorage from './pages/reportingStorage/ReportingStorage'
+import ReportingPacking from './pages/reportingPacking/ReportingPacking'
 
-import { LanguageProvider } from './utils/globalStates'
+// Language Provider
+import { LanguageProvider } from './utils/languageProvider'
 // App
 function App() {
 

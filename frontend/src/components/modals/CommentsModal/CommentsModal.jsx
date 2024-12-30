@@ -5,7 +5,7 @@ import React, { useContext } from 'react';
 import './CommentsModal.scss';
 
 // Import context
-import { LanguageContext } from '../../../utils/globalStates';
+import { LanguageContext } from '../../../utils/languageProvider';
 
 // CommentsModal conponent
 const CommentsModal = ({ isOpen, onClose, comments }) => {

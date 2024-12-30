@@ -130,10 +130,11 @@
         missingData: 'נתונים חסרים',
         // Toast messages
         connectionToWorkspaceSucceeded: 'ההתחברות לעמדה הצליחה',
-        sentSuccessfully: 'השליחה הצליחה',
         emptyReport: 'הדיווח ריק',
         oversizeCapacity: 'הכמות הכוללת גדולה ממה שקיים במערכת',
         notPossibleEmptyEmployeeNumber: 'מספר עובד לא יכול להיות ריק',
+        startSessionSuccessfully: 'התחלת הדיווח הצליחה',
+        sendReportingSuccessfully: 'הדיווח נשלח בהצלחה',
     },
     en: {
         // General
@@ -205,7 +206,7 @@
         componentList: 'List of components',
         // Production & Packing
         catalogNumber: 'Catalog number',
-        good: 'OK',
+        good: 'Produced',
         quantitySize: 'Quantity of units',
         showComments: 'Sow comments',
         enterCatalogNum: 'Enter catalog number...',
@@ -262,6 +263,15 @@
         invalidQuantity: 'Invalid quantity',
         oversizeQuantity: 'The entered quantity exceeds the ordered amount',
         employeeNotStartedReporting: 'The employee has not started reporting',
+        missingData: 'Missing data',
+        // Toast messages
+        connectionToWorkspaceSucceeded: 'Successfully connected to the workspace',
+        sentSuccessfully: 'Submission succeeded',
+        emptyReport: 'The report is empty',
+        oversizeCapacity: 'The total quantity exceeds what exists in the system',
+        notPossibleEmptyEmployeeNumber: 'Employee number cannot be empty',
+        startSessionSuccessfully: 'Session started successfully',
+        sendReportingSuccessfully: 'Reporting sent successfully',
     },
     ru: {
         return: 'возврат',
@@ -390,17 +400,16 @@
         invalidQuantity: 'Недопустимое количество',
         oversizeQuantity: 'Введенное количество превышает заказанное',
         employeeNotStartedReporting: 'Сотрудник не начал отчет',
+        missingData: 'Отсутствуют данные',
+        // Toast messages
+        connectionToWorkspaceSucceeded: 'Успешное подключение к рабочей станции',
+        sentSuccessfully: 'Отправка успешна',
+        emptyReport: 'Отчет пуст',
+        oversizeCapacity: 'Общий объем превышает имеющийся в системе',
+        notPossibleEmptyEmployeeNumber: 'Номер сотрудника не может быть пустым',
+        startSessionSuccessfully: 'Сессия успешно начата',
+        sendReportingSuccessfully: 'Отчет успешно отправлен',
     },
 };
 
-const localStorageStrings = [
-    'workspace',
-    'employee_number',
-    'reportId',
-    'serialNum',
-    'total',
-    'completed',
-]
-// workspace, employee_number, serialNum, reportId, total, completed
-
-  export { textResources, localStorageStrings }
+  export { textResources }

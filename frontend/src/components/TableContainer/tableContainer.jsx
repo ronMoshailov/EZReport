@@ -5,10 +5,10 @@ import React, { useState, useContext } from 'react';
 import './tableContainer.scss';
 
 // Import components
-import WorkSessionModal from '../../components/modals/WorkSessionModal/WorkSessionModal'
+import WorkSessionModal from '../modals/WorkSessionModal/WorkSessionModal'
 
 // Import context
-import { LanguageContext } from '../../utils/globalStates';
+import { LanguageContext } from '../../utils/languageProvider';
 
 // TableContainer component
 const TableContainer = ({ reports, isQueue, setRefreshReports }) => {

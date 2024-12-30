@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import './errorPage.scss';
 
 // import context
-import { LanguageContext } from '../../utils/globalStates';
+import { LanguageContext } from '../../utils/languageProvider';
 
 // ErrorPage conponent
 const ErrorPage = () => {

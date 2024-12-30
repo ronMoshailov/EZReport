@@ -5,7 +5,7 @@ import React, { useState, useContext} from 'react';
 import './ComponentsModal.scss';
 
 // Import context
-import { LanguageContext } from '../../../utils/globalStates';
+import { LanguageContext } from '../../../utils/languageProvider';
 
 // ComponentsModal component
 const ComponentsModal = ({ isOpen, onClose, components = [], onRemove }) => {

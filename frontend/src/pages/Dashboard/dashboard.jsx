@@ -9,11 +9,11 @@ import './dashboard.scss';
 import { fetchAllReportsByWorkspace } from '../../utils/APIs/report';
 
 // import context
-import { LanguageContext } from '../../utils/globalStates';
+import { LanguageContext } from '../../utils/languageProvider';
 
 // Import components
-import TableContainer from '../../components/TableContainer/tableContainer';
-import Slidebar from '../../components/Slidebar/slidebar';
+import TableContainer from '../../components/TableContainer/TableContainer';
+import Slidebar from '../../components/Slidebar/Slidebar';
 
 // Import functions
 import { resetLocalStorageDashboard } from '../../utils/functions';

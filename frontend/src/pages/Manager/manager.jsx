@@ -11,7 +11,7 @@ import { fetchAllReports } from '../../utils/APIs/report';
 import './manager.scss';
 
 // Import context
-import { LanguageContext } from '../../utils/globalStates';
+import { LanguageContext } from '../../utils/languageProvider';
 
 // Manager component
 const Manager = () => {
@@ -35,14 +35,14 @@ const Manager = () => {
     socket.on('reportStatusUpdated', (change) => {
       console.log('Report status update received:', change);
 
-      const updatedReportId = change.documentKey._id; // Extract the ID of the updated report
-      const newStatus = change.updatedStatus;         // Extract the new status
+      const updatedReportId = change.documentKey._id.toString(); // Ensure _id is a string
+      const updatedFields = change.updatedFields;               // Get all updated fields
   
       // Update the specific report in allReports
-      setAllReports((prevReports) => 
+      setAllReports((prevReports) =>
         prevReports.map((report) =>
           report._id === updatedReportId
-            ? { ...report, status: newStatus } // Update status of matching report
+            ? { ...report, ...updatedFields } // Merge updated fields into the report
             : report // Leave other reports unchanged
         )
       );

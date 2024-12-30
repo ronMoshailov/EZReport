@@ -12,9 +12,10 @@ const STATUS = {
  * STATIONS - Represents the different stations in the workflow.
  */
 const STATIONS = {
-  STORAGE: 'Storage',        // The station where items are stored or inventoried
-  PRODUCTION: 'Production',  // The station where items are manufactured or assembled
-  PACKING: 'Packing',        // The station where items are packed and prepared for shipment
+  STORAGE: 'Storage',         // The station where items are stored or inventoried
+  PRODUCTION: 'Production',   // The station where items are manufactured or assembled
+  PACKING: 'Packing',         // The station where items are packed and prepared for shipment
+  FINISHED: 'Finished'        // 
 };
 
 module.exports = { STATUS, STATIONS };

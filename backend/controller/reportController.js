@@ -128,7 +128,7 @@ const addComponentsToReport = async (req, res) => {
     }
 
     // Check if report exist
-    const report = await Report.findById(report_id).select('_id current_workspace reportingStorage_list components');
+    const report = await Report.findById(report_id).select('_id current_workspace reportingStorage_list components status');
     if(!report){
       console.error('Error in addComponentsToReport: Report not found');
       return res.status(404).json({message: 'Report not found'});
@@ -290,6 +290,11 @@ const startSession = async (req, res) => {
         if(!isStarted &&  operationType === 'start'){
           // Initialize reporting
           const newStorageReporting = await initializeReportingStorage(employee._id, session);
+          if(report.status === 'OPEN' || report.status === 'IN_WORK'){
+            report.status = 'IN_WORK';
+          } else{
+            throw new Error('Trying to start session with invalid status');
+          }
 
           // Update the report
           report.reportingStorage_list.push(newStorageReporting._id);
@@ -319,6 +324,11 @@ const startSession = async (req, res) => {
         if(!isStarted &&  operationType === 'start'){
           // Initialize reporting
           const newProductionReporting = await initializeReportingProduction(employee._id, session);
+          if(report.status === 'OPEN' || report.status === 'IN_WORK'){
+            report.status = 'IN_WORK';
+          } else{
+            throw new Error('Trying to start session with invalid status');
+          }
 
           // Update the report
           report.reportingProduction_list.push(newProductionReporting._id);
@@ -350,7 +360,12 @@ const startSession = async (req, res) => {
         if(!isStarted &&  operationType === 'start'){
           // Initialize reporting
           const newPackingReporting = await initializeReportingPacking(employee._id, session);
-
+          if(report.status === 'OPEN' || report.status === 'IN_WORK'){
+            report.status = 'IN_WORK';
+          } else{
+            throw new Error('Trying to start session with invalid status');
+          }
+          
           // Update the report
           report.reportingPacking_list.push(newPackingReporting._id);
           await report.save({session})

@@ -9,7 +9,7 @@ import { toast } from 'react-toastify';
 import './reportingProduction.scss'; 
 
 // Import context
-import { LanguageContext } from '../../utils/globalStates';
+import { LanguageContext } from '../../utils/languageProvider';
 
 // Import API
 import { displayReportComments, CloseProductionReporting } from '../../utils/APIs/report';
@@ -107,7 +107,7 @@ const NewReportingPage = () => {
       const [isTrue, data] = await CloseProductionReporting(employeeNum, reportId, Number(newCompleted), newComment);
 
       if (isTrue){
-        toast.success(text.connectionToWorkspaceSucceeded, {className:"toast-success-message"});    // Show display message
+        toast.success(text.sendReportingSuccessfully, {className:"toast-success-message"});    // Show display message
         navigate('/dashboard')        
       }
       
@@ -121,7 +121,7 @@ const NewReportingPage = () => {
 
   // Render
   return (
-    <div className="new-report-page" style={{direction}}>
+    <div className="new-reporting-production-page" style={{direction}}>
       <h1>{title}</h1>
       <div className="form-container">
         {/* Right Side */}

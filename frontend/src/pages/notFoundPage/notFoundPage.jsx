@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import './notFoundPage.scss'; 
 
 // Import context
-import { LanguageContext } from '../../utils/globalStates';
+import { LanguageContext } from '../../utils/languageProvider';
 
 // NotFoundPage component
 const NotFoundPage = () => {
