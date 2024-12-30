@@ -49,13 +49,15 @@ const LoginPage = () => {
 
   // Functions
   // Handle submit
-  const handleSubmit = async () => {                              
-      setLoading(true);                                               // Show loading spinner 
-      setBarcodeBuffer('');                                           // Reset the input value
-      setErrorMessage('');                                            // Reset error message
-      const [isTrue, data] = await isWorkspaceExist(barcodeBuffer);   // Check if the workspace exist in DB
-      isTrue ? valid(data) : setErrorMessage(text[data]);;            // If exist set valid operations , else set error message
-      setLoading(false);                                              // Hide loading spinner
+  const handleSubmit = async () => {
+    if(loading)
+      return;
+    setLoading(true);                                               // Show loading spinner 
+    setBarcodeBuffer('');                                           // Reset the input value
+    setErrorMessage('');                                            // Reset error message
+    const [isTrue, data] = await isWorkspaceExist(barcodeBuffer);   // Check if the workspace exist in DB
+    isTrue ? valid(data) : setErrorMessage(text[data]);;            // If exist set valid operations , else set error message
+    setLoading(false);                                              // Hide loading spinner
   }
 
   // Handle valid workspace

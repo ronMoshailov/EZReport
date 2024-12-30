@@ -68,6 +68,9 @@ const WorkSessionModal = ({ reportId, operationType, onClose, setRefreshReports 
 
   // Validate employee existence and perform send/receive action
   const handleSubmit = async () => {
+    if(isLoading)
+      return;
+    
     setErrorLoading('', true);
 
     try {
