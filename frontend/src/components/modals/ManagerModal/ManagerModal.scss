@@ -1,3 +1,5 @@
+@import '../../../styles/utility.scss';
+
 .modal-backdrop {
   position: fixed;
   top: 0;
@@ -12,7 +14,7 @@
 
   
   .modal-content {
-    background-color: #fff;
+    @include modalBackground;
     border-radius: 12px; // Smooth corners
     padding: 25px;
     width: 400px; // Restrict width to avoid overflow
