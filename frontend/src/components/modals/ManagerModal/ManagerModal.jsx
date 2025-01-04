@@ -30,10 +30,10 @@ const ManagerModal = ({ operationType, setIsModal }) => {
 
   // useEffect for initialized component
   useEffect(() => {
-    window.removeEventListener('keydown', (event) => handleEscKey(event, () => setIsModal(false)));
+    window.addEventListener('keydown', (event) => handleEscKey(event, () => setIsModal(false)));
 
     return () => {
-      window.addEventListener('keydown', (event) => handleEscKey(event, () => setIsModal(false)));
+    window.removeEventListener('keydown', (event) => handleEscKey(event, () => setIsModal(false)));
     }
   }, [])
   
@@ -43,9 +43,9 @@ const ManagerModal = ({ operationType, setIsModal }) => {
   // function for submit any button
   const handleSubmit = async (func, functionType) =>{
     
+    setError('');
     if (isSubmitting) return;
     setIsSubmitting(true);
-    setError('');
     const [isTrue, data] = await func();
 
     if (!isTrue){
@@ -57,35 +57,48 @@ const ManagerModal = ({ operationType, setIsModal }) => {
 
       case 'addEmployee':
         setIsModal(false);
+        toast.success(text.successAddedEmployee, {className:"toast-success-message"});     // Show display message  
         break;
 
       case 'removeEmployee':
         setIsModal(false);
+        toast.success(text.successRemovedEmployee, {className:"toast-success-message"});     // Show display message  
         break;
       
       case 'addComponent':
         setIsModal(false);
+        toast.success(text.successAddedComponent, {className:"toast-success-message"});     // Show display message  
         break;
 
       case 'removeComponent':
         setIsModal(false);
+        toast.success(text.successRemovedComponent, {className:"toast-success-message"});     // Show display message  
         break;
 
       case 'addStock':
         setIsModal(false);
+        toast.success(text.successUpdateStock, {className:"toast-success-message"});     // Show display message  
         break;
     
     case 'updateStock':
       setIsModal(false);
+      toast.success(text.successUpdateStock, {className:"toast-success-message"});     // Show display message  
       break;
   
     case 'calcAverage':
       setIsModal(false);
-      toast.info(data.averageTime, {className:"toast-info-message"});
+      if (data.averageTime){
+        toast.info(data.averageTime, {className:"toast-info-message"});     // Show display message
+      }
+      else{
+        toast.info(text.noDataFound, {className:"toast-info-message"});     // Show display message
+      }
       break;
   }
   setIsSubmitting(false);
 }
+
+const textSubmitting = isSubmitting ? text.wait : text.sendNow;
 
   // Render section
   const renderModalContent = () => {
@@ -104,7 +117,7 @@ const ManagerModal = ({ operationType, setIsModal }) => {
               <label> {text.employeeNum}: </label>
               <input type="number" placeholder={text.enterEmployeeNum} value={number}onChange={(e) => setNumber(e.target.value)}/>
             </div>
-            <button className='modalManagerModal' onClick={() => handleSubmit(() => addEmployee(name, Number(number)), 'addEmployee')}>{text.sendNow}</button>
+            <button className='modalManagerModal' onClick={() => handleSubmit(() => addEmployee(name, Number(number)), 'addEmployee')}>{textSubmitting}</button>
             {error && <label className='errorMessage'>{error}</label>}
           </div>
         );
@@ -116,7 +129,7 @@ const ManagerModal = ({ operationType, setIsModal }) => {
               <label>{text.employeeNum}:</label>
               <input type="number" placeholder={text.enterEmployeeNum} value={number} onChange={(e) => setNumber(e.target.value)}/>
             </div>
-            <button className='modalManagerModal' onClick={() => handleSubmit(() => removeEmployee(Number(number)), 'removeEmployee')}>{text.sendNow}</button>
+            <button className='modalManagerModal' onClick={() => handleSubmit(() => removeEmployee(Number(number)), 'removeEmployee')}>{textSubmitting}</button>
             {error && <label className='errorMessage'>{error}</label>}
           </div>
         );
@@ -136,7 +149,7 @@ const ManagerModal = ({ operationType, setIsModal }) => {
               <label>{text.stock}:</label>
               <input type="number" placeholder={text.enterQuantity} value={stock} onChange={(e) => setStock(e.target.value)}/>
             </div>
-            <button className='modalManagerModal' onClick={() => handleSubmit(() => addComponent(name, Number(number), Number(stock)), 'addComponent')}>{text.sendNow}</button>
+            <button className='modalManagerModal' onClick={() => handleSubmit(() => addComponent(name, Number(number), Number(stock)), 'addComponent')}>{textSubmitting}</button>
             {error && <label className='errorMessage'>{error}</label>}
           </div>
         );
@@ -148,7 +161,7 @@ const ManagerModal = ({ operationType, setIsModal }) => {
               <label>{text.componentNum}:</label>
               <input type="text" placeholder={text.addComponentNum} value={number} onChange={(e) => setNumber(e.target.value)}/>
             </div>
-            <button className='modalManagerModal' onClick={() => handleSubmit(() => removeComponent(Number(number)), 'removeComponent')}>{text.sendNow}</button>
+            <button className='modalManagerModal' onClick={() => handleSubmit(() => removeComponent(Number(number)), 'removeComponent')}>{textSubmitting}</button>
             {error && <label className='errorMessage'>{error}</label>}
           </div>
         );
@@ -161,10 +174,10 @@ const ManagerModal = ({ operationType, setIsModal }) => {
               <input type="text" placeholder={text.enterNumberComponent} value={number} onChange={(e) => setNumber(e.target.value)}/>
             </div>
             <div className="input-group">
-              <label>כמות להוספה:</label>
-              <input type="number" placeholder="הכנס כמות להוספה" value={stock} onChange={(e) => setStock(e.target.value)}/>
+              <label>{text.countToAdd}:</label>
+              <input type="number" placeholder={text.enterCountToAdd} value={stock} onChange={(e) => setStock(e.target.value)}/>
             </div>
-            <button className='modalManagerModal' onClick={() => handleSubmit(() => addStock(Number(number), Number(stock)), 'addStock')}>{text.sendNow}</button>
+            <button className='modalManagerModal' onClick={() => handleSubmit(() => addStock(Number(number), Number(stock)), 'addStock')}>{textSubmitting}</button>
             {error && <label className='errorMessage'>{error}</label>}
           </div>
         );
@@ -180,7 +193,7 @@ const ManagerModal = ({ operationType, setIsModal }) => {
               <label>{text.quantity}:</label>
               <input type="number" placeholder={text.enterQuantity} value={stock} onChange={(e) => setStock(e.target.value)}/>
             </div>
-            <button className='modalManagerModal' onClick={() => handleSubmit(() => updateStock(Number(number), Number(stock)), 'updateStock')}>{text.sendNow}</button>
+            <button className='modalManagerModal' onClick={() => handleSubmit(() => updateStock(Number(number), Number(stock)), 'updateStock')}>{textSubmitting}</button>
             {error && <label className='errorMessage'>{error}</label>}
           </div>
         );
@@ -192,7 +205,7 @@ const ManagerModal = ({ operationType, setIsModal }) => {
               <label>{text.pakaNumber}:</label>
               <input type="text" placeholder={text.EnterPaka} value={number} onChange={(e) => setNumber(e.target.value)}/>
             </div>
-            <button className='modalManagerModal' onClick={() => handleSubmit(() => calcAverage(number), 'calcAverage')}>{text.calc}</button>
+            <button className='modalManagerModal' onClick={() => handleSubmit(() => calcAverage(number), 'calcAverage')}>{textSubmitting}</button>
             {error && <label className='errorMessage'>{error}</label>}
           </div>
         );

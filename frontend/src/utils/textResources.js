@@ -95,9 +95,12 @@
         calcAve: 'זמן ממוצע לרכיב',
         workspace: 'תחנה',
         title: 'כותרת',
-        updateStock: 'עדכן כמות',
-        updateStock: 'עדכן כמות',
         moreOperation: 'פעולות נוספות',
+        successAddedEmployee: 'העובד התווסף בהצלחה',
+        successRemovedEmployee: 'העובד הוסר בהצלחה',
+        successAddedComponent: 'הרכיב התווסף בהצלחה',
+        successRemovedComponent: 'הרכיב הוסר בהצלחה',
+        successUpdateStock: 'המלאי התעדכן בהצלחה',
         // Manager Modal
         employeeName: 'שם עובד',
         enterEmployeeName: 'הכנס שם עובד...',
@@ -135,6 +138,9 @@
         notPossibleEmptyEmployeeNumber: 'מספר עובד לא יכול להיות ריק',
         startSessionSuccessfully: 'התחלת הדיווח הצליחה',
         sendReportingSuccessfully: 'הדיווח נשלח בהצלחה',
+        countToAdd: 'כמות להוספה',
+        enterCountToAdd: 'הכנס כמות להוספה',
+        noDataFound: 'מידע לא נמצא',
     },
     en: {
         // General
@@ -232,8 +238,6 @@
         calcAve: 'Average Time per Component',
         workspace: 'Station',
         title: 'Title',
-        updateStock: 'Update Stock',
-        updateStock: 'Update Stock',
         // Manager Modal
         employeeName: 'Employee Name',
         enterEmployeeName: 'Enter employee name...',
@@ -272,6 +276,9 @@
         notPossibleEmptyEmployeeNumber: 'Employee number cannot be empty',
         startSessionSuccessfully: 'Session started successfully',
         sendReportingSuccessfully: 'Reporting sent successfully',
+        countToAdd: 'Amount to add',
+        enterCountToAdd: 'Enter the amount to add',
+        noDataFound: 'No data found',
     },
     ru: {
         return: 'возврат',
@@ -367,8 +374,6 @@
         calcAve: 'Среднее время на компонент',
         workspace: 'Станция',
         title: 'Заголовок',
-        updateStock: 'Обновить количество',
-        updateStock: 'Обновить количество',
         // Manager Modal
         employeeName: 'Имя сотрудника',
         enterEmployeeName: 'Введите имя сотрудника...',
@@ -409,6 +414,9 @@
         notPossibleEmptyEmployeeNumber: 'Номер сотрудника не может быть пустым',
         startSessionSuccessfully: 'Сессия успешно начата',
         sendReportingSuccessfully: 'Отчет успешно отправлен',
+        countToAdd: 'Количество для добавления',
+        enterCountToAdd: 'Введите количество для добавления',
+        noDataFound: 'Данные не найдены',
     },
 };
 

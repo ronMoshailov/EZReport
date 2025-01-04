@@ -81,9 +81,6 @@ const NewReportingPage = () => {
     }
   };
 
-  // ESC action listener
-  const addEscListener = (event) => handleEscKey(event, () => setIsCommentsModalOpen(false));
-
   // show component modal with useCallback
   const handleCommentModalClose = useCallback(() => setIsCommentsModalOpen(false), []);
 
