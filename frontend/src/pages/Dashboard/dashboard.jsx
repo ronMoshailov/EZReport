@@ -12,8 +12,8 @@ import { fetchAllReportsByWorkspace } from '../../utils/APIs/report';
 import { LanguageContext } from '../../utils/languageProvider';
 
 // Import components
-import TableContainer from '../../components/TableContainer/TableContainer';
-import Slidebar from '../../components/Slidebar/Slidebar';
+import TableContainer from '../../components/TableContainer/tableContainer';
+import Slidebar from '../../components/Slidebar/slidebar';
 
 // Import functions
 import { resetLocalStorageDashboard } from '../../utils/functions';
